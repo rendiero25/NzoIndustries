@@ -1,0 +1,7 @@
+allowBuilds:
+  # msw: mock service worker transitive, tidak dipakai runtime
+  msw: false
+  # sharp: optimasi next/image
+  sharp: true
+  # unrs-resolver: resolver eslint-plugin-import
+  unrs-resolver: true

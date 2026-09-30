@@ -1,0 +1,400 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "sonner/dist/styles.css";
+
+@theme inline {
+  /* Font — mapping ke CSS vars yang di-inject Next.js font */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-geist-sans);
+
+  /* Warna semantik */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Chart */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Easing — Emil-style strong ease-out for button press feedback */
+  --transition-timing-function-spring: cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* Radius */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* GeekyTech Swiss — brand & palette */
+  --color-brand: #ea5329;
+  --color-brand-hover: #d44820;
+  --color-brand-foreground: #ffffff;
+  --color-rating: oklch(0.8 0.15 83);
+  --color-swiss-black: #000000;
+  --color-swiss-white: #ffffff;
+  --color-swiss-gray-100: oklch(0.97 0 0);
+  --color-swiss-gray-200: oklch(0.93 0 0);
+  --color-swiss-gray-300: oklch(0.87 0 0);
+  --color-swiss-gray-500: oklch(0.6 0 0);
+  --color-swiss-gray-700: oklch(0.38 0 0);
+  --color-swiss-gray-900: oklch(0.15 0 0);
+
+  /* Spacing Swiss — base 4px */
+  --spacing-px: 1px;
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+  --spacing-20: 5rem;
+  --spacing-24: 6rem;
+  --spacing-32: 8rem;
+
+  /* Swiss container max-widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1440px;
+}
+
+:root {
+  /* Swiss: putih, hitam, aksen #EA5329 */
+  --background: #ffffff;
+  --foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --primary: #000000;
+  --primary-foreground: #ffffff;
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: #000000;
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --accent: #ea5329;
+  --accent-foreground: #ffffff;
+  --destructive: oklch(0.55 0.22 27);
+  --destructive-foreground: #ffffff;
+  --border: #000000;
+  --input: oklch(0.92 0 0);
+  --ring: #ea5329;
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #000000;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(234, 83, 41, 0.25);
+  --sidebar-accent-foreground: #ea5329;
+  --sidebar-border: #e0e0e0;
+  --sidebar-ring: #ea5329;
+  --toast-border: #e0e0e0;
+  --toast-description: #7a7a7a;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    font-feature-settings:
+      "kern" 1,
+      "liga" 1,
+      "calt" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Interaktif — pointer konsisten untuk tautan & tombol */
+  a[href],
+  button:not(:disabled) {
+    @apply cursor-pointer;
+  }
+
+  /* Swiss Style — heading hierarchy */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading leading-tight font-black;
+  }
+
+  h1 {
+    @apply text-4xl sm:text-5xl;
+  }
+  h2 {
+    @apply text-3xl sm:text-4xl;
+  }
+  h3 {
+    @apply text-2xl sm:text-3xl;
+  }
+  h4 {
+    @apply text-xl sm:text-2xl;
+  }
+  h5 {
+    @apply text-lg sm:text-xl;
+  }
+  h6 {
+    @apply text-base sm:text-lg;
+  }
+
+  /* Focus visible — Swiss tepi tegas */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+
+  /* Scrollbar Swiss */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/60;
+  }
+
+  /* Selection */
+  ::selection {
+    background-color: #ea5329;
+    color: #ffffff;
+  }
+}
+
+@layer components {
+  /* Tombol/link dengan latar --color-swiss-black → hover brand */
+  button.bg-swiss-black:not(:disabled):hover,
+  a.bg-swiss-black:hover,
+  input[type="submit"].bg-swiss-black:not(:disabled):hover,
+  input[type="button"].bg-swiss-black:not(:disabled):hover {
+    background-color: var(--color-brand);
+    color: var(--color-brand-foreground);
+  }
+
+  button.bg-swiss-black:not(:disabled),
+  a.bg-swiss-black,
+  input[type="submit"].bg-swiss-black:not(:disabled),
+  input[type="button"].bg-swiss-black:not(:disabled) {
+    transition-property: color, background-color, border-color, opacity;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Admin panel — design.mdc: {colors.canvas-parchment} canvas, store-utility-card grammar */
+  .admin-shell {
+    @apply min-h-screen bg-[#f5f5f7];
+  }
+
+  .admin-sidebar-surface {
+    @apply flex h-screen w-60 flex-col border-r border-[#e0e0e0] bg-card;
+  }
+
+  .admin-topbar-surface {
+    @apply border-b border-[#e0e0e0] bg-card/85 backdrop-blur-md backdrop-saturate-150;
+  }
+
+  .admin-utility-card {
+    @apply rounded-2xl border border-[#e0e0e0] bg-card text-card-foreground;
+  }
+
+  .admin-utility-card-header {
+    @apply flex items-center justify-between border-b border-[#e0e0e0] px-5 py-3;
+  }
+
+  .admin-section-title {
+    @apply text-[14px] font-semibold text-foreground;
+  }
+
+  .admin-text-link {
+    @apply text-[17px] leading-[1.47] font-normal tracking-[-0.374px] text-brand transition-colors hover:text-brand-hover;
+  }
+
+  /* Sonner — shadcn cn-toast, soft hairline (bukan border Swiss hitam) */
+  [data-sonner-toaster] {
+    --normal-bg: var(--popover);
+    --normal-text: var(--popover-foreground);
+    --normal-border: var(--toast-border);
+    --border-radius: var(--radius-lg);
+  }
+
+  .cn-toast {
+    border-color: var(--toast-border) !important;
+    background: var(--popover) !important;
+    color: var(--popover-foreground) !important;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.08) !important;
+  }
+
+  .cn-toast-description {
+    color: var(--toast-description) !important;
+    opacity: 1 !important;
+  }
+
+  .cn-toast-action {
+    @apply rounded-md bg-primary text-primary-foreground;
+  }
+
+  .cn-toast-cancel {
+    @apply rounded-md bg-muted text-muted-foreground;
+  }
+}
+
+/* ============================================================
+   Swiss Typography Utilities
+   ============================================================ */
+@layer utilities {
+  /* Display — headline besar halaman */
+  .text-swiss-display {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+  }
+
+  /* Section heading */
+  .text-swiss-heading {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+  }
+
+  /* Eyebrow / label kecil di atas heading */
+  .text-swiss-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    @apply text-muted-foreground;
+  }
+
+  /* Label form / badge / chip */
+  .text-swiss-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  /* Body copy nyaman dibaca */
+  .text-swiss-body {
+    font-size: 1rem;
+    line-height: 1.65;
+    font-weight: 400;
+  }
+
+  /* Price tag */
+  .text-swiss-price {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Brand color utilities */
+  .text-brand {
+    color: #ea5329;
+  }
+  .bg-brand {
+    background-color: #ea5329;
+  }
+  .border-brand {
+    border-color: #ea5329;
+  }
+  .ring-brand {
+    --tw-ring-color: #ea5329;
+  }
+
+  /* Swiss divider — garis tegas */
+  .swiss-divider {
+    @apply border-t border-foreground;
+  }
+
+  /* Swiss box — kotak dengan border tegas */
+  .swiss-box {
+    @apply rounded-none border border-foreground;
+  }
+
+  /* Swiss grid — 12 kolom ketat */
+  .swiss-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  /* Transition standar */
+  .transition-swiss {
+    transition-property: color, background-color, border-color, opacity, transform;
+    transition-duration: 150ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Scroll horizontal tanpa bilah (nav kategori, tab) */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
