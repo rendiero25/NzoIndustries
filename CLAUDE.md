@@ -1,6 +1,6 @@
 # CLAUDE.md — NZO Industries E-commerce
 
-Versi dokumen: 0.2 (2026-09-30). Baca file ini di awal setiap sesi.
+Versi dokumen: 0.3 (2026-10-01). Baca file ini di awal setiap sesi.
 
 ## Proyek
 Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (plus sebagian produk non-otomotif yang masuk kategori sendiri). Ada tiga area: storefront publik, dashboard user (`/account`), dan dashboard admin/CMS (`/admin`). Prinsip utama: **security first**.
@@ -83,7 +83,7 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 6. Rate limit di login, daftar, lupa password, checkout, upload bukti, dan API publik. Turnstile di form auth dan checkout.
 7. Admin wajib MFA (Supabase Auth TOTP). RBAC dengan role: `owner`, `admin`, `warehouse`, `cs`, `customer`.
 8. Setiap aksi admin tercatat di `audit_logs` (siapa, apa, kapan, before/after).
-9. Upload Cloudinary hanya lewat signature dari server, dibatasi ke role admin, dengan folder dan tipe file yang ditentukan.
+9. Upload Cloudinary hanya lewat signature dari server, dibatasi ke role admin, dengan folder dan tipe file yang ditentukan. Folder selalu di bawah `nzo/` (D-16); operasi hapus/rename hanya untuk public_id `nzo/...`.
 10. Bukti transfer disimpan di bucket Supabase **privat**, divalidasi tipe (jpg/png/webp/pdf) dan ukuran (maks 5 MB), diakses via signed URL berumur pendek.
 11. Security headers: CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy.
 12. Dependency Next.js/React/Supabase dipatch rutin. Jalankan `pnpm audit` sebelum rilis.
@@ -118,6 +118,7 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - D-13 Gambar di Cloudinary, email transaksional di Resend.
 - D-14 Proyek dikerjakan per fase; tambahan di luar scope lewat change request.
 - D-15 Fork GeekyTech = salin source tanpa history git (repo NZO mulai bersih), kode dipindah ke `src/`, 37 migration GeekyTech diarsip di `supabase/_reference/` sebagai acuan dan schema NZO ditulis ulang di Fase 1. Akun GitHub/Supabase/Vercel/Cloudinary/Resend dibuat user.
+- D-16 Cloudinary memakai akun milik user yang sudah ada (bersama data lain). Semua aset NZO wajib di bawah root folder `nzo/`; folder dibangun di server lewat `src/lib/cloudinary/folders.ts`, public_id di luar `nzo/` ditolak. Repo: `github.com/rendiero25/NzoIndustries`.
 
 ## Pending info klien
 Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
@@ -143,3 +144,4 @@ Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 ## Changelog
 - 0.1 (2026-09-30): Dokumen awal dari sesi perencanaan.
 - 0.2 (2026-09-30): Fase 0. Tambah D-15, perintah aktual (pnpm 11, test, format, env, CSP).
+- 0.3 (2026-10-01): Tambah D-16 (Cloudinary akun bersama, root folder `nzo/`, repo GitHub). Security rule 9 diperjelas.

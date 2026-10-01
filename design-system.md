@@ -1,6 +1,6 @@
 # design-system.md — NZO Industries
 
-Versi dokumen: 0.2 (2026-09-30). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
+Versi dokumen: 0.3 (2026-10-01). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
 
 ## 1. Arah desain
 
@@ -219,7 +219,7 @@ Bahasa Indonesia, sapaan "kamu", sentence case, kalimat aktif, tanpa basa-basi.
 - Rasio: produk 1:1, banner hero 21:9 (mobile 4:5), banner promo 16:9, logo brand bebas dengan tinggi seragam.
 - Latar foto produk putih atau steel-50 agar grid seragam.
 - Placeholder blur saat memuat. Alt text wajib (default: nama produk + varian).
-- Folder: `nzo/products/{sku}`, `nzo/banners`, `nzo/brands`, `nzo/content`.
+- Folder: `nzo/products/{sku}`, `nzo/banners`, `nzo/brands`, `nzo/content`. Root `nzo/` wajib karena akun Cloudinary dipakai bersama data lain (D-16); helper `buildCloudinaryFolder()`.
 
 ## 12. Dokumen cetak
 
@@ -246,3 +246,4 @@ Hitam-putih, tanpa warna aksen, aman untuk printer thermal/laser. Cetak massal: 
 ## Changelog
 - 0.1 (2026-09-30): Dokumen awal.
 - 0.2 (2026-09-30): Sinkron versi dengan Fase 0 (D-15). Catatan: kode starter masih memakai token/warna GeekyTech (`geeky-*`, oranye `#EA5329`, font Plus Jakarta Sans) dan logo placeholder `public/logo.svg`; diganti di Fase 2 sesuai dokumen ini.
+- 0.3 (2026-10-01): §11 rujuk D-16 (root folder `nzo/` di akun Cloudinary bersama).

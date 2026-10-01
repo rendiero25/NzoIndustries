@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.2 (2026-09-30). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.3 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -10,9 +10,9 @@ Versi dokumen: 0.2 (2026-09-30). Aturan, keputusan (`D-xx`), dan pending klien (
 
 ## Fase 0 — Setup dan fondasi
 - [x] Fork starter GeekyTech, buang modul yang tidak relevan, rename ke `nzo-industries` (D-01, D-15)
-- [ ] Repo GitHub dengan dua branch: `development` → preview, `main` → production — git lokal + branch sudah ada; **menunggu user** buat repo GitHub lalu `git remote add origin` + push
-- [ ] Buat project Supabase (region Singapore) dan project Vercel [P-03] — **menunggu user**
-- [ ] Buat akun/environment Cloudinary dan Resend (D-13) — **menunggu user**
+- [x] Repo GitHub dengan dua branch: `development` → preview, `main` → production — `github.com/rendiero25/NzoIndustries`, kedua branch ter-push (D-16)
+- [ ] Buat project Supabase (region Singapore) dan project Vercel [P-03] — akun Supabase sudah dibuat user; **menunggu** project + kunci di `.env.local`, dan project Vercel
+- [x] Buat akun/environment Cloudinary dan Resend (D-13) — Resend: akun dibuat user. Cloudinary: akun user yang sudah ada, aset NZO dikunci di root `nzo/` (D-16, `src/lib/cloudinary/folders.ts` + test). Kunci API diisi user di `.env.local`; domain Resend menunggu P-09
 - [x] `env.example` lengkap: Supabase, Cloudinary, Resend, Mayar, Biteship, Jubelio, Upstash, Turnstile, GA4, Meta Pixel
 - [x] TypeScript strict, ESLint, Prettier, Husky + lint-staged
 - [x] Security headers (CSP, HSTS, X-Frame-Options, Referrer-Policy, Permissions-Policy) di `next.config`
@@ -215,3 +215,4 @@ Versi dokumen: 0.2 (2026-09-30). Aturan, keputusan (`D-xx`), dan pending klien (
 ## Changelog
 - 0.1 (2026-09-30): Dokumen awal.
 - 0.2 (2026-09-30): Fase 0 dikerjakan (kecuali task akun yang menunggu user), catatan fase diisi.
+- 0.3 (2026-10-01): Repo GitHub ter-push, akun Supabase/Resend dibuat user, Cloudinary pakai akun bersama dengan root `nzo/` (D-16).
