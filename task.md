@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.3 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.4 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -11,7 +11,7 @@ Versi dokumen: 0.3 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (
 ## Fase 0 — Setup dan fondasi
 - [x] Fork starter GeekyTech, buang modul yang tidak relevan, rename ke `nzo-industries` (D-01, D-15)
 - [x] Repo GitHub dengan dua branch: `development` → preview, `main` → production — `github.com/rendiero25/NzoIndustries`, kedua branch ter-push (D-16)
-- [ ] Buat project Supabase (region Singapore) dan project Vercel [P-03] — akun Supabase sudah dibuat user; **menunggu** project + kunci di `.env.local`, dan project Vercel
+- [ ] Buat project Supabase dan project Vercel [P-03] — Supabase ✓ (region `ap-southeast-2`, D-17; kunci di `.env.local` tervalidasi, DB kosong, `/api/health` cek DB `ok`). **Menunggu** project Vercel (region function `syd1`)
 - [x] Buat akun/environment Cloudinary dan Resend (D-13) — Resend: akun dibuat user. Cloudinary: akun user yang sudah ada, aset NZO dikunci di root `nzo/` (D-16, `src/lib/cloudinary/folders.ts` + test). Kunci API diisi user di `.env.local`; domain Resend menunggu P-09
 - [x] `env.example` lengkap: Supabase, Cloudinary, Resend, Mayar, Biteship, Jubelio, Upstash, Turnstile, GA4, Meta Pixel
 - [x] TypeScript strict, ESLint, Prettier, Husky + lint-staged
@@ -216,3 +216,4 @@ Versi dokumen: 0.3 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (
 - 0.1 (2026-09-30): Dokumen awal.
 - 0.2 (2026-09-30): Fase 0 dikerjakan (kecuali task akun yang menunggu user), catatan fase diisi.
 - 0.3 (2026-10-01): Repo GitHub ter-push, akun Supabase/Resend dibuat user, Cloudinary pakai akun bersama dengan root `nzo/` (D-16).
+- 0.4 (2026-10-01): Supabase siap (D-17), env tervalidasi.

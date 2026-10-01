@@ -1,6 +1,6 @@
 # CLAUDE.md — NZO Industries E-commerce
 
-Versi dokumen: 0.3 (2026-10-01). Baca file ini di awal setiap sesi.
+Versi dokumen: 0.4 (2026-10-01). Baca file ini di awal setiap sesi.
 
 ## Proyek
 Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (plus sebagian produk non-otomotif yang masuk kategori sendiri). Ada tiga area: storefront publik, dashboard user (`/account`), dan dashboard admin/CMS (`/admin`). Prinsip utama: **security first**.
@@ -119,12 +119,13 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - D-14 Proyek dikerjakan per fase; tambahan di luar scope lewat change request.
 - D-15 Fork GeekyTech = salin source tanpa history git (repo NZO mulai bersih), kode dipindah ke `src/`, 37 migration GeekyTech diarsip di `supabase/_reference/` sebagai acuan dan schema NZO ditulis ulang di Fase 1. Akun GitHub/Supabase/Vercel/Cloudinary/Resend dibuat user.
 - D-16 Cloudinary memakai akun milik user yang sudah ada (bersama data lain). Semua aset NZO wajib di bawah root folder `nzo/`; folder dibangun di server lewat `src/lib/cloudinary/folders.ts`, public_id di luar `nzo/` ditolak. Repo: `github.com/rendiero25/NzoIndustries`.
+- D-17 Project Supabase NZO di region `ap-southeast-2` (Sydney), keputusan user (bukan Singapore seperti rekomendasi awal P-03). Saat setup Vercel, region function disamakan (`syd1`) supaya latensi server ↔ DB minimal. Resend dipakai tanpa domain sampai P-09 terjawab.
 
 ## Pending info klien
 Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - P-01 ⏳ Harga mana yang dipakai di web.
 - P-02 ⏳ Pembayaran final: Mayar, transfer langsung ke rekening klien, atau keduanya. Juga data rekening untuk transfer manual.
-- P-03 ⏳ Hosting final (rekomendasi: Vercel Pro + Supabase Pro region Singapore).
+- P-03 ⏳ Hosting final (rekomendasi: Vercel Pro + Supabase Pro). Region Supabase sudah diputuskan: D-17.
 - P-04 ⏳ Akses Jubelio API: akun integrasi, paket yang mencakup API, dan izin tertulis menyalin katalog.
 - P-05 ⏳ Toko Shopify: diganti web ini atau tetap berjalan.
 - P-06 ⏳ Ada harga grosir/bengkel (reseller) atau tidak.
@@ -145,3 +146,4 @@ Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - 0.1 (2026-09-30): Dokumen awal dari sesi perencanaan.
 - 0.2 (2026-09-30): Fase 0. Tambah D-15, perintah aktual (pnpm 11, test, format, env, CSP).
 - 0.3 (2026-10-01): Tambah D-16 (Cloudinary akun bersama, root folder `nzo/`, repo GitHub). Security rule 9 diperjelas.
+- 0.4 (2026-10-01): Tambah D-17 (Supabase `ap-southeast-2`, Vercel `syd1`, Resend tanpa domain sampai P-09). P-03 diperbarui.
