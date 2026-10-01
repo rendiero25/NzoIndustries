@@ -30,6 +30,32 @@ const eslintConfig = defineConfig([
       "react-hooks/error-boundaries": "warn",
     },
   },
+  {
+    // D-19: kode NZO baru tidak boleh memakai client/tipe Supabase GeekyTech.
+    files: [
+      "src/server/**",
+      "src/lib/auth/**",
+      "src/lib/supabase/*.ts",
+      "src/proxy.ts",
+      "src/app/admin/mfa/**",
+      "src/components/admin/mfa-form.tsx",
+      "tests/**",
+      "scripts/**",
+    ],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/lib/supabase/legacy/*", "@/types/legacy-supabase"],
+              message: "Pakai @/lib/supabase/{server,client,admin} dan @/types/database (D-19).",
+            },
+          ],
+        },
+      ],
+    },
+  },
   globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "supabase/_reference/**"]),
 ]);
 

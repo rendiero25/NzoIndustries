@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/auth/login-form";
+import { safeRedirectPath } from "@/lib/auth/redirect";
 
 type LoginPageProps = {
   searchParams: Promise<{
@@ -14,7 +15,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   return (
     <LoginForm
-      redirectTo={params.redirectTo ?? "/"}
+      redirectTo={safeRedirectPath(params.redirectTo, "/")}
       urlError={params.error ?? null}
       urlMessage={params.message ?? null}
     />

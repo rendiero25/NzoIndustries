@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { sendComplaintMessageAction } from "@/app/(dashboard)/dashboard/orders/_actions";
 import type { ComplaintMessage } from "@/lib/data/complaints";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/legacy/client";
 
 export function ComplaintThread({
   complaintId,

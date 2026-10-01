@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/legacy/server";
 import type { CartLineView } from "@/components/store/cart-line-card";
 import { computeVariantUnitPrice } from "@/lib/utils/product-detail-pricing";
 

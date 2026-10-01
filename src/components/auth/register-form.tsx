@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-import { GoogleOAuthButton } from "@/components/auth/google-oauth-button";
 import { TurnstileWidgetLazy } from "@/components/auth/turnstile-widget-lazy";
 import { Button } from "@/components/ui/button";
 import { PasswordVisibilityToggle } from "@/components/ui/password-visibility-toggle";
@@ -15,17 +14,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AUTH_INPUT_CLASS } from "@/lib/auth/auth-field-classes";
 import { isTurnstileRequired } from "@/lib/auth/turnstile-config";
-import { createClient } from "@/lib/supabase/client";
 import { registerSchema, type RegisterFormValues } from "@/lib/validations/auth";
-
-const supabase = createClient();
+import { signUpAction } from "@/server/actions/auth";
 
 export function RegisterForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileKey, setTurnstileKey] = useState(0);
 
@@ -54,29 +50,14 @@ export function RegisterForm() {
 
     setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          first_name: values.first_name.trim(),
-          last_name: values.last_name.trim(),
-          phone: values.phone.trim(),
-          email: values.email.trim(),
-          password: values.password,
-          turnstileToken: turnstileToken ?? undefined,
-        }),
+      const result = await signUpAction({
+        ...values,
+        email: values.email.trim(),
+        turnstileToken: turnstileToken ?? undefined,
       });
 
-      const json = (await res.json()) as { success: boolean; error?: string };
-
-      if (!json.success) {
-        if (json.error === "EMAIL_EXISTS") {
-          toast.error("Email ini sudah terdaftar. Silakan masuk.", {
-            action: { label: "Masuk", onClick: () => router.push("/login") },
-          });
-        } else {
-          toast.error(json.error ?? "Terjadi kesalahan. Coba lagi.");
-        }
+      if (!result.ok) {
+        toast.error(result.error);
         resetTurnstile();
         return;
       }
@@ -87,23 +68,6 @@ export function RegisterForm() {
       resetTurnstile();
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleGoogleRegister = async () => {
-    setIsGoogleLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
-        },
-      });
-      if (error) toast.error(error.message);
-    } catch {
-      toast.error("Gagal daftar dengan Google. Coba lagi.");
-    } finally {
-      setIsGoogleLoading(false);
     }
   };
 
@@ -291,12 +255,6 @@ export function RegisterForm() {
           Daftar
         </Button>
       </form>
-
-      <GoogleOAuthButton
-        label="Daftar dengan google"
-        isLoading={isGoogleLoading}
-        onClick={handleGoogleRegister}
-      />
 
       <p className="text-center text-[17px] leading-[1.47] font-normal text-[#1d1d1f]">
         Sudah punya akun?{" "}

@@ -2,7 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { DEFAULT_STORE_ORIGIN, parseStoreOrigin, type StoreOrigin } from "./store-origin";
 
 export const getStoreOrigin = cache(async (): Promise<StoreOrigin> => {

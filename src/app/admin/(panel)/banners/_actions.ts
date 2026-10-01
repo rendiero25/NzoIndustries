@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { parseFlashSaleIdFromBannerTemplate } from "@/app/admin/(panel)/promotions/flash-sale/_lib/flash-sale-banner-template";
 
 function revalidateBannerRelatedPaths(template: string | null) {

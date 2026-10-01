@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { FlashSaleForm } from "../_components/flash-sale-form-client";
 
 export const dynamic = "force-dynamic";

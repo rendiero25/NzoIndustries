@@ -1,7 +1,7 @@
 ﻿import { Suspense } from "react";
 import type { Metadata } from "next";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { ComplaintFilters } from "./_components/complaint-filters";
 import { ComplaintTable, type ComplaintRow } from "./_components/complaint-table";
 

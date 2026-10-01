@@ -1,9 +1,9 @@
 import { notFound, redirect } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { fetchOrderDetailForUser } from "@/lib/data/dashboard-user";
 import { InvoicePrintView } from "@/components/dashboard/invoice-print-view";
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/legacy-supabase";
 
 type OrderStatus = Database["public"]["Enums"]["order_status"];
 type WatermarkType = "LUNAS" | "DIBATALKAN" | "DIKEMBALIKAN";

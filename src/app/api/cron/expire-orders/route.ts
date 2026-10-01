@@ -1,4 +1,4 @@
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { cancelExpiredOrder } from "@/lib/orders/cancel-expired";
 
 export const dynamic = "force-dynamic";

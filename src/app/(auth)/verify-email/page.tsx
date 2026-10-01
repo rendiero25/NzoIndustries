@@ -7,6 +7,7 @@ import { ArrowLeft, MailCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { resendActivationAction } from "@/server/actions/auth";
 
 export default function VerifyEmailPage() {
   return (
@@ -29,20 +30,14 @@ function VerifyEmailContent() {
 
     setIsResending(true);
     try {
-      const res = await fetch("/api/auth/resend-activation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      const result = await resendActivationAction({ email });
 
-      const json = (await res.json()) as { success: boolean; error?: string };
-
-      if (!json.success) {
-        toast.error(json.error ?? "Gagal kirim ulang. Coba lagi.");
+      if (!result.ok) {
+        toast.error(result.error);
         return;
       }
 
-      toast.success("Email aktivasi berhasil dikirim ulang. Cek inbox kamu.");
+      toast.success("Jika email terdaftar dan belum aktif, link aktivasi baru sudah dikirim.");
     } catch {
       toast.error("Terjadi kesalahan. Coba lagi.");
     } finally {

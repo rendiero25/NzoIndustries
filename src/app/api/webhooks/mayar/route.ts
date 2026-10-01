@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { verifyMayarWebhookToken } from "@/lib/mayar/verify-webhook";
 import { reconcileMayarPayment } from "@/lib/payments/reconcile-mayar";
-import type { Json } from "@/types/supabase";
+import type { Json } from "@/types/legacy-supabase";
 
 /**
  * POST /api/webhooks/mayar

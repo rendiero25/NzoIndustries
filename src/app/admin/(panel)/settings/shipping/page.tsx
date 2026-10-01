@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { SettingsNav } from "../_components/settings-nav";
 import { OriginForm } from "./_components/origin-form";
 import { parseStoreOrigin } from "@/lib/settings/store-origin";

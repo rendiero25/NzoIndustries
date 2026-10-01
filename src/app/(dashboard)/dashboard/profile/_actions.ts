@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 
 export type SimpleActionResult = { success: true } | { success: false; error: string };
 

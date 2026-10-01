@@ -1,4 +1,4 @@
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import {
   REVIEW_IMAGE_MAX_SIZE_MB,
   REVIEW_IMAGE_MIME_TYPES,

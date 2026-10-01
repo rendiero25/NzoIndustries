@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { createClient } from "@/lib/supabase/server";
-import { uploadReviewImage } from "@/lib/supabase/upload-review-image";
+import { createClient } from "@/lib/supabase/legacy/server";
+import { uploadReviewImage } from "@/lib/supabase/legacy/upload-review-image";
 
 const fileSchema = z.instanceof(File, { message: "File foto wajib diisi." });
 

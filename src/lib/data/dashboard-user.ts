@@ -2,9 +2,9 @@ import "server-only";
 
 import { cache } from "react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/legacy-supabase";
 
 import type { OrderStatus } from "@/lib/constants/order-status-labels";
 import type { ProductDetailVariant } from "@/lib/types/product-detail";

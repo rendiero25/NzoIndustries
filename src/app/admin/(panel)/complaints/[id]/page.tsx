@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { ComplaintDetailView, type ComplaintDetail } from "./_components/complaint-detail";
 
 export const dynamic = "force-dynamic";

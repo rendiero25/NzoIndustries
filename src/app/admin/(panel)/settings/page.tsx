@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { SettingsNav } from "./_components/settings-nav";
 import { MaintenanceToggle } from "./_components/maintenance-toggle";
 import { AnnouncementForm } from "./_components/announcement-form";

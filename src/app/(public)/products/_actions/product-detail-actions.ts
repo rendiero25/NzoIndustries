@@ -3,8 +3,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 
-import { createClient } from "@/lib/supabase/server";
-import type { Database } from "@/types/supabase";
+import { createClient } from "@/lib/supabase/legacy/server";
+import type { Database } from "@/types/legacy-supabase";
 
 export type ProductActionResult =
   { success: true; lineId: string } | { success: false; error: string };

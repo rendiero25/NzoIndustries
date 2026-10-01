@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { AnnouncementBar } from "@/components/layout/announcement-bar";
 
 export async function AnnouncementBarServer() {

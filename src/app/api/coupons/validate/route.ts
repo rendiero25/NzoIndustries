@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { computeCouponDiscount } from "@/lib/checkout/coupon-discount";
 
 const lineSchema = z.object({

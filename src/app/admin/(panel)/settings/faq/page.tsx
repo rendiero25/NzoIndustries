@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ChevronLeft, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { SettingsNav } from "../_components/settings-nav";
 import { FaqTable, type FaqRow } from "./_components/faq-table";
 

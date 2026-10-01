@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { fetchUserAddresses } from "@/lib/data/dashboard-user";
 import { Button } from "@/components/ui/button";
 import { AddressDeleteButton } from "@/components/dashboard/address-delete-button";

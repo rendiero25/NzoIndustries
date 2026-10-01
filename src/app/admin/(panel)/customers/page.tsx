@@ -1,7 +1,7 @@
 ﻿import { Suspense } from "react";
 import type { Metadata } from "next";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/legacy/server";
 import { CustomerFilters } from "./_components/customer-filters";
 import { CustomerTable, type CustomerRow } from "./_components/customer-table";
 

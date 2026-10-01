@@ -6,7 +6,7 @@ import { AlertCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { PaymentCountdown } from "@/components/dashboard/payment-countdown";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/legacy/client";
 import { PAYMENT_METHOD_LABELS } from "@/lib/constants/payment-method-labels";
 import { PAYMENT_METHOD_LOGOS } from "@/lib/constants/payment-method-logos";
 import { formatRupiah } from "@/lib/format";

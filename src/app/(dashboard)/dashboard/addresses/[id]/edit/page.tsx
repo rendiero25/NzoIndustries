@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { fetchAddressForUser } from "@/lib/data/dashboard-user";
 import { AddressForm } from "@/components/dashboard/address-form";
 

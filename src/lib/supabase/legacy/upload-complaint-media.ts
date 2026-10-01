@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 
 const BUCKET = "complaint-images";
 const MAX_SIZE_MB = 50;

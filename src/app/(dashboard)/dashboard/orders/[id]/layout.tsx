@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { fetchOrderDetailForUser } from "@/lib/data/dashboard-user";
 import { OrderSubNav } from "@/components/dashboard/order-subnav";
 

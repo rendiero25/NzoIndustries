@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { BITESHIP_COURIER_BRANDS } from "@/lib/biteship/courier-brands";
 import { LEGAL_ENTITY_NAME } from "@/lib/constants/business-identity";
 import { formatDate, formatRupiah } from "@/lib/format";

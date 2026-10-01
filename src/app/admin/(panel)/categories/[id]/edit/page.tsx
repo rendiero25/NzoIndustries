@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { notFound } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { CategoryForm } from "../../_components/category-form";
 
 export const metadata: Metadata = { title: "Edit Kategori — Admin NZO Industries" };

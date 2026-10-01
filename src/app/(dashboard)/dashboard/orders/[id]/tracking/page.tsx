@@ -15,7 +15,7 @@ import {
   XCircle,
 } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { fetchOrderDetailForUser } from "@/lib/data/dashboard-user";
 import {
   fetchBiteshipTracking,
@@ -24,7 +24,7 @@ import {
   type TrackingStep,
 } from "@/lib/biteship/fetch-tracking";
 import { OrderStatusStepper } from "@/components/dashboard/order-status-stepper";
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/legacy-supabase";
 
 type ShipmentStatus = Database["public"]["Enums"]["shipment_status"];
 

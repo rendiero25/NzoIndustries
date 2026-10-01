@@ -12,7 +12,7 @@ import { useNotificationStore } from "@/store/notification-store";
 import { Button } from "@/components/ui/button";
 import { formatRelativeDate } from "@/lib/format";
 import { getNotificationTypeLabel } from "@/lib/notifications/format-notification-display";
-import type { Json } from "@/types/supabase";
+import type { Json } from "@/types/legacy-supabase";
 
 type Row = {
   id: string;

@@ -1,4 +1,4 @@
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 
 type AdminNotifInput = {
   title: string;
@@ -14,7 +14,7 @@ export async function createAdminNotification(input: AdminNotifInput): Promise<v
       title: input.title,
       body: input.body,
       type: input.type,
-      data: (input.data ?? null) as import("@/types/supabase").Json,
+      data: (input.data ?? null) as import("@/types/legacy-supabase").Json,
     });
   } catch {
     // Fire-and-forget — jangan break flow utama

@@ -1,4 +1,4 @@
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 
 type NotifInput = {
   userId: string;
@@ -18,7 +18,7 @@ export async function createNotification(input: NotifInput): Promise<void> {
       title: input.title,
       body: input.body,
       type: input.type,
-      data: (input.data ?? null) as import("@/types/supabase").Json,
+      data: (input.data ?? null) as import("@/types/legacy-supabase").Json,
     });
 
     // Delete old notifications beyond max limit

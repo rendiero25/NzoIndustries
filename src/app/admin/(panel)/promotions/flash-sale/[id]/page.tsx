@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { FlashSaleForm } from "../_components/flash-sale-form-client";
 import { FlashSaleBannersSection } from "../_components/flash-sale-banners-section";
 import {

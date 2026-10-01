@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { createNotification } from "@/lib/notifications/create-notification";
 import { createAdminNotification } from "@/lib/notifications/create-admin-notification";
 

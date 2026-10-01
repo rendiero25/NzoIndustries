@@ -1,4 +1,4 @@
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/legacy/server";
 
 export type StoreHeaderCategoryRow = { id: string; name: string; slug: string };
 

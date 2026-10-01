@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { PromotionTable, type PromotionTableRow } from "../_components/promotion-table";
 
 export const metadata: Metadata = { title: "Produk Second — Promosi Admin NZO Industries" };

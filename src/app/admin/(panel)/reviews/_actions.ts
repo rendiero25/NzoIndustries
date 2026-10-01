@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { syncProductRating } from "@/lib/products/sync-product-rating";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 
 export async function deleteReview(reviewId: string): Promise<{ error?: string }> {
   const supabase = await createServiceClient();

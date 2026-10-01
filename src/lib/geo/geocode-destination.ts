@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 
 /**
  * Resolusi koordinat (lat/lng) tujuan dari kode pos Indonesia, untuk kurir

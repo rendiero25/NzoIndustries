@@ -1,17 +1,23 @@
 import "server-only";
 
 import { createServerClient } from "@supabase/ssr";
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
-import type { Database } from "@/types/supabase";
+import { getClientEnv } from "@/lib/env.client";
+import type { Database } from "@/types/database";
 
+/**
+ * Client user-scoped (cookie session). RLS berlaku penuh dan `auth.uid()`
+ * terisi, sehingga audit log mencatat pelaku. Pakai ini untuk semua aksi
+ * admin/user. Service role hanya lewat `createAdminClient()` (admin.ts).
+ */
 export async function createClient() {
   const cookieStore = await cookies();
+  const env = getClientEnv();
 
   return createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    env.NEXT_PUBLIC_SUPABASE_URL,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll() {
@@ -23,32 +29,10 @@ export async function createClient() {
               cookieStore.set(name, value, options),
             );
           } catch {
-            // setAll dipanggil dari Server Component — cookies tidak bisa di-set,
-            // tapi middleware sudah menangani refresh session.
+            // Dipanggil dari Server Component: cookie tidak bisa ditulis.
+            // Refresh session ditangani proxy.
           }
         },
-      },
-    },
-  );
-}
-
-/**
- * Server client dengan service_role key.
- * Gunakan HANYA di API routes / server actions yang membutuhkan bypass RLS.
- * JANGAN gunakan di Client Components atau expose ke browser.
- *
- * Menggunakan createClient dari @supabase/supabase-js (bukan @supabase/ssr)
- * agar Authorization header benar-benar pakai service role JWT — bukan JWT
- * user dari cookies — sehingga RLS di-bypass sepenuhnya.
- */
-export function createServiceClient() {
-  return createSupabaseClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
       },
     },
   );

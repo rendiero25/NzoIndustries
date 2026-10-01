@@ -8,7 +8,7 @@ import { ArrowRight, ShoppingBag } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/legacy/client";
 import { formatRupiah, formatRelativeDate } from "@/lib/format";
 import { useAdminOrdersStore } from "@/store/admin-orders-store";
 

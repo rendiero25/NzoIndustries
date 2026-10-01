@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { FaqForm } from "../../_components/faq-form";
 
 export const metadata: Metadata = { title: "Edit FAQ — Admin NZO Industries" };

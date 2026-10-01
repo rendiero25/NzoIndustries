@@ -1,5 +1,5 @@
 ﻿import type { Metadata } from "next";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { HomeSectionsEditor } from "./_components/home-sections-editor";
 import type { HomeSection } from "./_actions";
 

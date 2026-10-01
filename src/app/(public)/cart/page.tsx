@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { fetchCartCrossSellProducts } from "@/lib/data/product-detail-page";
 import { fetchUserCartWithLines } from "@/lib/data/user-cart-lines";
 import { CartCheckoutStepper } from "@/components/store/cart-checkout-stepper";

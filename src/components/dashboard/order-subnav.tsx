@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { orderStatusLabel } from "@/lib/constants/order-status-labels";
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/legacy-supabase";
 import { Button } from "@/components/ui/button";
 
 type OrderStatus = Database["public"]["Enums"]["order_status"];

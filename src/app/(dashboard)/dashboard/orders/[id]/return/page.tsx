@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { fetchOrderDetailForUser } from "@/lib/data/dashboard-user";
 import { fetchComplaintForOrder } from "@/lib/data/complaints";
 

@@ -42,7 +42,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { NotificationBell } from "@/components/layout/notification-bell";
 import { cn } from "@/lib/utils";
-import type { Tables } from "@/types/supabase";
+import type { Tables } from "@/types/legacy-supabase";
 
 type SearchResult = {
   id: string;

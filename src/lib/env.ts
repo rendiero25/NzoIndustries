@@ -48,7 +48,9 @@ let cached: ServerEnv | undefined;
 
 export function getServerEnv(): ServerEnv {
   if (cached) return cached;
-  const parsed = serverEnvSchema.safeParse(process.env);
+  // `KEY=` (kosong) di .env diperlakukan sama dengan tidak diset.
+  const raw = Object.fromEntries(Object.entries(process.env).filter(([, value]) => value !== ""));
+  const parsed = serverEnvSchema.safeParse(raw);
   if (!parsed.success) {
     // Hanya nama variabel yang dilaporkan, tidak pernah nilainya.
     const keys = parsed.error.issues.map((issue) => issue.path.join(".")).join(", ");

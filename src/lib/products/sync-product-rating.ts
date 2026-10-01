@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 
 type ProductRatingSyncResult =
   { success: true; averageRating: number; reviewCount: number } | { success: false; error: string };

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { createNotification } from "@/lib/notifications/create-notification";
 import { createBiteshipOrder } from "@/lib/biteship/create-order";
 import { fetchBiteshipCourierRates } from "@/lib/biteship/fetch-courier-rates";
@@ -62,7 +62,7 @@ export async function sendAdminComplaintMessage(
   complaintId: string,
   message: string,
 ): Promise<{ error?: string }> {
-  const { createClient: createAuthClient } = await import("@/lib/supabase/server");
+  const { createClient: createAuthClient } = await import("@/lib/supabase/legacy/server");
   const authClient = await createAuthClient();
   const {
     data: { user },

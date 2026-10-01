@@ -3,7 +3,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { getServerEnv } from "@/lib/env";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
   if (hasValidBearer(request, process.env.CRON_SECRET)) {
     try {
       getServerEnv();
-      const supabase = createServiceClient();
+      const supabase = createAdminClient();
       const { error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
       body.db = error ? "error" : "ok";
     } catch {

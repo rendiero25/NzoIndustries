@@ -18,7 +18,7 @@ import {
 import type { RealtimeChannel } from "@supabase/supabase-js";
 
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/legacy/client";
 
 type NotifItem = {
   id: string;

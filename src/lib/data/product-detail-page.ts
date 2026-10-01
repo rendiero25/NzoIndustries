@@ -2,7 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import {
   productRowToShelf,
   type HomeShelfProduct,

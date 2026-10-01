@@ -1,4 +1,4 @@
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/legacy-supabase";
 
 type CouponRow = Pick<
   Database["public"]["Tables"]["coupons"]["Row"],

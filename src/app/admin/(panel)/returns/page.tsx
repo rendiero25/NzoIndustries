@@ -1,4 +1,4 @@
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { ReturnsTable } from "./_components/returns-table";
 
 export default async function AdminReturnsPage() {

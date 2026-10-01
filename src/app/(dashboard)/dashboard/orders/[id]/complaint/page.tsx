@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Video } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { fetchOrderDetailForUser } from "@/lib/data/dashboard-user";
 import { fetchComplaintForOrder } from "@/lib/data/complaints";
 import { OrderComplaintForm } from "@/components/dashboard/order-complaint-form";

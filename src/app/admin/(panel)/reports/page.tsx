@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { formatRupiah } from "@/lib/format";
 import { DashboardRevenueChart, DashboardOrdersChart } from "@/components/admin/dashboard-charts";
 

@@ -7,7 +7,7 @@ import { StarRatingDisplay } from "@/components/shared/star-rating-display";
 
 import { PaymentCountdown } from "@/components/dashboard/payment-countdown";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { reconcileMayarPayment } from "@/lib/payments/reconcile-mayar";
 import {
   fetchOrderDetailForUser,
@@ -22,7 +22,7 @@ import { PAYMENT_METHOD_LABELS } from "@/lib/constants/payment-method-labels";
 import { PAYMENT_METHOD_LOGOS } from "@/lib/constants/payment-method-logos";
 import { formatDate, formatRupiah } from "@/lib/format";
 import { OrderToolbar } from "@/components/dashboard/order-toolbar";
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/legacy-supabase";
 
 type PaymentStatus = Database["public"]["Enums"]["payment_status"];
 type OrderStatus = Database["public"]["Enums"]["order_status"];

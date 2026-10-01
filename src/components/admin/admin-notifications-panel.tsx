@@ -10,7 +10,7 @@ import {
 } from "@/app/admin/(panel)/notifications/_actions";
 import { Button } from "@/components/ui/button";
 import { formatRelativeDate } from "@/lib/format";
-import type { Json } from "@/types/supabase";
+import type { Json } from "@/types/legacy-supabase";
 
 type Row = {
   id: string;

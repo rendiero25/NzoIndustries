@@ -13,8 +13,8 @@ import {
   fetchStoreHeaderCartCount,
   fetchStoreHeaderSecondHandPromoId,
 } from "@/lib/data/store-header-server";
-import { createClient } from "@/lib/supabase/server";
-import type { Tables } from "@/types/supabase";
+import { createClient } from "@/lib/supabase/legacy/server";
+import type { Tables } from "@/types/legacy-supabase";
 
 // StoreHeader pakai useSearchParams() — halaman /_not-found selalu di-prerender
 // statis oleh Next.js, jadi wajib dibungkus Suspense agar build tidak gagal.

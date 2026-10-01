@@ -1,10 +1,10 @@
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { createNotification } from "@/lib/notifications/create-notification";
 import { getUserEmail } from "@/lib/email/get-user-email";
 import { sendOrderShipped } from "@/lib/email/send-order-shipped";
 import { sendOrderDelivered } from "@/lib/email/send-order-delivered";
 import { shipmentStageToNotify } from "@/lib/shipping/notify-stage";
-import type { Database, Json } from "@/types/supabase";
+import type { Database, Json } from "@/types/legacy-supabase";
 
 type ShipmentStatus = Database["public"]["Enums"]["shipment_status"];
 type OrderStatus = Database["public"]["Enums"]["order_status"];

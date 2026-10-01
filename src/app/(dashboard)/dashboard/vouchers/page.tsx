@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { fetchActiveCouponsForStore } from "@/lib/data/dashboard-user";
 import { formatDate, formatRupiah } from "@/lib/format";
 

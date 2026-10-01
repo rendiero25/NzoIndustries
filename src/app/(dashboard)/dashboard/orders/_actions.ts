@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
-import type { Database } from "@/types/supabase";
+import { createClient, createServiceClient } from "@/lib/supabase/legacy/server";
+import type { Database } from "@/types/legacy-supabase";
 import { syncProductRating } from "@/lib/products/sync-product-rating";
 
 import { buildWhatsAppUrl } from "@/lib/whatsapp-link";

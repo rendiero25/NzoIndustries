@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { BrandFilters } from "./_components/brand-filters";
 import { BrandTable, type BrandRow } from "./_components/brand-table";
 

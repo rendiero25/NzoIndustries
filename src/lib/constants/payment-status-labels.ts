@@ -1,4 +1,4 @@
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/legacy-supabase";
 
 export type PaymentStatus = Database["public"]["Enums"]["payment_status"];
 

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/legacy/server";
 import { createNotification } from "@/lib/notifications/create-notification";
 import { createAdminNotification } from "@/lib/notifications/create-admin-notification";
 import { sendOrderConfirmation } from "@/lib/email/send-order-confirmation";
@@ -478,15 +478,13 @@ export async function POST(req: Request) {
       });
       if (cuErr) {
         if (cartId) {
-          await svc
-            .from("cart_items")
-            .insert(
-              orderLines.map((l) => ({
-                cart_id: cartId,
-                variant_id: l.variantId,
-                quantity: l.qty,
-              })),
-            );
+          await svc.from("cart_items").insert(
+            orderLines.map((l) => ({
+              cart_id: cartId,
+              variant_id: l.variantId,
+              quantity: l.qty,
+            })),
+          );
         }
         for (const line of orderLines) {
           const { data: v } = await svc
@@ -518,15 +516,13 @@ export async function POST(req: Request) {
       if (bumpErr) {
         await svc.from("coupon_usages").delete().eq("order_id", order.id);
         if (cartId) {
-          await svc
-            .from("cart_items")
-            .insert(
-              orderLines.map((l) => ({
-                cart_id: cartId,
-                variant_id: l.variantId,
-                quantity: l.qty,
-              })),
-            );
+          await svc.from("cart_items").insert(
+            orderLines.map((l) => ({
+              cart_id: cartId,
+              variant_id: l.variantId,
+              quantity: l.qty,
+            })),
+          );
         }
         for (const line of orderLines) {
           const { data: v } = await svc

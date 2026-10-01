@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { ChangePasswordForm } from "@/components/dashboard/change-password-form";
 
 export const metadata: Metadata = {

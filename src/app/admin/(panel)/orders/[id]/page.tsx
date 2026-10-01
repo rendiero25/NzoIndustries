@@ -4,7 +4,7 @@ import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import { ChevronRight, MapPin, Package, Phone, Printer, User } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { cancelExpiredOrder } from "@/lib/orders/cancel-expired";
 import { formatRupiah, formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";

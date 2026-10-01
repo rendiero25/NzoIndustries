@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { BannerTable, type BannerRow } from "@/app/admin/(panel)/banners/_components/banner-table";
 
 type Props = {

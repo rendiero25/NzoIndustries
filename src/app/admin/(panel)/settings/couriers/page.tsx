@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { SettingsNav } from "../_components/settings-nav";
 import { CourierBrandForm } from "./_components/courier-brand-form";
 

@@ -7,7 +7,7 @@ import { formatDate } from "@/lib/format";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { sendAdminComplaintMessage } from "../../_actions";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/legacy/client";
 
 type Message = { id: string; sender_role: string; message: string; created_at: string };
 

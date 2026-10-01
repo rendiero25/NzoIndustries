@@ -1,9 +1,10 @@
 import { createBrowserClient } from "@supabase/ssr";
 
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/database";
 
 let client: ReturnType<typeof createBrowserClient<Database>> | undefined;
 
+/** Browser client (anon key + session cookie). RLS berlaku. */
 export function createClient() {
   if (!client) {
     client = createBrowserClient<Database>(

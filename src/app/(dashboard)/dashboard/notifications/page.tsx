@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { fetchUserNotifications } from "@/lib/data/dashboard-user";
 import { NotificationsPanel } from "@/components/dashboard/notifications-panel";
 

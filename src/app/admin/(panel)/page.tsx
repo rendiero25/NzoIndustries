@@ -16,7 +16,7 @@ import {
 
 import React, { cache } from "react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { formatRupiah, formatRelativeDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { DashboardRevenueChart, DashboardOrdersChart } from "@/components/admin/dashboard-charts";

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { ChevronLeft } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { CouponForm } from "../_components/coupon-form";
 
 export const metadata: Metadata = { title: "Buat Kupon — Admin NZO Industries" };

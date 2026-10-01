@@ -1,6 +1,6 @@
 import { formatDate } from "@/lib/format";
 import type { OrderStatusHistoryItem } from "@/lib/data/dashboard-user";
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/legacy-supabase";
 
 type OrderStatus = Database["public"]["Enums"]["order_status"];
 

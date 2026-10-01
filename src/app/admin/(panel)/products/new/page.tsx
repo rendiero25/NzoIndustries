@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { ProductForm } from "../_components/product-form";
 
 export const metadata: Metadata = { title: "Tambah Produk — Admin NZO Industries" };

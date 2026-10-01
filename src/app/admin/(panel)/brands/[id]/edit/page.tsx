@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { notFound } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { BrandForm } from "../../_components/brand-form";
 
 export const metadata: Metadata = { title: "Edit Merek — Admin NZO Industries" };

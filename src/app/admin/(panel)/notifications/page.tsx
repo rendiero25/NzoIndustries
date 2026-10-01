@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/legacy/server";
 import { AdminNotificationsPanel } from "@/components/admin/admin-notifications-panel";
 
 export const metadata: Metadata = {

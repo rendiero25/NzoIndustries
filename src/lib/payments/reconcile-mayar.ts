@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { createAdminNotification } from "@/lib/notifications/create-admin-notification";
 import {
   getMayarPayment,
@@ -8,7 +8,7 @@ import {
   normalizeMayarPaymentMethod,
 } from "@/lib/mayar/client";
 import { applyPaidOrder, type ApplyPaidOrderResult } from "@/lib/payments/apply-paid-order";
-import type { Json } from "@/types/supabase";
+import type { Json } from "@/types/legacy-supabase";
 
 export type ReconcileResult =
   | { status: "paid"; outcome: ApplyPaidOrderResult }

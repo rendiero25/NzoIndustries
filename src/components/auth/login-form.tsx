@@ -7,7 +7,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-import { GoogleOAuthButton } from "@/components/auth/google-oauth-button";
 import { TurnstileWidgetLazy } from "@/components/auth/turnstile-widget-lazy";
 import { Button } from "@/components/ui/button";
 import { PasswordVisibilityToggle } from "@/components/ui/password-visibility-toggle";
@@ -38,7 +37,6 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(hasRememberedEmail);
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileKey, setTurnstileKey] = useState(0);
 
@@ -95,8 +93,10 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
           });
         } else if (error.message.toLowerCase().includes("captcha")) {
           toast.error("Verifikasi keamanan gagal. Coba lagi.");
+        } else if (error.status === 429) {
+          toast.error("Terlalu banyak percobaan. Coba lagi beberapa menit lagi.");
         } else {
-          toast.error(error.message);
+          toast.error("Gagal masuk. Coba lagi.");
         }
         resetTurnstile();
         return;
@@ -114,23 +114,6 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
       resetTurnstile();
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    setIsGoogleLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
-        },
-      });
-      if (error) toast.error(error.message);
-    } catch {
-      toast.error("Gagal masuk dengan Google. Coba lagi.");
-    } finally {
-      setIsGoogleLoading(false);
     }
   };
 
@@ -227,12 +210,6 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
           Masuk
         </Button>
       </form>
-
-      <GoogleOAuthButton
-        label="Masuk dengan google"
-        isLoading={isGoogleLoading}
-        onClick={handleGoogleLogin}
-      />
 
       <p className="text-center text-[17px] leading-[1.47] font-normal text-[#1d1d1f]">
         Tidak punya akun?{" "}

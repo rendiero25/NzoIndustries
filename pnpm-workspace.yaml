@@ -5,3 +5,7 @@ allowBuilds:
   sharp: true
   # unrs-resolver: resolver eslint-plugin-import
   unrs-resolver: true
+  # supabase: unduh binary Supabase CLI saat install
+  supabase: true
+  # esbuild: dipakai tsx untuk menjalankan script TypeScript
+  esbuild: true

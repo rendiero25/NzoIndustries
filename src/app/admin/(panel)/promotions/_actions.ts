@@ -1,8 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createServiceClient } from "@/lib/supabase/server";
-import type { Json } from "@/types/supabase";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
+import type { Json } from "@/types/legacy-supabase";
 
 export type PromotionType = "second_products" | "featured_products";
 

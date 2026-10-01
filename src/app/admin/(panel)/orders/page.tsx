@@ -1,7 +1,7 @@
 ﻿import { Suspense } from "react";
 import type { Metadata } from "next";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { OrderFilters } from "./_components/order-filters";
 import { OrderTable, type OrderRow } from "./_components/order-table";
 

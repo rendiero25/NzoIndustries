@@ -1,11 +1,16 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-import type { Database } from "@/types/supabase";
+import { decideAccess, isAppRole, STAFF_ROLES } from "@/lib/auth/access";
+import type { Database } from "@/types/database";
 
+/**
+ * Proxy hanya untuk refresh session + redirect UX. Proteksi sesungguhnya ada
+ * di guard server (src/lib/auth/guards.ts) dan RLS (pelajaran CVE-2025-29927).
+ */
 export async function proxy(request: NextRequest) {
-  // Biteship webhook only accepts base URL — rewrite POST "/" to our handler.
-  // Skip if Next-Action header is present (Next.js server action, not a Biteship webhook).
+  // Biteship webhook hanya menerima base URL — rewrite POST "/" ke handler.
+  // Lewati bila ada header Next-Action (server action Next.js, bukan webhook).
   if (
     request.method === "POST" &&
     request.nextUrl.pathname === "/" &&
@@ -35,7 +40,7 @@ export async function proxy(request: NextRequest) {
     },
   );
 
-  // PENTING: Jangan letakkan logic apapun antara createServerClient dan getUser()
+  // PENTING: jangan sisipkan logika apa pun antara createServerClient dan getUser().
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -47,52 +52,56 @@ export async function proxy(request: NextRequest) {
     redirectUrl.pathname = destination;
     redirectUrl.search = "";
     if (searchParams) {
-      Object.entries(searchParams).forEach(([key, value]) => {
-        redirectUrl.searchParams.set(key, value);
-      });
+      Object.entries(searchParams).forEach(([key, value]) =>
+        redirectUrl.searchParams.set(key, value),
+      );
     }
     const res = NextResponse.redirect(redirectUrl);
-    supabaseResponse.cookies.getAll().forEach((cookie) => {
-      res.cookies.set(cookie.name, cookie.value, cookie);
-    });
+    supabaseResponse.cookies
+      .getAll()
+      .forEach((cookie) => res.cookies.set(cookie.name, cookie.value, cookie));
     return res;
   }
 
-  // ─── /dashboard/* — wajib login ──────────────────────────────────────────────
-  if (pathname.startsWith("/dashboard")) {
-    if (!user) {
-      return redirectWithCookies("/login", { redirectTo: pathname });
-    }
+  if (pathname.startsWith("/dashboard") && !user) {
+    return redirectWithCookies("/login", { redirectTo: pathname });
   }
 
-  // ─── /admin/* — wajib login + role admin ─────────────────────────────────────
-  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+  const isAdminArea = pathname === "/admin" || pathname.startsWith("/admin/");
+  const isAdminLogin = pathname === "/admin/login";
+  const isAdminMfa = pathname === "/admin/mfa";
+
+  if (isAdminArea) {
     if (!user) {
-      return redirectWithCookies("/admin/login");
+      return isAdminLogin ? supabaseResponse : redirectWithCookies("/admin/login");
     }
 
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
+    const [{ data: profile }, { data: aalData }] = await Promise.all([
+      supabase.from("profiles").select("role, is_blocked").eq("id", user.id).maybeSingle(),
+      supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+    ]);
 
-    if (profile?.role !== "admin") {
-      return redirectWithCookies("/admin/login", { error: "not_admin" });
+    const decision = decideAccess(
+      {
+        authenticated: true,
+        role: profile && isAppRole(profile.role) ? profile.role : null,
+        isBlocked: profile?.is_blocked ?? false,
+        aal: aalData?.currentLevel === "aal2" ? "aal2" : "aal1",
+      },
+      STAFF_ROLES,
+    );
+
+    if (decision.ok) {
+      return isAdminLogin || isAdminMfa ? redirectWithCookies("/admin") : supabaseResponse;
     }
-  }
-
-  // ─── /admin/login — redirect ke /admin jika sudah login sebagai admin ────────
-  if (pathname === "/admin/login" && user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .single();
-
-    if (profile?.role === "admin") {
-      return redirectWithCookies("/admin");
+    if (decision.reason === "mfa_required") {
+      return isAdminMfa ? supabaseResponse : redirectWithCookies("/admin/mfa");
     }
+    // Bukan staf / diblokir: hanya halaman login staf yang boleh dibuka.
+    if (isAdminLogin) return supabaseResponse;
+    return redirectWithCookies("/admin/login", {
+      error: decision.reason === "blocked" ? "blocked" : "not_admin",
+    });
   }
 
   return supabaseResponse;

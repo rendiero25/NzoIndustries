@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { ProductFilters } from "./_components/product-filters";
 import { ProductTable, type ProductRow } from "./_components/product-table";
 
@@ -62,11 +62,9 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
       if (q) query = query.ilike("name", `%${q}%`);
       if (status === "active") query = query.eq("is_active", true);
       if (status === "inactive") query = query.eq("is_active", false);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (conditionFilter === "new" || conditionFilter === "second")
-        query = (query as any).eq("condition", conditionFilter);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (brandId) query = (query as any).eq("brand_id", brandId);
+        query = query.eq("condition", conditionFilter);
+      if (brandId) query = query.eq("brand_id", brandId);
       if (categoryId) query = query.eq("category_id", categoryId);
 
       switch (sort) {

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ChevronLeft, ChevronRight, Mail, MapPin, Phone, ShoppingBag } from "lucide-react";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/legacy/server";
 import { formatRupiah, formatDate, formatRelativeDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { ADMIN_ORDER_STATUS_LABEL, adminOrderStatusBadgeClass } from "@/lib/admin/order-status-ui";

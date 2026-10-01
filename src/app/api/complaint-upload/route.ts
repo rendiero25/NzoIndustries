@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { uploadComplaintMedia } from "@/lib/supabase/upload-complaint-media";
+import { createClient } from "@/lib/supabase/legacy/server";
+import { uploadComplaintMedia } from "@/lib/supabase/legacy/upload-complaint-media";
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient();

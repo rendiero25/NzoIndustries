@@ -1,4 +1,4 @@
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import type { ProductOption, BrandOption } from "../_components/product-brand-selector";
 
 export async function fetchSelectorData() {

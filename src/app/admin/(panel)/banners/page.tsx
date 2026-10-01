@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { BannerTable, type BannerRow } from "./_components/banner-table";
 
 export const metadata: Metadata = { title: "Banner — Admin NZO Industries" };

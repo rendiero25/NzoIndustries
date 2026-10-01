@@ -12,7 +12,7 @@ import { AreaAutocomplete, type BiteshipArea } from "@/components/dashboard/area
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/legacy-supabase";
 import dynamic from "next/dynamic";
 import type { LatLng } from "@/components/dashboard/location-picker";
 

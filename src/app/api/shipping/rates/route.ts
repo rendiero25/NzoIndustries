@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/legacy/server";
 import { fetchUserCartWithLines, fetchVariantAsBuyNowLine } from "@/lib/data/user-cart-lines";
 import { fetchAddressForUser } from "@/lib/data/dashboard-user";
 import { fetchBiteshipCourierRates } from "@/lib/biteship/fetch-courier-rates";

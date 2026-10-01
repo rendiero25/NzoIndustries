@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { fetchWishlistForUser, WISHLIST_PER_PAGE } from "@/lib/data/dashboard-user";
 import { WishlistTileCard } from "@/components/dashboard/wishlist-tile-card";
 import { WishlistPagination } from "@/components/dashboard/wishlist-pagination";

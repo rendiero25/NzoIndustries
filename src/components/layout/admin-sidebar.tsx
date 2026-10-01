@@ -37,7 +37,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useAuthStore } from "@/store/auth-store";
 import { useAdminOrdersStore } from "@/store/admin-orders-store";
 import { useAdminReviewsStore } from "@/store/admin-reviews-store";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/legacy/client";
 import { useAdminSidebarCounts } from "@/lib/admin/use-admin-sidebar-counts";
 import { SidebarNotificationBadge } from "@/components/shared/sidebar-notification-badge";
 import {

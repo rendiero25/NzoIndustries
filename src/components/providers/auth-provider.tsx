@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/legacy/client";
 import { useAuthStore } from "@/store/auth-store";
 import { markFirstLoginDoneAction } from "@/app/(dashboard)/dashboard/notifications/_actions";
 

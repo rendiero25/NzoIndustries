@@ -1,6 +1,6 @@
 import "server-only";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { createBiteshipOrder } from "@/lib/biteship/create-order";
 import {
   ON_DEMAND_COURIERS,
@@ -12,7 +12,7 @@ import { createAdminNotification } from "@/lib/notifications/create-admin-notifi
 import { getUserEmail } from "@/lib/email/get-user-email";
 import { sendPaymentConfirmed } from "@/lib/email/send-payment-confirmed";
 import { sendLowStockAlert } from "@/lib/email/send-low-stock-alert";
-import type { Json } from "@/types/supabase";
+import type { Json } from "@/types/legacy-supabase";
 
 export type ApplyPaidOrderResult = "settled" | "already_paid" | "paid_after_cancel" | "not_found";
 

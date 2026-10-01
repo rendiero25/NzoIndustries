@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { flashSaleBannerTemplate } from "./_lib/flash-sale-banner-template";
 
 export type FlashSaleFormData = {

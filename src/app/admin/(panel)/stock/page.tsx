@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { formatDate } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { StockFilters } from "./_components/stock-filters";

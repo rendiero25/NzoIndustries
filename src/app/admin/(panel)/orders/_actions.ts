@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { createNotification } from "@/lib/notifications/create-notification";
 import { getBiteshipOrder } from "@/lib/biteship/get-order";
 import { confirmBiteshipOrder } from "@/lib/biteship/confirm-order";
@@ -11,7 +11,7 @@ import { shipmentStageToNotify } from "@/lib/shipping/notify-stage";
 import { getUserEmail } from "@/lib/email/get-user-email";
 import { sendRefundProcessed } from "@/lib/email/send-refund-processed";
 import { ORDER_STATUSES, type OrderStatus } from "./_constants";
-import type { Database, Json } from "@/types/supabase";
+import type { Database, Json } from "@/types/legacy-supabase";
 
 type ShipmentStatus = Database["public"]["Enums"]["shipment_status"];
 type TrackingHistoryEntry = { status: string; note: string; at: string };

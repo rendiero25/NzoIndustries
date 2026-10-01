@@ -15,6 +15,7 @@ import { PasswordVisibilityToggle } from "@/components/ui/password-visibility-to
 import { SiteLogo } from "@/components/shared/site-logo";
 import { TurnstileWidgetLazy } from "@/components/auth/turnstile-widget-lazy";
 import { isTurnstileRequired } from "@/lib/auth/turnstile-config";
+import { adminSignInAction } from "@/server/actions/auth";
 import {
   Form,
   FormControl,
@@ -48,7 +49,9 @@ function AdminLoginContent() {
   useEffect(() => {
     const err = searchParams.get("error");
     if (err === "not_admin") {
-      toast.error("Akses ditolak. Akun ini bukan admin.");
+      toast.error("Akses ditolak. Akun ini bukan staf.");
+    } else if (err === "blocked") {
+      toast.error("Akun ini diblokir. Hubungi owner toko.");
     }
   }, [searchParams]);
 
@@ -60,24 +63,18 @@ function AdminLoginContent() {
 
     setIsLoading(true);
     try {
-      const res = await fetch("/api/auth/admin-login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "same-origin",
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-          turnstileToken: turnstileToken ?? undefined,
-        }),
+      const result = await adminSignInAction({
+        email: values.email,
+        password: values.password,
+        turnstileToken: turnstileToken ?? undefined,
       });
-      const json = (await res.json()) as { success: boolean; error?: string };
-      if (!json.success) {
-        toast.error(json.error ?? "Login gagal.");
+      if (!result.ok) {
+        toast.error(result.error);
         resetTurnstile();
         return;
       }
-      toast.success("Selamat datang di Admin Panel.");
-      window.location.href = "/admin";
+      // Langkah wajib berikutnya: verifikasi / pendaftaran TOTP.
+      window.location.href = "/admin/mfa";
     } catch {
       toast.error("Terjadi kesalahan tidak terduga. Coba lagi.");
       resetTurnstile();

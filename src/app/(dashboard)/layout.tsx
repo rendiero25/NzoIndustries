@@ -2,7 +2,8 @@ export const dynamic = "force-dynamic";
 
 import { cookies } from "next/headers";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
+import { requireUser } from "@/lib/auth/guards";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { InitAuthStore } from "@/components/providers/init-auth-store";
 import { fetchUserProfile } from "@/lib/data/dashboard-user";
@@ -27,6 +28,9 @@ async function getUnreadNotificationsCount(userId: string): Promise<number> {
 }
 
 export default async function DashboardRootLayout({ children }: { children: React.ReactNode }) {
+  // Proteksi di server (bukan hanya proxy).
+  await requireUser("/dashboard");
+
   const supabase = await createClient();
   const {
     data: { user },

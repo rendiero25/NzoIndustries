@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { confirmOrderReceivedAction } from "@/app/(dashboard)/dashboard/orders/_actions";
 import { CancelOrderDialog } from "@/components/dashboard/cancel-order-dialog";
 import { Button } from "@/components/ui/button";
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/legacy-supabase";
 
 type OrderStatus = Database["public"]["Enums"]["order_status"];
 

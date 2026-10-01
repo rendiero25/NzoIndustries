@@ -2,14 +2,14 @@ import "server-only";
 
 import { cache } from "react";
 
-import { createServiceClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { getFlashSaleLink, getPromoLink } from "@/lib/promo-links";
 import type {
   HomeSection,
   HomeSectionKey,
 } from "@/app/admin/(panel)/promotions/home-sections/_actions";
 import { flashSaleBannerTemplate } from "@/app/admin/(panel)/promotions/flash-sale/_lib/flash-sale-banner-template";
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/legacy-supabase";
 
 type BannerRow = Pick<
   Database["public"]["Tables"]["banners"]["Row"],

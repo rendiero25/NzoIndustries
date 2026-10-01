@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/legacy/server";
 import { reconcileMayarPayment } from "@/lib/payments/reconcile-mayar";
 
 const paramsSchema = z.object({ id: z.string().uuid() });

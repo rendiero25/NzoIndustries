@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { CategoryFilters } from "./_components/category-filters";
 import { CategoryTable } from "./_components/category-table";
 import { buildFlatCategoryTree, type CategoryRow } from "./_lib/flat-category-tree";

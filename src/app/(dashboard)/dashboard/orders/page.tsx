@@ -4,7 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/legacy/server";
 import { fetchUserOrders, ORDERS_PER_PAGE, type OrderSortOption } from "@/lib/data/dashboard-user";
 import {
   ORDER_STATUS_FILTER_OPTIONS,

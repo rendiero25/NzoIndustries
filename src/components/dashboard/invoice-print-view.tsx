@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { PAYMENT_METHOD_LABELS } from "@/lib/constants/payment-method-labels";
 import { formatRupiah, formatDate } from "@/lib/format";
-import type { Database } from "@/types/supabase";
+import type { Database } from "@/types/legacy-supabase";
 import type { DashboardOrderItemRow } from "@/lib/data/dashboard-user";
 
 type Order = Database["public"]["Tables"]["orders"]["Row"];

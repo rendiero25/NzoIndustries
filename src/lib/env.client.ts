@@ -24,15 +24,17 @@ let cached: ClientEnv | undefined;
 
 export function getClientEnv(): ClientEnv {
   if (cached) return cached;
+  // `KEY=` (kosong) diperlakukan sama dengan tidak diset.
+  const orUndefined = (value: string | undefined) => (value === "" ? undefined : value);
   const parsed = clientEnvSchema.safeParse({
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-    NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
-    NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
-    NEXT_PUBLIC_META_PIXEL_ID: process.env.NEXT_PUBLIC_META_PIXEL_ID,
-    NEXT_PUBLIC_WHATSAPP_NUMBER: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER,
+    NEXT_PUBLIC_APP_URL: orUndefined(process.env.NEXT_PUBLIC_APP_URL),
+    NEXT_PUBLIC_SUPABASE_URL: orUndefined(process.env.NEXT_PUBLIC_SUPABASE_URL),
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: orUndefined(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: orUndefined(process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME),
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: orUndefined(process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY),
+    NEXT_PUBLIC_GA_MEASUREMENT_ID: orUndefined(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID),
+    NEXT_PUBLIC_META_PIXEL_ID: orUndefined(process.env.NEXT_PUBLIC_META_PIXEL_ID),
+    NEXT_PUBLIC_WHATSAPP_NUMBER: orUndefined(process.env.NEXT_PUBLIC_WHATSAPP_NUMBER),
   });
   if (!parsed.success) {
     const keys = parsed.error.issues.map((issue) => issue.path.join(".")).join(", ");
