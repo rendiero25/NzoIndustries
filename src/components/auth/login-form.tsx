@@ -120,8 +120,8 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
   return (
     <div className="space-y-10">
       <div className="space-y-2">
-        <h1 className="text-[28px] font-semibold text-foreground">Selamat Datang</h1>
-        <p className="text-base font-normal text-foreground">Silahkan masukan detail Anda.</p>
+        <h1 className="text-[1.75rem] leading-9">Masuk ke akun</h1>
+        <p className="text-muted-foreground">Pakai email dan kata sandi yang kamu daftarkan.</p>
       </div>
 
       {urlMessage ? (
@@ -138,28 +138,27 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-[14px] leading-[1.43] font-normal text-foreground">
+          <Label htmlFor="email" className="text-sm font-medium">
             Email
           </Label>
           <Input
             id="email"
             type="email"
             autoComplete="email"
-            placeholder="Masukin email kamu"
+            placeholder="nama@email.com"
             aria-invalid={!!errors.email}
             className={AUTH_INPUT_CLASS}
             {...register("email")}
           />
           {errors.email ? (
-            <p className="text-[14px] text-destructive">{errors.email.message}</p>
+            <p role="alert" className="text-sm text-destructive">
+              {errors.email.message}
+            </p>
           ) : null}
         </div>
 
         <div className="space-y-2">
-          <Label
-            htmlFor="password"
-            className="text-[14px] leading-[1.43] font-normal text-foreground"
-          >
+          <Label htmlFor="password" className="text-sm font-medium">
             Kata Sandi
           </Label>
           <div className="relative">
@@ -167,7 +166,7 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
               id="password"
               type={showPassword ? "text" : "password"}
               autoComplete="current-password"
-              placeholder="••••••••••"
+              placeholder="Minimal 8 karakter"
               aria-invalid={!!errors.password}
               className={AUTH_PASSWORD_INPUT_CLASS}
               {...register("password")}
@@ -178,7 +177,9 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
             />
           </div>
           {errors.password ? (
-            <p className="text-[14px] text-destructive">{errors.password.message}</p>
+            <p role="alert" className="text-sm text-destructive">
+              {errors.password.message}
+            </p>
           ) : null}
         </div>
 
@@ -195,7 +196,7 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
             href="/forgot-password"
             className="text-[14px] leading-[1.43] font-semibold text-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
           >
-            Lupa Kata Sandi
+            Lupa kata sandi?
           </Link>
         </div>
 
@@ -211,13 +212,13 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
         </Button>
       </form>
 
-      <p className="text-center text-base leading-[1.47] font-normal text-foreground">
+      <p className="text-center text-sm text-steel-700">
         Tidak punya akun?{" "}
         <Link
           href="/register"
           className="font-semibold text-foreground underline-offset-4 transition-colors hover:text-steel-700 hover:underline"
         >
-          daftar
+          Daftar
         </Link>
       </p>
     </div>

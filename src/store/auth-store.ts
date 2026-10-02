@@ -52,7 +52,9 @@ export const useAuthStore = create<AuthStore>()(
 export const selectUser = (state: AuthStore) => state.user;
 export const selectProfile = (state: AuthStore) => state.profile;
 export const selectIsAuthenticated = (state: AuthStore) => !!state.user;
-export const selectIsAdmin = (state: AuthStore) => state.profile?.role === "admin";
+/** Semua role staf boleh membuka panel admin (menu tetap dibatasi per role di server). */
+export const selectIsAdmin = (state: AuthStore) =>
+  ["owner", "admin", "warehouse", "cs"].includes(state.profile?.role ?? "");
 export const selectIsLoading = (state: AuthStore) => state.isLoading;
 export const selectIsInitialized = (state: AuthStore) => state.isInitialized;
 export const selectRole = (state: AuthStore) => state.profile?.role ?? "customer";

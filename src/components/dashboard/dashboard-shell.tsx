@@ -1,120 +1,26 @@
-"use client";
+import type { ReactNode } from "react";
 
-import * as React from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
-
-const SEGMENT_LABELS: Record<string, string> = {
-  orders: "Pesanan",
-  wishlist: "Wishlist",
-  notifications: "Notifikasi",
-  addresses: "Alamat",
-  profile: "Profil",
-  vouchers: "Voucher",
-  "change-password": "Ganti Password",
-  new: "Baru",
-  edit: "Edit",
-  tracking: "Lacak Pesanan",
-  invoice: "Invoice",
-  review: "Ulasan",
-  complaint: "Komplain",
-};
-
-function isIdSegment(s: string) {
-  return s.startsWith("GT-") || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}/i.test(s) || /^\d+$/.test(s);
-}
-
-function DashboardBreadcrumb() {
-  const pathname = usePathname();
-  const segments = pathname.split("/").filter(Boolean);
-  const relevant = segments.slice(1).filter((s) => !isIdSegment(s));
-
-  if (relevant.length === 0) {
-    return (
-      <Breadcrumb>
-        <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbPage>Ringkasan</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-    );
-  }
-
-  return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem className="hidden md:flex">
-          <BreadcrumbLink asChild>
-            <Link href="/dashboard">Dashboard</Link>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-
-        {relevant.map((seg, i) => {
-          const isLast = i === relevant.length - 1;
-          const label = SEGMENT_LABELS[seg] ?? seg;
-          const rawIdx = segments.indexOf(seg, 1);
-          const href = "/" + segments.slice(0, rawIdx + 1).join("/");
-
-          return (
-            <React.Fragment key={`${seg}-${i}`}>
-              <BreadcrumbSeparator className="hidden md:flex" />
-              <BreadcrumbItem>
-                {isLast ? (
-                  <BreadcrumbPage>{label}</BreadcrumbPage>
-                ) : (
-                  <BreadcrumbLink asChild>
-                    <Link href={href}>{label}</Link>
-                  </BreadcrumbLink>
-                )}
-              </BreadcrumbItem>
-            </React.Fragment>
-          );
-        })}
-      </BreadcrumbList>
-    </Breadcrumb>
-  );
-}
+import { DashboardMobileNav, DashboardSidebar } from "@/components/dashboard/dashboard-sidebar";
 
 type DashboardShellProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   unreadNotifications?: number;
+  /** @deprecated warisan sidebar shadcn; tidak dipakai lagi. */
   sidebarDefaultOpen?: boolean;
 };
 
-export function DashboardShell({
-  children,
-  unreadNotifications = 0,
-  sidebarDefaultOpen = true,
-}: DashboardShellProps) {
+/**
+ * Shell akun pelanggan (design-system.md §6): navigasi kiri di desktop,
+ * tab geser di mobile, konten tanpa kartu pembungkus.
+ */
+export function DashboardShell({ children, unreadNotifications = 0 }: DashboardShellProps) {
   return (
-    <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-24">
-      <SidebarProvider
-        defaultOpen={sidebarDefaultOpen}
-        className="!min-h-0 items-start gap-5 bg-transparent py-6 lg:gap-7 lg:py-8"
-        style={{ "--sidebar-width": "18.5rem" } as React.CSSProperties}
-      >
+    <div className="nzo-container py-6 md:py-10">
+      <DashboardMobileNav unreadNotifications={unreadNotifications} />
+      <div className="flex gap-10 pt-6 md:pt-0 lg:gap-14">
         <DashboardSidebar unreadNotifications={unreadNotifications} />
-        <SidebarInset className="min-w-0 overflow-hidden rounded-md border border-black/5 bg-white">
-          <header className="flex h-14 shrink-0 items-center gap-2.5 border-b border-border bg-white px-5 sm:px-6">
-            <SidebarTrigger className="-ml-1 text-steel-700 hover:bg-muted hover:text-foreground" />
-            <span className="text-sm text-steel-200 select-none">|</span>
-            <DashboardBreadcrumb />
-          </header>
-          <div className="w-full flex-1 p-5 sm:p-7 lg:p-8">{children}</div>
-        </SidebarInset>
-      </SidebarProvider>
+        <div className="min-w-0 flex-1">{children}</div>
+      </div>
     </div>
   );
 }

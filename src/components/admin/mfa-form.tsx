@@ -168,7 +168,11 @@ export function MfaForm() {
             >
               <InputOTPGroup>
                 {Array.from({ length: 6 }, (_, i) => (
-                  <InputOTPSlot key={i} index={i} />
+                  <InputOTPSlot
+                    key={i}
+                    index={i}
+                    className="size-11 text-lg font-semibold md:size-12"
+                  />
                 ))}
               </InputOTPGroup>
             </InputOTP>

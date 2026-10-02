@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.6 (2026-10-02). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.7 (2026-10-02). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -70,16 +70,30 @@ Versi dokumen: 0.6 (2026-10-02). Aturan, keputusan (`D-xx`), dan pending klien (
 - Verifikasi: `pnpm typecheck` ✓, `pnpm lint` ✓ (0 error), `pnpm test` ✓ (18), `pnpm test:rls` ✓ (15, teardown bersih), `pnpm build` ✓, redirect/guard 9/9 ✓, login staf → enroll TOTP → `/admin` ✓ di browser.
 
 ## Fase 2 — Implementasi design system
-- [ ] Token warna, radius, dan tipografi di `globals.css` sesuai design-system.md §2–4 (D-02)
-- [ ] Font Outfit via `next/font/google`
-- [ ] Install komponen shadcn yang tercantum di design-system.md §7 (D-03)
-- [ ] Install Magic UI terbatas: Marquee, NumberTicker, BlurFade
-- [ ] Setup GSAP + ScrollTrigger + hook `useReducedMotion` (D-11)
-- [ ] Sonner di root layout dengan konfigurasi posisi/durasi §9 (D-10)
-- [ ] Komponen dasar: `Price`, `ProductCard`, `FitmentBadge` (motif perisai), `EmptyState`, `PageHeader`, skeleton set
-- [ ] Halaman `/design` (dev only) untuk preview token dan komponen
+- [x] Token warna, radius, dan tipografi di `globals.css` sesuai design-system.md §2–4 (D-02)
+- [x] Font Outfit via `next/font/google`
+- [x] Install komponen shadcn yang tercantum di design-system.md §7 (D-03)
+- [x] Install Magic UI terbatas: Marquee, NumberTicker, BlurFade
+- [x] Setup GSAP + ScrollTrigger + hook `useReducedMotion` (D-11)
+- [x] Sonner di root layout dengan konfigurasi posisi/durasi §9 (D-10) — durasi error 6 detik belum per-tipe (Sonner global 4 detik), dikerjakan saat helper notifikasi dibuat
+- [x] Komponen dasar: `Price`, `ProductCard`, `FitmentBadge` (motif perisai), `EmptyState`, `PageHeader`, skeleton set
+- [x] Halaman `/design` (dev only) untuk preview token dan komponen
+- [x] Tambahan (permintaan user): redesign shell agar tidak lagi seperti GeekyTech — header, promo bar, footer, tombol WhatsApp, 404, halaman auth, login admin, MFA, shell admin, shell akun
+- [ ] Logo resmi NZO (wordmark & perisai masih sementara) — **menunggu klien**
 
 **Catatan fase:**
+- Arah visual mengikuti design-system.md (user memilih tidak mengusulkan arah baru). Skill frontend-design + impeccable dipakai untuk eksekusi; Outfit dan hitam murni dipertahankan karena identitas brand sudah dikunci dokumen.
+- Palet GeekyTech dihapus: `scripts/codemod-geekytech-palette.mjs` mengganti 1.461 kelas/literal di 208 file (oranye `#EA5329`, abu ala Apple, tracking -0.374px). Kelas lama `swiss-*`/`admin-utility*` didefinisikan ulang ke token NZO. Favicon, logo PNG/SVG, dan gambar WhatsApp GeekyTech dihapus.
+- Nomor WhatsApp GeekyTech yang masih hardcode diganti `NEXT_PUBLIC_WHATSAPP_NUMBER`; tombol dan link CS tidak tampil bila env kosong.
+- Bottom nav mobile ala GeekyTech dilepas (design-system: menu mobile lewat Sheet). Promo bar membaca `banners` placement `promo_bar` (schema NZO).
+- Panel admin: menu disaring per role (owner/admin/warehouse/cs), badge hitungan legacy dan lonceng notifikasi legacy dilepas sampai Fase 8. Dark mode khusus admin (kelas `dark` di `<html>` hanya selama di admin).
+- Akun: shell tanpa sidebar shadcn (navigasi kiri desktop, tab geser mobile). Path tetap `/dashboard` sampai Fase 7.
+- Token `success` digelapkan ke `#1C7F46` (kontras teks putih 4.38 menjadi 5.03:1).
+- Judul halaman legacy yang dobel ("… — NZO Industries | NZO Industries") dirapikan di 48 file.
+- shadcn CLI: gagal TLS karena Node 24.6 tidak membangun rantai Let's Encrypt baru (`YR1`). Solusi sementara: `NODE_EXTRA_CA_CERTS` berisi intermediate LE (scratchpad). Registry `radix-nova` mengirim sumber mentah (`import { cn } from "cn"`, `IconPlaceholder`); ditransformasi manual dan paket npm `cn` yang ikut terpasang dihapus (bukan util kita).
+- `@tanstack/react-table` dipin ke v8 (pola Data Table shadcn).
+- Isi halaman storefront/akun/admin masih legacy (data schema GeekyTech) sampai Fase 4/7/8; tampilannya sudah memakai token NZO.
+- Verifikasi: `typecheck` ✓, `lint` ✓ (0 error), `test` ✓ (21), `build` ✓; cek visual desktop + mobile 375 (`/design`, `/`, `/products`, `/login`, `/admin/login`, `/admin` dengan akun staf sementara, mode gelap admin). Akun test dihapus setelahnya.
 
 ## Fase 3 — Katalog, gambar, dan import produk
 - [ ] Integrasi Cloudinary: route signature `/api/cloudinary/sign` (admin only), `CldImage`, folder sesuai design-system.md §11
@@ -231,3 +245,4 @@ Versi dokumen: 0.6 (2026-10-02). Aturan, keputusan (`D-xx`), dan pending klien (
 - 0.4 (2026-10-01): Supabase siap (D-17), env tervalidasi.
 - 0.5 (2026-10-01): Fase 1 dikerjakan (kecuali uji email & SMTP Resend), catatan fase diisi.
 - 0.6 (2026-10-02): D-20 (MFA staf lewat flag, default mati), fix reset password akun ber-TOTP, uji auth user.
+- 0.7 (2026-10-02): Fase 2 selesai (kecuali logo resmi), redesign shell, codemod palet GeekyTech.

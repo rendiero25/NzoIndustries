@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SiteLogo } from "@/components/shared/site-logo";
 import { PAYMENT_METHOD_LABELS } from "@/lib/constants/payment-method-labels";
 import { formatRupiah, formatDate } from "@/lib/format";
 import type { Database } from "@/types/legacy-supabase";
@@ -88,16 +88,7 @@ export function InvoicePrintView({ order, items, paidPayment, watermark }: Invoi
         {/* Header */}
         <div className="flex items-start justify-between gap-6">
           <div>
-            <div className="relative h-8 w-36">
-              <Image
-                src="/logo.svg"
-                unoptimized
-                alt="NZO Industries"
-                fill
-                className="object-contain object-left"
-                sizes="144px"
-              />
-            </div>
+            <SiteLogo variant="shippingLabel" asStatic />
             <p className="mt-2 text-xs text-steel-700">NZO Industries</p>
             <p className="text-xs text-steel-700">nzo-industries.test</p>
           </div>

@@ -1,25 +1,23 @@
-import { createClient } from "@/lib/supabase/legacy/server";
 import { AnnouncementBar } from "@/components/layout/announcement-bar";
+import { createClient } from "@/lib/supabase/server";
 
+/**
+ * Bar promo tipis (design-system.md §5), diatur admin lewat tabel `banners`
+ * dengan placement `promo_bar`. RLS hanya mengembalikan banner aktif dalam periode.
+ */
 export async function AnnouncementBarServer() {
   try {
     const supabase = await createClient();
     const { data } = await supabase
-      .from("settings")
-      .select("key, value")
-      .in("key", ["announcement_enabled", "announcement_text", "announcement_link"]);
+      .from("banners")
+      .select("id, title, link_url")
+      .eq("placement", "promo_bar")
+      .order("sort_order", { ascending: true })
+      .limit(1)
+      .maybeSingle();
 
-    if (!data) return null;
-
-    const byKey = Object.fromEntries(data.map((r) => [r.key, r.value]));
-    const enabled = byKey["announcement_enabled"];
-    const text = byKey["announcement_text"] as string | undefined;
-
-    if (!enabled || enabled === "false" || !text) return null;
-
-    const link = byKey["announcement_link"] as string | undefined;
-
-    return <AnnouncementBar text={text} link={link} />;
+    if (!data?.title) return null;
+    return <AnnouncementBar id={data.id} text={data.title} link={data.link_url ?? undefined} />;
   } catch {
     return null;
   }

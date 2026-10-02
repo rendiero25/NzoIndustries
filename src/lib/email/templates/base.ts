@@ -65,7 +65,7 @@ export function emailShell(opts: {
           <tr>
             <td style="background:#1d1d1f;padding:26px 32px;text-align:center;">
               <p style="margin:0;font-size:19px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;line-height:1;">NZO Industries</p>
-              <p style="margin:5px 0 0;font-size:11px;color:#8e8e93;letter-spacing:0.6px;text-transform:uppercase;">Gear up. Level up.</p>
+              <p style="margin:5px 0 0;font-size:11px;color:#8e8e93;">Part yang pas untuk kendaraanmu</p>
             </td>
           </tr>
           <tr>

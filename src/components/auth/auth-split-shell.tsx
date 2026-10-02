@@ -1,64 +1,91 @@
-import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 
+import { SiteLogo } from "@/components/shared/site-logo";
+import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
-const STORE_HREF = "/";
-
 export type AuthSplitShellProps = {
-  /** Foto panel kiri. Kosong = panel gelap polos (foto brand menunggu klien). */
-  imageSrc?: string;
-  imagePriority?: boolean;
-  leftPanel: React.ReactNode;
-  /** Lebar area form, mis. max-w-sm | max-w-md | max-w-lg */
+  /** Kalimat pendek di bawah headline panel kiri, sesuai halaman. */
+  note?: string;
+  /** Lebar area form, mis. max-w-sm | max-w-md. */
   formMaxWidthClass?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
+async function fetchModelNames(): Promise<string[]> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("vehicle_models")
+      .select("name, vehicle_makes(name)")
+      .order("name")
+      .limit(24);
+    return (data ?? []).map((m) => {
+      const make = Array.isArray(m.vehicle_makes) ? m.vehicle_makes[0] : m.vehicle_makes;
+      return make?.name ? `${make.name} ${m.name}` : m.name;
+    });
+  } catch {
+    return [];
+  }
+}
+
 /**
- * Layout split auth: panel foto + panel form putih.
- * Tautan toko di sudut atas area gelap — panel putih kanan hanya berisi form.
+ * Layout auth NZO: panel kiri hitam (desktop) berisi janji inti toko,
+ * "part yang pas untuk kendaraanmu", dengan nama model kendaraan asli dari
+ * katalog sebagai tekstur tipografis. Panel kanan: form. Mobile: form saja.
  */
-export function AuthSplitShell({
-  imageSrc,
-  imagePriority = false,
-  leftPanel,
+export async function AuthSplitShell({
+  note = "Simpan kendaraanmu di Garasi, lalu belanja part yang memang cocok.",
   formMaxWidthClass = "max-w-md",
   children,
 }: AuthSplitShellProps) {
+  const models = await fetchModelNames();
+
   return (
-    <div className="relative min-h-screen min-h-svh bg-primary p-3 pt-[max(2.75rem,env(safe-area-inset-top,0px)+0.75rem)] sm:p-4 lg:p-6 lg:pt-6">
-      <Link
-        href={STORE_HREF}
-        className="absolute top-[max(1.25rem,env(safe-area-inset-top,0px)+0.25rem)] right-[max(1.25rem,env(safe-area-inset-right,0px))] z-30 text-[14px] leading-[1.29] font-normal text-foreground transition-colors hover:text-steel-700 active:scale-95 lg:top-15 lg:right-15"
-      >
-        Kunjungi NZO Industries
-      </Link>
+    <div className="grid min-h-svh bg-background lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+      <aside className="relative hidden overflow-hidden bg-brand-black text-white lg:flex lg:flex-col lg:justify-between lg:p-12 xl:p-16">
+        <SiteLogo variant="authPanel" tone="light" />
 
-      <div className="mx-auto flex min-h-[calc(100svh-2.5rem)] max-w-[1920px] flex-col gap-3 pt-2 sm:gap-4 sm:pt-0 lg:min-h-[calc(100svh-3rem)] lg:flex-row lg:gap-6 lg:pt-0">
-        <div className="relative hidden min-h-0 flex-1 flex-col justify-end overflow-hidden rounded-tr-[1rem] rounded-br-[1rem] lg:flex lg:min-h-[calc(100svh-3rem)]">
-          {imageSrc ? (
-            <Image
-              src={imageSrc}
-              alt=""
-              fill
-              className="object-cover object-center"
-              sizes="50vw"
-              priority={imagePriority}
-            />
-          ) : (
-            <div className="absolute inset-0 bg-primary" aria-hidden="true" />
-          )}
-          <div className="absolute inset-0" />
-          <div className="pointer-events-none relative z-10 p-12 lg:p-16 xl:p-20">{leftPanel}</div>
+        <div className="relative z-10 max-w-md">
+          <p className="text-[2.75rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance xl:text-[3.25rem]">
+            Part yang pas, untuk kendaraan yang kamu kendarai.
+          </p>
+          <p className="mt-5 max-w-sm text-base leading-7 text-white/65">{note}</p>
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden rounded-tl-[1rem] rounded-tr-[1rem] bg-white sm:rounded-tr-none lg:min-h-[calc(100svh-3rem)] lg:rounded-tr-[1rem]">
-          <div className="flex flex-col justify-center px-4 py-8 sm:px-6 sm:py-10 lg:px-12 lg:py-14">
-            <div className={cn("mx-auto w-full", formMaxWidthClass)}>{children}</div>
-          </div>
+        {models.length > 0 ? (
+          <ul
+            aria-label="Contoh kendaraan yang didukung"
+            className="relative z-10 flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-steel-500"
+          >
+            {models.map((name) => (
+              <li key={name} className="whitespace-nowrap">
+                {name}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <span />
+        )}
+      </aside>
+
+      <main className="flex flex-col">
+        <div className="flex items-center justify-between px-5 pt-5 sm:px-8 sm:pt-8">
+          <span className="lg:hidden">
+            <SiteLogo variant="authMobile" />
+          </span>
+          <Link
+            href="/"
+            className="ml-auto rounded-sm text-sm font-medium text-steel-700 underline-offset-4 hover:text-foreground hover:underline"
+          >
+            Kembali ke toko
+          </Link>
         </div>
-      </div>
+        <div className="flex flex-1 items-center justify-center px-5 py-10 sm:px-8">
+          <div className={cn("w-full", formMaxWidthClass)}>{children}</div>
+        </div>
+      </main>
     </div>
   );
 }

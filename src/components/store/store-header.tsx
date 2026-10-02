@@ -1,48 +1,41 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, startTransition } from "react";
-import Image from "next/image";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   ChevronDown,
+  Heart,
   LayoutDashboard,
   LogOut,
   Menu,
   Package,
   Search,
   Settings,
-  ShoppingCart,
+  ShoppingBag,
   User,
-  X,
 } from "lucide-react";
-import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { toast } from "sonner";
 
-import { useAuth } from "@/hooks/use-auth";
-import { useAuthStore } from "@/store/auth-store";
-import { useCartStore } from "@/store/cart-store";
+import { ShieldMark } from "@/components/catalog/shield-mark";
+import { NotificationBell } from "@/components/layout/notification-bell";
+import { SiteLogo } from "@/components/shared/site-logo";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  HEADER_DROPDOWN_MENU_CONTENT_CLASS,
-  HEADER_DROPDOWN_MENU_ITEM_CLASS,
-  HeaderDropdownPanelBody,
-  HeaderDropdownPanelHeader,
-} from "@/components/shared/header-dropdown-panel";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { NotificationBell } from "@/components/layout/notification-bell";
+import { Spinner } from "@/components/ui/spinner";
+import { useAuth } from "@/hooks/use-auth";
+import { formatIDR } from "@/lib/money";
 import { cn } from "@/lib/utils";
-import type { Tables } from "@/types/legacy-supabase";
+import { useAuthStore } from "@/store/auth-store";
+import { useCartStore } from "@/store/cart-store";
 
 type SearchResult = {
   id: string;
@@ -50,74 +43,66 @@ type SearchResult = {
   slug: string;
   base_price: number;
   sale_price: number | null;
-  image: string | null;
 };
 
-type StoreHeaderNavItem = { label: string; href: string };
+type NavItem = {
+  label: string;
+  href: string;
+  match: (path: string, category: string | null) => boolean;
+};
 
-/** Nav tetap di bawah header — bukan daftar kategori DB, tapi jalur belanja pilihan. */
-function buildStoreHeaderNavItems(secondHandPromoId: string | null): StoreHeaderNavItem[] {
-  const items: StoreHeaderNavItem[] = [
-    { label: "Smartwatch", href: "/products?category=smartwatch" },
-    { label: "Headset", href: "/products?category=headphone,earphone" },
-    { label: "Speaker", href: "/products?category=speaker" },
-    { label: "Shop by Brand", href: "/brands" },
-  ];
-  if (secondHandPromoId) {
-    items.push({ label: "Second Hand", href: `/promo/${secondHandPromoId}` });
-  }
-  items.push({ label: "Others", href: "/products" });
-  return items;
-}
-
-function isStoreHeaderNavItemActive(
-  href: string,
-  pathname: string,
-  categoryParam: string | null,
-): boolean {
-  const [hrefPath, hrefQuery] = href.split("?");
-  if (hrefQuery) {
-    const category = new URLSearchParams(hrefQuery).get("category");
-    return pathname === hrefPath && category !== null && category === categoryParam;
-  }
-  if (hrefPath === "/products") {
-    return pathname === hrefPath && categoryParam === null;
-  }
-  return pathname === hrefPath || pathname.startsWith(`${hrefPath}/`);
-}
-
-/** URL avatar: profil DB dulu, lalu metadata OAuth (picture). */
-function resolveStoreHeaderAvatarUrl(
-  profile: Tables<"profiles"> | null,
-  user: SupabaseUser | null,
-): string {
-  const fromProfile = profile?.avatar_url?.trim();
-  if (fromProfile) return fromProfile;
-  const meta = user?.user_metadata;
-  if (!meta || typeof meta !== "object") return "";
-  const picture = meta.picture;
-  if (typeof picture === "string" && picture.trim() !== "") return picture.trim();
-  const metaAvatar = meta.avatar_url;
-  if (typeof metaAvatar === "string" && metaAvatar.trim() !== "") return metaAvatar.trim();
-  return "";
-}
+/** Navigasi utama design-system.md §5. Slug kategori sesuai seed (motor, mobil). */
+const NAV_ITEMS: NavItem[] = [
+  { label: "Semua part", href: "/products", match: (p, c) => p === "/products" && !c },
+  {
+    label: "Motor",
+    href: "/products?category=motor",
+    match: (p, c) => p === "/products" && c === "motor",
+  },
+  {
+    label: "Mobil",
+    href: "/products?category=mobil",
+    match: (p, c) => p === "/products" && c === "mobil",
+  },
+  { label: "Brand", href: "/brands", match: (p) => p.startsWith("/brands") },
+  {
+    label: "Perawatan & alat",
+    href: "/products?category=non-otomotif",
+    match: (p, c) => p === "/products" && c === "non-otomotif",
+  },
+];
 
 type StoreHeaderProps = {
-  /** ID promosi "Produk Second" aktif — dipakai link "Second Hand" di nav. Item disembunyikan jika null. */
+  /** @deprecated warisan starter, tidak dipakai lagi. */
   secondHandPromoId?: string | null;
   initialCartCount?: number;
-  /** Default true — matikan jika header dibungkus sticky di parent (mis. layout dashboard). */
+  /** Matikan bila header dibungkus elemen sticky di parent. */
   sticky?: boolean;
   showCategoryNav?: boolean;
   showBorder?: boolean;
   className?: string;
 };
 
-const searchInputClass =
-  "h-11 min-w-0 flex-1 border-0 bg-transparent px-2 text-sm shadow-none focus-visible:ring-0";
+function initialsOf(name: string | null | undefined, email: string | null | undefined) {
+  if (name?.trim()) {
+    return name
+      .trim()
+      .split(/\s+/)
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+  }
+  return email?.[0]?.toUpperCase() ?? "?";
+}
 
+/**
+ * Header storefront NZO (design-system.md §5): logo, pencarian, Garasi,
+ * wishlist, akun, keranjang; baris navigasi di bawahnya. Mobile: menu Sheet.
+ * Saat scroll, header menempel dengan bayangan tipis (tanpa mengubah tinggi,
+ * supaya konten tidak melompat).
+ */
 export function StoreHeader({
-  secondHandPromoId = null,
   initialCartCount = 0,
   sticky = true,
   showCategoryNav = true,
@@ -125,18 +110,12 @@ export function StoreHeader({
   className,
 }: StoreHeaderProps) {
   const router = useRouter();
-  const pathname = usePathname();
+  const pathname = usePathname() ?? "/";
   const searchParams = useSearchParams();
-  const categoryParam = pathname === "/products" ? searchParams.get("category") : null;
-  const isSecondHandPromoPage =
-    Boolean(secondHandPromoId) && pathname === `/promo/${secondHandPromoId}`;
-  const hideCategoryNav =
-    !showCategoryNav ||
-    (!isSecondHandPromoPage &&
-      (pathname?.startsWith("/promo/") || pathname?.startsWith("/flash-sale/")));
-  const navItems = buildStoreHeaderNavItems(secondHandPromoId);
+  const category = pathname === "/products" ? searchParams.get("category") : null;
+
   const { user, profile, isAuthenticated, isAdmin } = useAuth();
-  const { reset } = useAuthStore();
+  const resetAuth = useAuthStore((s) => s.reset);
   const cartCount = useCartStore((s) => s.cartCount);
   const setCartCount = useCartStore((s) => s.setCartCount);
 
@@ -144,233 +123,220 @@ export function StoreHeader({
     setCartCount(initialCartCount);
   }, [initialCartCount, setCartCount]);
 
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [showResults, setShowResults] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    startTransition(() => {
-      setMobileMenuOpen(false);
-    });
-  }, [pathname]);
+    if (!sticky) return;
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [sticky]);
 
-  const fetchSearchResults = useCallback(async (q: string) => {
+  const runSearch = useCallback(async (q: string) => {
     if (q.trim().length < 2) {
-      setSearchResults([]);
-      setShowDropdown(false);
+      setResults([]);
+      setShowResults(false);
       return;
     }
-    setIsSearching(true);
+    setSearching(true);
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(q.trim())}`);
-      const data = await res.json();
-      setSearchResults(data.results ?? []);
-      setShowDropdown(true);
+      const data = (await res.json()) as { results?: SearchResult[] };
+      setResults(data.results ?? []);
+      setShowResults(true);
     } catch {
-      // ignore
+      setResults([]);
     } finally {
-      setIsSearching(false);
+      setSearching(false);
     }
   }, []);
 
-  const handleSearchChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
-      setSearchQuery(value);
-      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
-      searchDebounceRef.current = setTimeout(() => fetchSearchResults(value), 300);
-    },
-    [fetchSearchResults],
-  );
+  function onQueryChange(value: string) {
+    setQuery(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => void runSearch(value), 300);
+  }
 
-  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const q = searchQuery.trim();
+  function submitSearch(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const q = query.trim();
     if (!q) return;
-    setShowDropdown(false);
+    setShowResults(false);
+    setMenuOpen(false);
     router.push(`/search?q=${encodeURIComponent(q)}`);
-    setSearchQuery("");
-    setSearchResults([]);
-  };
+  }
 
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Escape") setShowDropdown(false);
-  };
+  function clearSearch() {
+    setShowResults(false);
+    setQuery("");
+    setResults([]);
+  }
 
-  const closeDropdown = () => setTimeout(() => setShowDropdown(false), 150);
-
-  const searchDropdown =
-    showDropdown && searchResults.length > 0 ? (
-      <div className="absolute top-full right-0 left-0 z-50 mt-1 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-lg">
-        {searchResults.map((r) => (
-          <Link
-            key={r.id}
-            href={`/products/${r.slug}`}
-            onMouseDown={(e) => e.preventDefault()}
-            onClick={() => {
-              setShowDropdown(false);
-              setSearchQuery("");
-              setSearchResults([]);
-            }}
-            className="flex items-center gap-3 px-3 py-2.5 transition-colors hover:bg-neutral-50"
-          >
-            {r.image ? (
-              <Image
-                src={r.image}
-                alt={r.name}
-                width={40}
-                height={40}
-                className="h-10 w-10 shrink-0 rounded-lg object-cover"
-              />
-            ) : (
-              <div className="h-10 w-10 shrink-0 rounded-lg bg-neutral-100" />
-            )}
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-neutral-900">{r.name}</p>
-              <p className="text-xs text-neutral-500">
-                {r.sale_price
-                  ? `Rp${r.sale_price.toLocaleString("id-ID")}`
-                  : `Rp${r.base_price.toLocaleString("id-ID")}`}
-              </p>
-            </div>
-          </Link>
-        ))}
-        <Link
-          href={`/search?q=${encodeURIComponent(searchQuery.trim())}`}
-          onMouseDown={(e) => e.preventDefault()}
-          onClick={() => {
-            setShowDropdown(false);
-            setSearchQuery("");
-            setSearchResults([]);
-          }}
-          className="flex items-center justify-center border-t border-neutral-100 px-3 py-2 text-xs font-medium text-brand transition-colors hover:bg-neutral-50"
-        >
-          Lihat semua hasil untuk &ldquo;{searchQuery.trim()}&rdquo; →
-        </Link>
-      </div>
-    ) : null;
-
-  const handleLogout = async () => {
-    if (isLoggingOut) return;
-    setIsLoggingOut(true);
+  async function logout() {
+    if (loggingOut) return;
+    setLoggingOut(true);
     try {
       await fetch("/api/auth/logout", { method: "POST" });
-      reset();
-      toast.success("Berhasil keluar.");
+      resetAuth();
+      toast.success("Kamu sudah keluar.");
     } catch {
       toast.error("Gagal keluar. Coba lagi.");
     } finally {
-      setIsLoggingOut(false);
+      setLoggingOut(false);
       window.location.href = "/";
     }
-  };
+  }
 
-  const avatarUrl = resolveStoreHeaderAvatarUrl(profile, user);
+  const searchForm = (id: string, className?: string) => (
+    <form onSubmit={submitSearch} className={cn("relative min-w-0", className)} role="search">
+      <label htmlFor={id} className="sr-only">
+        Cari part atau aksesoris
+      </label>
+      <div className="flex h-11 items-center gap-2 rounded-md border border-border bg-steel-50 px-3 transition-colors focus-within:border-foreground focus-within:bg-background">
+        <Search className="size-4 shrink-0 text-steel-500" strokeWidth={1.75} aria-hidden="true" />
+        <input
+          id={id}
+          type="search"
+          value={query}
+          onChange={(e) => onQueryChange(e.target.value)}
+          onKeyDown={(e) => e.key === "Escape" && setShowResults(false)}
+          onFocus={() => results.length > 0 && setShowResults(true)}
+          onBlur={() => setTimeout(() => setShowResults(false), 150)}
+          placeholder="Cari kampas rem, oli, lampu…"
+          autoComplete="off"
+          className="h-full min-w-0 flex-1 bg-transparent text-[0.9375rem] outline-none placeholder:text-steel-500"
+        />
+        {searching ? <Spinner className="size-4 text-steel-500" /> : null}
+      </div>
+      {showResults && results.length > 0 ? (
+        <div className="absolute inset-x-0 top-full z-50 mt-2 overflow-hidden rounded-lg border border-border bg-popover shadow-[0_16px_40px_-16px_rgb(0_0_0/0.3)]">
+          <ul>
+            {results.map((r) => (
+              <li key={r.id}>
+                <Link
+                  href={`/products/${r.slug}`}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={clearSearch}
+                  className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm hover:bg-muted"
+                >
+                  <span className="truncate">{r.name}</span>
+                  <span className="shrink-0 font-semibold tabular-nums">
+                    {formatIDR(r.sale_price ?? r.base_price)}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <Link
+            href={`/search?q=${encodeURIComponent(query.trim())}`}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={clearSearch}
+            className="block border-t border-border px-4 py-2.5 text-sm font-medium hover:bg-muted"
+          >
+            Lihat semua hasil untuk &ldquo;{query.trim()}&rdquo;
+          </Link>
+        </div>
+      ) : null}
+    </form>
+  );
 
-  const userInitials = profile?.full_name
-    ? profile.full_name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .slice(0, 2)
-        .toUpperCase()
-    : (user?.email?.[0]?.toUpperCase() ?? "?");
+  const accountLinks = [
+    { href: "/dashboard", label: "Ringkasan akun", icon: LayoutDashboard },
+    { href: "/dashboard/orders", label: "Pesanan", icon: Package },
+    { href: "/dashboard/wishlist", label: "Wishlist", icon: Heart },
+    { href: "/dashboard/profile", label: "Profil", icon: User },
+  ];
 
   return (
     <>
       <header
         className={cn(
-          "w-full bg-white",
-          showBorder && "border-b border-neutral-200",
-          sticky &&
-            "sticky top-0 z-40 bg-white/95 backdrop-blur-md supports-[backdrop-filter]:bg-white/90",
+          "z-40 w-full bg-background",
+          sticky && "sticky top-0",
+          showBorder && "border-b border-border",
+          scrolled && "shadow-[0_1px_0_0_var(--border),0_8px_24px_-20px_rgb(0_0_0/0.35)]",
           className,
         )}
       >
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-24">
-          <div className="flex items-center gap-3 py-3 md:py-4">
+        <div className="nzo-container">
+          <div className="flex h-16 items-center gap-3 md:h-[4.5rem] md:gap-6">
             <Button
               type="button"
               variant="ghost"
-              size="icon-sm"
-              onClick={() => setMobileMenuOpen(true)}
-              className="shrink-0 text-neutral-600 md:hidden"
+              size="icon"
+              onClick={() => setMenuOpen(true)}
+              className="-ml-2 md:hidden"
               aria-label="Buka menu"
             >
-              <Menu size={22} />
+              <Menu className="size-5" strokeWidth={1.75} />
             </Button>
 
+            <SiteLogo variant="navbar" priority />
+
+            {searchForm("store-search", "hidden flex-1 md:block md:max-w-xl")}
+
+            {/* Signature: konteks kendaraan aktif (pemilih kendaraan dibangun Fase 4) */}
             <Link
-              href="/"
-              className="relative block h-8 w-[9.5rem] shrink-0 sm:h-9 sm:w-[11.5rem]"
-              aria-label="NZO Industries — Beranda"
+              href="/#pilih-kendaraan"
+              className="group hidden h-11 shrink-0 items-center gap-2 rounded-md border border-border px-3 text-sm transition-colors hover:border-foreground lg:flex"
             >
-              <Image
-                src="/logo.svg"
-                unoptimized
-                alt="NZO Industries"
-                fill
-                className="object-contain object-left"
-                sizes="184px"
-                priority
-              />
+              <ShieldMark checked={false} className="size-4 text-foreground" />
+              <span className="flex flex-col leading-tight">
+                <span className="text-caption text-muted-foreground">Garasi</span>
+                <span className="font-medium">Pilih kendaraan</span>
+              </span>
             </Link>
 
-            <form
-              onSubmit={handleSearchSubmit}
-              className="relative mx-auto hidden max-w-2xl min-w-0 flex-1 sm:block"
-            >
-              <div className="flex w-full items-center rounded-md border border-neutral-200 bg-neutral-100 pr-3 pl-4">
-                <Search size={14} className="mr-2 shrink-0 text-neutral-400" aria-hidden />
-                <Input
-                  ref={searchInputRef}
-                  type="search"
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                  onKeyDown={handleSearchKeyDown}
-                  onFocus={() => searchResults.length > 0 && setShowDropdown(true)}
-                  onBlur={closeDropdown}
-                  placeholder="Cari produk..."
-                  className={searchInputClass}
-                  aria-label="Cari produk"
-                  aria-expanded={showDropdown}
-                  aria-autocomplete="list"
-                />
-                {isSearching ? <Spinner className="size-3.5 shrink-0 text-neutral-400" /> : null}
-              </div>
-              {searchDropdown}
-            </form>
+            <div className="ml-auto flex shrink-0 items-center gap-0.5 md:gap-1">
+              <Button asChild variant="ghost" size="icon" className="md:hidden" aria-label="Cari">
+                <Link href="/search">
+                  <Search className="size-5" strokeWidth={1.75} />
+                </Link>
+              </Button>
 
-            <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2">
-              <Tooltip>
-                <TooltipTrigger asChild>
+              {isAuthenticated ? (
+                <>
                   <Button
                     asChild
                     variant="ghost"
-                    size="icon-sm"
-                    className="relative hidden sm:inline-flex"
+                    size="icon"
+                    className="hidden md:inline-flex"
+                    aria-label="Wishlist"
                   >
-                    <Link
-                      href="/cart"
-                      aria-label={`Keranjang${cartCount > 0 ? ` (${cartCount})` : ""}`}
-                    >
-                      <ShoppingCart size={20} />
-                      {cartCount > 0 ? (
-                        <span className="absolute top-0.5 right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand px-1 text-[10px] leading-none font-bold text-white">
-                          {cartCount > 99 ? "99+" : cartCount}
-                        </span>
-                      ) : null}
+                    <Link href="/dashboard/wishlist">
+                      <Heart className="size-5" strokeWidth={1.75} />
                     </Link>
                   </Button>
-                </TooltipTrigger>
-                <TooltipContent>Keranjang</TooltipContent>
-              </Tooltip>
-              {isAuthenticated ? <NotificationBell /> : null}
+                  <span className="hidden md:inline-flex">
+                    <NotificationBell />
+                  </span>
+                </>
+              ) : null}
+
+              <Button
+                asChild
+                variant="ghost"
+                size="icon"
+                className="relative"
+                aria-label={`Keranjang, ${cartCount} barang`}
+              >
+                <Link href="/cart">
+                  <ShoppingBag className="size-5" strokeWidth={1.75} />
+                  {cartCount > 0 ? (
+                    <span className="absolute top-1 right-0.5 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-signal px-1 text-[0.6875rem] leading-none font-bold text-brand-black tabular-nums">
+                      {cartCount > 99 ? "99+" : cartCount}
+                    </span>
+                  ) : null}
+                </Link>
+              </Button>
 
               {isAuthenticated ? (
                 <DropdownMenu>
@@ -378,83 +344,58 @@ export function StoreHeader({
                     <Button
                       type="button"
                       variant="ghost"
-                      size="sm"
-                      className="gap-1.5 px-2"
+                      className="hidden h-11 gap-2 px-2 md:inline-flex"
                       aria-label="Menu akun"
                     >
-                      <Avatar className="h-8 w-8 after:border-0">
-                        {avatarUrl ? (
-                          <AvatarImage src={avatarUrl} alt="" referrerPolicy="no-referrer" />
-                        ) : null}
-                        <AvatarFallback className="bg-primary text-[10px] font-black text-white">
-                          {userInitials}
-                        </AvatarFallback>
-                      </Avatar>
-                      <ChevronDown size={12} className="shrink-0 text-muted-foreground" />
+                      <span className="flex size-8 items-center justify-center rounded-full bg-primary text-caption font-bold text-primary-foreground">
+                        {initialsOf(profile?.full_name, user?.email)}
+                      </span>
+                      <ChevronDown className="size-4 text-muted-foreground" strokeWidth={1.75} />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    sideOffset={8}
-                    className={cn("w-[min(100vw-2rem,14rem)]", HEADER_DROPDOWN_MENU_CONTENT_CLASS)}
-                  >
-                    <HeaderDropdownPanelHeader title={profile?.full_name ?? "Pengguna"} />
-                    <HeaderDropdownPanelBody className="py-1">
-                      <DropdownMenuItem asChild className={HEADER_DROPDOWN_MENU_ITEM_CLASS}>
-                        <Link href="/dashboard" className="flex items-center gap-2">
-                          <LayoutDashboard size={14} />
-                          Dashboard
+                  <DropdownMenuContent align="end" sideOffset={8} className="w-60">
+                    <DropdownMenuLabel className="flex flex-col gap-0.5">
+                      <span className="truncate font-semibold">
+                        {profile?.full_name ?? "Akun saya"}
+                      </span>
+                      <span className="truncate text-caption font-normal text-muted-foreground">
+                        {user?.email}
+                      </span>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    {accountLinks.map(({ href, label, icon: Icon }) => (
+                      <DropdownMenuItem key={href} asChild>
+                        <Link href={href}>
+                          <Icon className="size-4" strokeWidth={1.75} />
+                          {label}
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild className={HEADER_DROPDOWN_MENU_ITEM_CLASS}>
-                        <Link href="/dashboard/profile" className="flex items-center gap-2">
-                          <User size={14} />
-                          Profil
+                    ))}
+                    {isAdmin ? (
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin">
+                          <Settings className="size-4" strokeWidth={1.75} />
+                          Panel admin
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem asChild className={HEADER_DROPDOWN_MENU_ITEM_CLASS}>
-                        <Link href="/dashboard/orders" className="flex items-center gap-2">
-                          <Package size={14} />
-                          Pesanan
-                        </Link>
-                      </DropdownMenuItem>
-                      {isAdmin ? (
-                        <DropdownMenuItem asChild className={HEADER_DROPDOWN_MENU_ITEM_CLASS}>
-                          <Link href="/admin" className="flex items-center gap-2">
-                            <Settings size={14} />
-                            Admin
-                          </Link>
-                        </DropdownMenuItem>
-                      ) : null}
-                      <DropdownMenuItem
-                        variant="destructive"
-                        onClick={() => void handleLogout()}
-                        disabled={isLoggingOut}
-                        className={cn(
-                          HEADER_DROPDOWN_MENU_ITEM_CLASS,
-                          "border-t border-border text-destructive focus:bg-destructive/10 focus:text-destructive",
-                        )}
-                      >
-                        <LogOut size={14} />
-                        Keluar
-                      </DropdownMenuItem>
-                    </HeaderDropdownPanelBody>
+                    ) : null}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      disabled={loggingOut}
+                      onSelect={() => void logout()}
+                    >
+                      <LogOut className="size-4" strokeWidth={1.75} />
+                      Keluar
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <div className="flex items-center gap-1">
-                  <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
-                    <Link href="/login">
-                      <User size={16} strokeWidth={1.75} />
-                      Masuk
-                    </Link>
+                <div className="hidden items-center gap-2 pl-2 md:flex">
+                  <Button asChild variant="ghost" size="sm">
+                    <Link href="/login">Masuk</Link>
                   </Button>
-                  <Button
-                    asChild
-                    variant="primary"
-                    size="sm"
-                    className="text-xs font-bold uppercase"
-                  >
+                  <Button asChild size="sm">
                     <Link href="/register">Daftar</Link>
                   </Button>
                 </div>
@@ -462,139 +403,114 @@ export function StoreHeader({
             </div>
           </div>
 
-          <form onSubmit={handleSearchSubmit} className="relative pb-3 sm:hidden">
-            <div className="flex w-full items-center rounded-md border border-neutral-200 bg-neutral-100 pr-3 pl-3">
-              <Search size={15} className="shrink-0 text-neutral-500" aria-hidden />
-              <Input
-                type="search"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                onKeyDown={handleSearchKeyDown}
-                onFocus={() => searchResults.length > 0 && setShowDropdown(true)}
-                onBlur={closeDropdown}
-                placeholder="Cari produk..."
-                className="h-10 border-0 bg-transparent px-2 text-sm shadow-none focus-visible:ring-0"
-                aria-label="Cari produk"
-              />
-              {isSearching ? <Spinner className="size-3 shrink-0 text-neutral-400" /> : null}
-            </div>
-            {searchDropdown}
-          </form>
-
-          {hideCategoryNav ? null : (
-            <nav
-              aria-label="Kategori produk"
-              className="scrollbar-none -mx-4 flex scroll-py-2 gap-4 overflow-x-auto px-4 py-3 text-sm font-medium text-black sm:-mx-6 sm:justify-center sm:px-6"
-            >
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "-mb-[13px] shrink-0 border-b-2 border-transparent pb-[13px] whitespace-nowrap transition hover:text-brand",
-                    isStoreHeaderNavItemActive(item.href, pathname ?? "", categoryParam) &&
-                      "border-current font-bold",
-                  )}
-                >
-                  {item.label}
-                </Link>
-              ))}
+          {showCategoryNav ? (
+            <nav aria-label="Navigasi utama" className="-mx-4 hidden md:-mx-6 md:block lg:-mx-8">
+              <ul className="scrollbar-none flex gap-1 overflow-x-auto px-2 md:px-4 lg:px-6">
+                {NAV_ITEMS.map((item) => {
+                  const active = item.match(pathname, category);
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(
+                          "relative inline-flex h-11 items-center px-3 text-sm whitespace-nowrap text-steel-700 transition-colors hover:text-foreground",
+                          "after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:origin-left after:scale-x-0 after:bg-foreground after:transition-transform after:duration-200",
+                          active && "font-semibold text-foreground after:scale-x-100",
+                        )}
+                      >
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
             </nav>
-          )}
+          ) : null}
         </div>
       </header>
 
-      <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-        <SheetContent side="left" showCloseButton={false} className="w-[min(100%,20rem)] gap-0 p-0">
-          <SheetHeader className="flex-row items-center justify-between border-b border-neutral-100 px-4 py-3">
-            <SheetTitle className="text-sm font-black uppercase">Menu</SheetTitle>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => setMobileMenuOpen(false)}
-              aria-label="Tutup menu"
-            >
-              <X size={18} />
-            </Button>
+      <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+        <SheetContent side="left" className="w-[min(100%,22rem)] gap-0 p-0">
+          <SheetHeader className="border-b border-border px-5 py-4">
+            <SheetTitle className="text-left text-base">Menu</SheetTitle>
           </SheetHeader>
-          <nav className="flex-1 overflow-y-auto px-3 py-4">
-            <p className="mb-2 px-2 text-[10px] font-semibold text-muted-foreground uppercase">
-              Kategori
-            </p>
-            <ul className="space-y-0.5">
-              {navItems.map((item) => (
-                <li key={item.href}>
-                  <Button
-                    asChild
-                    variant="ghost"
-                    className="h-10 w-full justify-start px-2 text-sm font-medium"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
+          <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-5 py-5">
+            {searchForm("store-search-mobile")}
+
+            <Link
+              href="/#pilih-kendaraan"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-3 rounded-md border border-border p-3"
+            >
+              <ShieldMark checked={false} className="size-5 text-foreground" />
+              <span className="flex flex-col leading-tight">
+                <span className="text-caption text-muted-foreground">Garasi</span>
+                <span className="font-medium">Pilih kendaraan</span>
+              </span>
+            </Link>
+
+            <nav aria-label="Navigasi utama">
+              <ul className="flex flex-col">
+                {NAV_ITEMS.map((item) => (
+                  <li key={item.href}>
                     <Link
                       href={item.href}
+                      onClick={() => setMenuOpen(false)}
                       className={cn(
-                        isStoreHeaderNavItemActive(item.href, pathname ?? "", categoryParam) &&
-                          "font-bold underline underline-offset-4",
+                        "flex h-12 items-center border-b border-border text-[0.9375rem]",
+                        item.match(pathname, category) && "font-semibold",
                       )}
                     >
                       {item.label}
                     </Link>
-                  </Button>
-                </li>
-              ))}
-            </ul>
-            <div className="my-4 border-t border-neutral-100" />
-            {!isAuthenticated ? (
-              <div className="space-y-2 px-2">
-                <Button asChild variant="pearl" className="w-full font-bold uppercase">
-                  <Link href="/login">Masuk</Link>
-                </Button>
-                <Button asChild variant="primary" className="w-full font-bold uppercase">
-                  <Link href="/register">Daftar</Link>
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-1 px-2">
-                <Button asChild variant="ghost" className="w-full justify-start gap-2">
-                  <Link href="/dashboard">
-                    <LayoutDashboard size={16} />
-                    Dashboard
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            {isAuthenticated ? (
+              <div className="flex flex-col gap-1">
+                <p className="text-caption text-muted-foreground">Akun</p>
+                {accountLinks.map(({ href, label, icon: Icon }) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex h-11 items-center gap-3 text-[0.9375rem]"
+                  >
+                    <Icon className="size-4" strokeWidth={1.75} />
+                    {label}
                   </Link>
-                </Button>
-                <Button asChild variant="ghost" className="w-full justify-start gap-2">
-                  <Link href="/dashboard/profile">
-                    <User size={16} />
-                    Profil
-                  </Link>
-                </Button>
-                <Button asChild variant="ghost" className="w-full justify-start gap-2">
-                  <Link href="/dashboard/orders">
-                    <Package size={16} />
-                    Pesanan
-                  </Link>
-                </Button>
+                ))}
                 {isAdmin ? (
-                  <Button asChild variant="ghost" className="w-full justify-start gap-2">
-                    <Link href="/admin">
-                      <Settings size={16} />
-                      Admin
-                    </Link>
-                  </Button>
+                  <Link href="/admin" className="flex h-11 items-center gap-3 text-[0.9375rem]">
+                    <Settings className="size-4" strokeWidth={1.75} />
+                    Panel admin
+                  </Link>
                 ) : null}
                 <Button
                   type="button"
                   variant="destructive-ghost"
-                  loading={isLoggingOut}
-                  onClick={() => void handleLogout()}
-                  className="w-full justify-start gap-2"
+                  loading={loggingOut}
+                  onClick={() => void logout()}
+                  className="mt-2 justify-start"
                 >
-                  <LogOut size={16} />
+                  <LogOut className="size-4" strokeWidth={1.75} />
                   Keluar
                 </Button>
               </div>
+            ) : (
+              <div className="mt-auto grid grid-cols-2 gap-2">
+                <Button asChild variant="secondary">
+                  <Link href="/login">Masuk</Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/register">Daftar</Link>
+                </Button>
+              </div>
             )}
-          </nav>
+          </div>
         </SheetContent>
       </Sheet>
     </>

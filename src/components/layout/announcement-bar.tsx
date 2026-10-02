@@ -1,58 +1,82 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { useSyncExternalStore } from "react";
 
 type AnnouncementBarProps = {
+  /** id banner: penutupan diingat per banner, banner baru muncul lagi. */
+  id: string;
   text: string;
   link?: string;
 };
 
-const STORAGE_KEY = "nzo-announcement-dismissed";
+const KEY_PREFIX = "nzo-promo-dismissed:";
+const listeners = new Set<() => void>();
 
-export function AnnouncementBar({ text, link }: AnnouncementBarProps) {
-  const [visible, setVisible] = useState(false);
+function subscribe(onChange: () => void) {
+  listeners.add(onChange);
+  return () => listeners.delete(onChange);
+}
 
-  useEffect(() => {
-    const dismissed = sessionStorage.getItem(STORAGE_KEY);
-    if (!dismissed) setVisible(true);
-  }, []);
+function isDismissed(id: string) {
+  try {
+    return sessionStorage.getItem(KEY_PREFIX + id) === "1";
+  } catch {
+    return false;
+  }
+}
 
-  const dismiss = () => {
-    sessionStorage.setItem(STORAGE_KEY, "1");
-    setVisible(false);
-  };
+/** Bar promo signal-soft, bisa ditutup (design-system.md §2, §5). */
+export function AnnouncementBar({ id, text, link }: AnnouncementBarProps) {
+  const dismissed = useSyncExternalStore(
+    subscribe,
+    () => isDismissed(id),
+    () => false,
+  );
 
-  if (!visible) return null;
+  if (dismissed) return null;
 
-  const content = <span className="text-xs font-medium sm:text-sm">{text}</span>;
+  function dismiss() {
+    try {
+      sessionStorage.setItem(KEY_PREFIX + id, "1");
+    } catch {
+      // storage diblokir: tutup untuk render ini saja
+    }
+    listeners.forEach((l) => l());
+  }
+
+  const isInternal = link?.startsWith("/");
 
   return (
-    <div
-      role="banner"
-      className="gap-3[#000000] relative flex items-center justify-center bg-black px-4 py-2 text-white"
-    >
-      <div className="flex items-center gap-2 text-center">
+    <div className="relative bg-signal-soft text-brand-black">
+      <div className="nzo-container flex min-h-10 items-center justify-center py-2 pr-10 text-center text-sm">
         {link ? (
-          <a href={link} className="transition-swiss underline-offset-2 hover:underline">
-            {content}
-          </a>
+          isInternal ? (
+            <Link href={link} className="font-medium underline-offset-4 hover:underline">
+              {text}
+            </Link>
+          ) : (
+            <a
+              href={link}
+              className="font-medium underline-offset-4 hover:underline"
+              rel="noopener noreferrer"
+            >
+              {text}
+            </a>
+          )
         ) : (
-          content
+          <span className="font-medium">{text}</span>
         )}
       </div>
-      <Button
+      <button
         type="button"
-        variant="ghost"
-        size="icon-sm"
         onClick={dismiss}
-        aria-label="Tutup pengumuman"
-        className="absolute top-1/2 right-3 -translate-y-1/2 text-white/70 hover:bg-white/10 hover:text-white"
+        aria-label="Tutup info promo"
+        className="absolute top-1/2 right-2 flex size-9 -translate-y-1/2 items-center justify-center rounded-full transition-colors hover:bg-black/5"
       >
-        <X size={14} />
-      </Button>
+        <X className="size-4" strokeWidth={1.75} />
+      </button>
     </div>
   );
 }

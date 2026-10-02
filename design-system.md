@@ -1,6 +1,6 @@
 # design-system.md — NZO Industries
 
-Versi dokumen: 0.6 (2026-10-02). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
+Versi dokumen: 0.7 (2026-10-02). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
 
 ## 1. Arah desain
 
@@ -39,7 +39,7 @@ Dasar dari logo (hitam/putih) ditambah satu aksen **signal amber**, diambil dari
 **Warna semantik** (status saja, bukan dekorasi):
 | Token | Hex | Pemakaian |
 |---|---|---|
-| `success` | `#1F8A4C` | Pembayaran diterima, stok tersedia |
+| `success` | `#1C7F46` | Pembayaran diterima, stok tersedia (digelapkan dari `#1F8A4C` agar teks putih ≥ 4.5:1) |
 | `danger` | `#D92D20` | Error, stok habis, aksi destruktif |
 | `info` | `#2563EB` | Status informasi di dashboard |
 | `warning` | `#B54708` | Menunggu verifikasi, stok menipis |
@@ -51,7 +51,7 @@ Dasar dari logo (hitam/putih) ditambah satu aksen **signal amber**, diambil dari
 - `--accent`: signal, `--accent-foreground`: brand-black
 - `--border`, `--input`: steel-200; `--ring`: brand-black
 - `--destructive`: danger
-- Dashboard admin mendukung dark mode: `--background` asphalt, `--card` `#26282C`, `--foreground` white, `--border` `#3A3D42`. Storefront hanya light mode.
+- Dashboard admin mendukung dark mode: `--background` asphalt, `--card` `#26282C`, `--foreground` white, `--border` `#3A3D42`. Storefront hanya light mode. Implementasi: kelas `dark` dipasang di `<html>` hanya selama berada di shell admin (toggle di header admin, disimpan di `localStorage`), dilepas saat keluar dari admin.
 
 ## 3. Tipografi
 
@@ -162,7 +162,13 @@ Mobile: bar beli sticky di bawah (harga + tombol).
 - `NumberTicker`: statistik toko.
 - `BlurFade`: hanya untuk urutan masuk hero.
 
-Komponen Magic UI lain butuh persetujuan dan update dokumen ini.
+Komponen Magic UI lain butuh persetujuan dan update dokumen ini. NumberTicker dan BlurFade membutuhkan paket `motion`; dipakai hanya lewat dua komponen itu (animasi lain tetap GSAP).
+
+**Komponen NZO (Fase 2):**
+- `src/components/catalog/`: `Price` (format id-ID, harga coret, "Hemat X%"), `FitmentBadge` + `ShieldMark` (perisai sementara sampai logo resmi tersedia), `ProductCard`, `ProductImage` (CldImage, placeholder "Foto segera" bila belum ada foto).
+- `src/components/shared/`: `PageHeader`, `EmptyState`, skeleton set (`ProductCardSkeleton`, `ProductGridSkeleton`, `TableRowsSkeleton`, `DetailSkeleton`), `ConfirmDialog` (AlertDialog), `SiteLogo` (wordmark teks sementara, prop `tone` untuk latar gelap).
+- Varian tombol: `primary`, `secondary`, `signal` (satu CTA promo per viewport), `ghost`, `destructive`, `destructive-ghost`, `link`.
+- Pratinjau semua token & komponen: `/design` (hanya development).
 
 **Ikon:** lucide-react, stroke 1.75, ukuran 16/20/24.
 
@@ -250,3 +256,4 @@ Hitam-putih, tanpa warna aksen, aman untuk printer thermal/laser. Cetak massal: 
 - 0.4 (2026-10-01): Sinkron versi (D-17, tanpa perubahan visual).
 - 0.5 (2026-10-01): Sinkron versi (D-18, D-19). Komponen InputOTP ditambahkan untuk halaman MFA admin.
 - 0.6 (2026-10-02): Sinkron versi (D-20).
+- 0.7 (2026-10-02): Fase 2 diimplementasikan. `success` jadi `#1C7F46` (kontras AA), daftar komponen NZO + varian tombol `signal`, implementasi dark mode admin, catatan paket `motion` untuk Magic UI. Logo & perisai masih sementara.

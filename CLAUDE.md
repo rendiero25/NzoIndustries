@@ -1,6 +1,6 @@
 # CLAUDE.md — NZO Industries E-commerce
 
-Versi dokumen: 0.6 (2026-10-02). Baca file ini di awal setiap sesi.
+Versi dokumen: 0.7 (2026-10-02). Baca file ini di awal setiap sesi.
 
 ## Proyek
 Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (plus sebagian produk non-otomotif yang masuk kategori sendiri). Ada tiga area: storefront publik, dashboard user (`/account`), dan dashboard admin/CMS (`/admin`). Prinsip utama: **security first**.
@@ -155,3 +155,4 @@ Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - 0.4 (2026-10-01): Tambah D-17 (Supabase `ap-southeast-2`, Vercel `syd1`, Resend tanpa domain sampai P-09). P-03 diperbarui.
 - 0.5 (2026-10-01): Fase 1. Tambah D-18 (harga varian opsional), D-19 (isolasi legacy, workflow migration remote, client user-scoped untuk aksi admin). Perintah database, test RLS, promote-owner. Aturan bisnis harga diperbarui.
 - 0.6 (2026-10-02): Tambah D-20 (MFA staf lewat flag, default mati). Security rule 7 diperbarui.
+- 0.7 (2026-10-02): Fase 2 (design system + redesign shell). Sinkron versi, tanpa keputusan baru.

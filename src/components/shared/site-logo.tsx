@@ -1,63 +1,83 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 
-const variantClass = {
-  navbar: "h-7 w-[9.5rem] sm:h-8 sm:w-[11.5rem]",
-  footer: "h-10 w-[13rem] sm:w-[15rem]",
-  adminSidebar: "h-8 w-[9.5rem]",
-  adminTopbar: "h-6 w-[7.25rem]",
-  authPanel: "h-10 w-[14rem] max-w-full",
-  authMobile: "h-8 w-[11rem]",
-  adminLogin: "h-9 w-[12rem]",
-  maintenance: "h-11 w-[16rem] sm:h-12 sm:w-[18rem] mx-auto",
-  shippingLabel: "h-7 w-[9.5rem]",
+/**
+ * Wordmark sementara NZO Industries (logo resmi menunggu klien). Dirender
+ * sebagai teks Outfit agar tajam di semua ukuran dan bisa dibalik warnanya
+ * di latar gelap. Ganti isi komponen ini saat file logo tersedia.
+ */
+const sizeClass = {
+  navbar: "gap-1.5 [--nzo-main:1.5rem] [--nzo-sub:0.625rem]",
+  footer: "gap-2 [--nzo-main:1.875rem] [--nzo-sub:0.6875rem]",
+  adminSidebar: "gap-1.5 [--nzo-main:1.25rem] [--nzo-sub:0.5625rem]",
+  adminTopbar: "gap-1.5 [--nzo-main:1.125rem] [--nzo-sub:0.5rem]",
+  authPanel: "gap-2 [--nzo-main:2rem] [--nzo-sub:0.75rem]",
+  authMobile: "gap-1.5 [--nzo-main:1.5rem] [--nzo-sub:0.625rem]",
+  adminLogin: "gap-1.5 [--nzo-main:1.625rem] [--nzo-sub:0.6875rem]",
+  maintenance: "mx-auto gap-2 [--nzo-main:2.25rem] [--nzo-sub:0.75rem]",
+  shippingLabel: "gap-1.5 [--nzo-main:1.375rem] [--nzo-sub:0.625rem]",
 } as const;
 
-export type SiteLogoVariant = keyof typeof variantClass;
+export type SiteLogoVariant = keyof typeof sizeClass;
 
 type SiteLogoProps = {
-  /** Default `/` kecuali panel admin memakai `/admin` */
+  /** Default `/`; panel admin memakai `/admin`. */
   href?: string;
   variant?: SiteLogoVariant;
+  /** `light` untuk latar hitam/asphalt. */
+  tone?: "dark" | "light";
   className?: string;
-  /** Tanpa link (mis. halaman maintenance) */
+  /** Tanpa link (mis. halaman maintenance, dokumen cetak). */
   asStatic?: boolean;
+  /** @deprecated tidak dipakai lagi (wordmark berupa teks). */
   priority?: boolean;
-  /** Override `aria-label` pada link */
   ariaLabel?: string;
 };
 
 export function SiteLogo({
   href = "/",
   variant = "navbar",
+  tone = "dark",
   className,
   asStatic = false,
-  priority = false,
-  ariaLabel = "NZO Industries — Beranda",
+  ariaLabel = "NZO Industries, ke beranda",
 }: SiteLogoProps) {
-  const box = cn("relative block shrink-0", variantClass[variant], className);
+  const mark = (
+    <>
+      <span
+        aria-hidden="true"
+        className="text-(length:--nzo-main) leading-none font-extrabold tracking-[-0.04em]"
+      >
+        NZO
+      </span>
+      <span
+        aria-hidden="true"
+        className="text-(length:--nzo-sub) leading-none font-semibold tracking-[0.22em] uppercase"
+      >
+        Industries
+      </span>
+    </>
+  );
 
-  const image = (
-    <Image
-      src="/logo.svg"
-      unoptimized
-      alt="NZO Industries"
-      fill
-      className={cn("object-contain", variant === "maintenance" ? "object-center" : "object-left")}
-      sizes="(max-width: 640px) 200px, 280px"
-      priority={priority}
-    />
+  const box = cn(
+    "inline-flex shrink-0 items-baseline whitespace-nowrap select-none",
+    tone === "light" ? "text-white" : "text-foreground",
+    sizeClass[variant],
+    className,
   );
 
   if (asStatic) {
-    return <div className={box}>{image}</div>;
+    return (
+      <span className={box} role="img" aria-label="NZO Industries">
+        {mark}
+      </span>
+    );
   }
 
   return (
-    <Link href={href} className={box} aria-label={ariaLabel}>
-      {image}
+    <Link href={href} className={cn(box, "rounded-sm")} aria-label={ariaLabel}>
+      {mark}
     </Link>
   );
 }

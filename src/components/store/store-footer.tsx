@@ -1,108 +1,90 @@
 import Link from "next/link";
 
-// TODO [P-11]: alamat gudang/toko dan link Maps dari klien.
-const FOOTER_ADDRESS = "Alamat toko segera tersedia.";
-const FOOTER_MAPS_URL = "#";
+import { SiteLogo } from "@/components/shared/site-logo";
 
-const FOOTER_ABOUT = [
-  { label: "Our Story", href: "/about" },
-  { label: "Blog & News", href: "/blog" },
-  { label: "Privacy Policy", href: "/kebijakan-privasi" },
-  { label: "Terms & Conditions", href: "/syarat-ketentuan" },
-  { label: "Return Policy", href: "/kebijakan-pengembalian" },
-] as const;
+type FooterLink = { label: string; href: string; external?: boolean };
 
-// TODO: akun sosial media NZO Industries dari klien.
-const FOOTER_SOCIAL = [
-  { label: "Instagram", href: "#" },
-  { label: "Tiktok", href: "#" },
-  { label: "Youtube", href: "#" },
-] as const;
+const SHOP: FooterLink[] = [
+  { label: "Part motor", href: "/products?category=motor" },
+  { label: "Part mobil", href: "/products?category=mobil" },
+  { label: "Perawatan & alat", href: "/products?category=non-otomotif" },
+  { label: "Semua brand", href: "/brands" },
+];
 
-const FOOTER_MARKETPLACES = [
-  { label: "Tokopedia", href: "https://tokopedia.com" },
-  { label: "Shopee", href: "https://shopee.co.id" },
-  { label: "Blibli", href: "https://blibli.com" },
-  { label: "TikTok shop", href: "https://www.tiktok.com" },
-  { label: "Lazada", href: "https://www.lazada.co.id" },
-] as const;
+const HELP: FooterLink[] = [
+  { label: "Lacak pesanan", href: "/dashboard/orders" },
+  { label: "Akun saya", href: "/dashboard" },
+  { label: "Tentang NZO", href: "/about" },
+];
 
+// TODO [P-08]: halaman legal resmi dari klien.
+const POLICY: FooterLink[] = [
+  { label: "Kebijakan privasi", href: "/kebijakan-privasi" },
+  { label: "Syarat & ketentuan", href: "/syarat-ketentuan" },
+  { label: "Pengembalian & garansi", href: "/kebijakan-pengembalian" },
+];
+
+function Column({ title, links }: { title: string; links: FooterLink[] }) {
+  return (
+    <div>
+      <h2 className="text-sm font-semibold tracking-normal text-white">{title}</h2>
+      <ul className="mt-4 flex flex-col gap-3">
+        {links.map((l) => (
+          <li key={l.href}>
+            <Link
+              href={l.href}
+              className="text-sm text-white/65 transition-colors hover:text-white"
+            >
+              {l.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/**
+ * Footer asphalt (design-system.md §5 no. 10). Data toko, metode pembayaran,
+ * dan kurir ditampilkan setelah klien mengonfirmasi (P-02, P-11, P-12).
+ */
 export function StoreFooter() {
   const year = new Date().getFullYear();
+  const wa = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "");
 
   return (
-    <footer className="relative mt-auto overflow-hidden bg-gradient-to-br from-foreground via-foreground to-foreground/90 pt-12 text-white">
-      <div className="relative z-10 mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-24 lg:py-16">
-        <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between lg:gap-20">
-          <div className="min-w-0 space-y-4 lg:max-w-xl">
-            <h2 className="text-2xl leading-tight font-black text-white md:text-3xl">
-              Experience it in person!
-            </h2>
+    <footer className="mt-auto bg-asphalt text-white">
+      <div className="nzo-container grid gap-12 py-14 md:grid-cols-12 md:py-20">
+        <div className="flex flex-col gap-5 md:col-span-5">
+          <SiteLogo variant="footer" tone="light" />
+          <p className="max-w-sm text-sm leading-6 text-white/65">
+            Suku cadang dan aksesoris motor dan mobil. Pilih kendaraanmu, lalu belanja part yang
+            memang pas.
+          </p>
+          {wa ? (
+            <a
+              href={`https://wa.me/${wa}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-11 w-fit items-center rounded-md border border-white/25 px-4 text-sm font-semibold transition-colors hover:border-white"
+            >
+              Tanya CS lewat WhatsApp
+            </a>
+          ) : null}
+        </div>
 
-            <div className="relative z-10 mt-6 space-y-1.5 text-xs text-white/45">
-              <p>© {year} NZO Industries. All rights reserved.</p>
-              <p>{FOOTER_ADDRESS}</p>
-              <p>
-                <a
-                  href={FOOTER_MAPS_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium text-white/70 underline underline-offset-2 transition-colors hover:text-white"
-                >
-                  View Maps
-                </a>
-              </p>
-            </div>
-          </div>
+        <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 md:col-span-7">
+          <Column title="Belanja" links={SHOP} />
+          <Column title="Bantuan" links={HELP} />
+          <Column title="Kebijakan" links={POLICY} />
+        </div>
+      </div>
 
-          <div className="grid min-w-0 grid-cols-2 gap-10 sm:grid-cols-3">
-            <div>
-              <p className="mb-4 text-[10px] font-semibold text-white/45 uppercase">About</p>
-              <ul className="space-y-2.5 text-sm text-white/90">
-                {FOOTER_ABOUT.map((l) => (
-                  <li key={l.href}>
-                    <Link href={l.href} className="transition hover:text-brand">
-                      {l.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="mb-4 text-[10px] font-semibold text-white/45 uppercase">Sosial Media</p>
-              <ul className="space-y-2.5 text-sm text-white/90">
-                {FOOTER_SOCIAL.map((l) => (
-                  <li key={l.href}>
-                    <a
-                      href={l.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="transition hover:text-brand"
-                    >
-                      {l.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className="mb-4 text-[10px] font-semibold text-white/45 uppercase">Marketplace</p>
-              <ul className="space-y-2.5 text-sm text-white/90">
-                {FOOTER_MARKETPLACES.map((l) => (
-                  <li key={l.href}>
-                    <a
-                      href={l.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="transition hover:text-brand"
-                    >
-                      {l.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+      <div className="border-t border-white/10">
+        <div className="nzo-container flex flex-col gap-2 py-6 text-caption text-white/50 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {year} NZO Industries</p>
+          {/* TODO [P-11]: alamat toko/gudang dari klien */}
+          <p>Alamat toko segera tersedia</p>
         </div>
       </div>
     </footer>
