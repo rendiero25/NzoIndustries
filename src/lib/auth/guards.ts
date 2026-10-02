@@ -50,12 +50,23 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   };
 });
 
+/**
+ * Kebijakan MFA staf dari database (`store_settings.require_staff_mfa`, D-20).
+ * Sumber yang sama dipakai RLS, jadi aplikasi dan database selalu sejalan.
+ * Gagal membaca = anggap wajib (fail closed).
+ */
+export const getStaffMfaRequired = cache(async (): Promise<boolean> => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("staff_mfa_required");
+  return error ? true : data === true;
+});
+
 /** Keputusan akses tanpa redirect — untuk server action yang mengembalikan error. */
 export async function checkRole(
   roles: readonly AppRole[],
   options: { requireMfa?: boolean } = {},
 ): Promise<{ user: CurrentUser | null; decision: AccessDecision }> {
-  const user = await getCurrentUser();
+  const [user, mfaRequired] = await Promise.all([getCurrentUser(), getStaffMfaRequired()]);
   const decision = decideAccess(
     {
       authenticated: !!user,
@@ -64,7 +75,7 @@ export async function checkRole(
       aal: user?.aal ?? null,
     },
     roles,
-    options,
+    { requireMfa: options.requireMfa ?? mfaRequired },
   );
   return { user, decision };
 }
@@ -78,7 +89,8 @@ export async function requireUser(redirectTo = "/dashboard"): Promise<CurrentUse
 }
 
 /**
- * Halaman dengan role tertentu. Staf aal1 diarahkan ke /admin/mfa.
+ * Halaman dengan role tertentu. Bila MFA staf diwajibkan (D-20), staf aal1
+ * diarahkan ke /admin/mfa.
  * Role salah: 404 (tidak membocorkan keberadaan halaman).
  */
 export async function requireRole(

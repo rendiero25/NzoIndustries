@@ -1,6 +1,6 @@
 # CLAUDE.md — NZO Industries E-commerce
 
-Versi dokumen: 0.5 (2026-10-01). Baca file ini di awal setiap sesi.
+Versi dokumen: 0.6 (2026-10-02). Baca file ini di awal setiap sesi.
 
 ## Proyek
 Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (plus sebagian produk non-otomotif yang masuk kategori sendiri). Ada tiga area: storefront publik, dashboard user (`/account`), dan dashboard admin/CMS (`/admin`). Prinsip utama: **security first**.
@@ -64,7 +64,7 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - Database (project sudah di-link, D-19): tulis file baru di `supabase/migrations/<timestamp>_<nama>.sql`, lalu `pnpm db:push` (cek dulu `pnpm exec supabase db push --dry-run`), `pnpm db:types` (tulis `src/types/database.ts`), `pnpm exec supabase db advisors --linked`. Seed: `pnpm db:seed`. Jangan ubah migration yang sudah diterapkan; buat migration baru.
 - `pnpm test:rls`: test RLS ke project dev (membuat user test sementara lalu menghapusnya). Wajib lolos setiap ada tabel/policy baru.
 - `pnpm promote-owner <email>`: jadikan akun pertama owner (service role). Role berikutnya lewat RPC `set_user_role` oleh owner.
-- Fungsi helper policy ada di schema `private` (tidak diekspos API): `private.has_role(app_role[])`, `private.is_staff()`, `private.owns_order(uuid)`, dll. Role staf otomatis butuh MFA aal2 di RLS.
+- Fungsi helper policy ada di schema `private` (tidak diekspos API): `private.has_role(app_role[])`, `private.is_staff()`, `private.owns_order(uuid)`, dll. Role staf butuh MFA aal2 di RLS hanya bila `require_staff_mfa` menyala (D-20).
 - `pnpm tsx scripts/import-jubelio.ts --dry-run` untuk mencoba import tanpa menulis ke database.
 
 ## Konvensi kode
@@ -84,7 +84,7 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 4. Harga, diskon, voucher, ongkir, dan total **selalu dihitung ulang di server** dari database. Nilai dari client diabaikan.
 5. Webhook (Mayar, Biteship) wajib verifikasi signature dan idempotent (simpan event ID di `webhook_events`).
 6. Rate limit di login, daftar, lupa password, checkout, upload bukti, dan API publik. Turnstile di form auth dan checkout.
-7. Admin wajib MFA (Supabase Auth TOTP). RBAC dengan role: `owner`, `admin`, `warehouse`, `cs`, `customer`.
+7. RBAC dengan role: `owner`, `admin`, `warehouse`, `cs`, `customer`. MFA staf (Supabase Auth TOTP) dikendalikan flag `store_settings.require_staff_mfa` (D-20, default **mati** atas keputusan user). Kode MFA, RLS aal2, dan halaman `/admin/mfa` tetap ada; owner menyalakan flag untuk mewajibkannya lagi. Rekomendasi: nyalakan sebelum launch.
 8. Setiap aksi admin tercatat di `audit_logs` (siapa, apa, kapan, before/after).
 9. Upload Cloudinary hanya lewat signature dari server, dibatasi ke role admin, dengan folder dan tipe file yang ditentukan. Folder selalu di bawah `nzo/` (D-16); operasi hapus/rename hanya untuk public_id `nzo/...`.
 10. Bukti transfer disimpan di bucket Supabase **privat**, divalidasi tipe (jpg/png/webp/pdf) dan ukuran (maks 5 MB), diakses via signed URL berumur pendek.
@@ -125,6 +125,7 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - D-17 Project Supabase NZO di region `ap-southeast-2` (Sydney), keputusan user (bukan Singapore seperti rekomendasi awal P-03). Saat setup Vercel, region function disamakan (`syd1`) supaya latensi server ↔ DB minimal. Resend dipakai tanpa domain sampai P-09 terjawab.
 - D-18 Varian produk boleh punya `price` (dan `compare_at_price`) opsional yang menggantikan harga produk; kosong = ikut harga produk. Melonggarkan D-04.
 - D-19 Kode starter GeekyTech diisolasi: memakai `@/lib/supabase/legacy/*` dan `@/types/legacy-supabase` sampai ditulis ulang (Fase 3–8); kode NZO wajib memakai `@/lib/supabase/{server,client,admin}` dan `@/types/database` (dijaga ESLint). Migration diterapkan langsung ke project dev remote lewat Supabase CLI (tanpa Docker). Aksi admin dari UI memakai client user-scoped (RLS + `auth.uid()` untuk audit); service role hanya untuk webhook, cron, script, dan operasi sistem.
+- D-20 Login staf tanpa scan QR/TOTP (keputusan user 2026-10-02, sudah diberi peringatan risiko). MFA tidak dihapus: flag `store_settings.require_staff_mfa` (default false, hanya owner yang bisa ubah) dibaca `private.has_role` di RLS dan `getStaffMfaRequired()` di aplikasi. Gagal membaca flag = MFA dianggap wajib. Akun yang sudah punya faktor TOTP tetap diminta kode saat ganti password (aturan Supabase Auth).
 
 ## Pending info klien
 Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
@@ -153,3 +154,4 @@ Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - 0.3 (2026-10-01): Tambah D-16 (Cloudinary akun bersama, root folder `nzo/`, repo GitHub). Security rule 9 diperjelas.
 - 0.4 (2026-10-01): Tambah D-17 (Supabase `ap-southeast-2`, Vercel `syd1`, Resend tanpa domain sampai P-09). P-03 diperbarui.
 - 0.5 (2026-10-01): Fase 1. Tambah D-18 (harga varian opsional), D-19 (isolasi legacy, workflow migration remote, client user-scoped untuk aksi admin). Perintah database, test RLS, promote-owner. Aturan bisnis harga diperbarui.
+- 0.6 (2026-10-02): Tambah D-20 (MFA staf lewat flag, default mati). Security rule 7 diperbarui.

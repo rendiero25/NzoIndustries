@@ -75,10 +75,12 @@ export async function resendActivationAction(input: unknown): Promise<ActionResu
 }
 
 /**
- * Login staf. Hanya role staf yang boleh lanjut; langkah berikutnya selalu
- * /admin/mfa (enroll atau verifikasi TOTP) sebelum panel bisa diakses.
+ * Login staf. Hanya role staf yang boleh lanjut. Tujuan berikutnya:
+ * /admin/mfa bila MFA staf diwajibkan (D-20), selain itu langsung /admin.
  */
-export async function adminSignInAction(input: unknown): Promise<ActionResult> {
+export async function adminSignInAction(
+  input: unknown,
+): Promise<{ ok: true; next: "/admin" | "/admin/mfa" } | { ok: false; error: string }> {
   const parsed = loginSchema.extend(turnstileField).safeParse(input);
   if (!parsed.success) return { ok: false, error: "Email atau password tidak valid." };
   if (!(await verifyTurnstile(parsed.data.turnstileToken)))
@@ -111,5 +113,7 @@ export async function adminSignInAction(input: unknown): Promise<ActionResult> {
     await supabase.auth.signOut();
     return { ok: false, error: "Akses ditolak. Akun ini bukan staf." };
   }
-  return { ok: true };
+
+  const { data: mfaRequired, error: mfaError } = await supabase.rpc("staff_mfa_required");
+  return { ok: true, next: mfaError || mfaRequired ? "/admin/mfa" : "/admin" };
 }

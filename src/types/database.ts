@@ -1585,6 +1585,7 @@ export type Database = {
           manual_transfer_enabled: boolean;
           mayar_enabled: boolean;
           payment_timeout_minutes: number;
+          require_staff_mfa: boolean;
           shipper: Json;
           store_name: string;
           support_email: string | null;
@@ -1598,6 +1599,7 @@ export type Database = {
           manual_transfer_enabled?: boolean;
           mayar_enabled?: boolean;
           payment_timeout_minutes?: number;
+          require_staff_mfa?: boolean;
           shipper?: Json;
           store_name?: string;
           support_email?: string | null;
@@ -1611,6 +1613,7 @@ export type Database = {
           manual_transfer_enabled?: boolean;
           mayar_enabled?: boolean;
           payment_timeout_minutes?: number;
+          require_staff_mfa?: boolean;
           shipper?: Json;
           store_name?: string;
           support_email?: string | null;
@@ -1992,6 +1995,7 @@ export type Database = {
         };
         Returns: undefined;
       };
+      staff_mfa_required: { Args: never; Returns: boolean };
     };
     Enums: {
       app_role: "owner" | "admin" | "warehouse" | "cs" | "customer";

@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.5 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.6 (2026-10-02). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -50,8 +50,8 @@ Versi dokumen: 0.5 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (
 - [x] RLS + policy untuk setiap tabel, termasuk test policy per role (`pnpm test:rls`, 15 kasus)
 - [x] Index untuk slug, SKU, status, kategori, fitment, pencarian (full-text / trigram)
 - [x] Trigger: `updated_at`, snapshot `order_status_history`, audit log
-- [ ] Supabase Auth: email + password, verifikasi email, reset password, SMTP via Resend [P-09] — kode siap (daftar, aktivasi, lupa/reset password). **Menunggu**: uji alur email oleh user dengan inbox sendiri; SMTP Resend setelah domain (P-09)
-- [x] MFA (TOTP) wajib untuk role staf (owner, admin, warehouse, cs) — di RLS (aal2) dan guard server; diuji end-to-end di browser
+- [ ] Supabase Auth: email + password, verifikasi email, reset password, SMTP via Resend [P-09] — daftar, verifikasi, login sudah diuji user ✓; reset password untuk akun ber-TOTP kini minta kode dulu (bug "AAL2 session is required…" diperbaiki). **Menunggu**: SMTP Resend setelah domain (P-09)
+- [x] MFA (TOTP) untuk role staf — di RLS (aal2) dan guard server, diuji end-to-end. D-20: diwajibkan lewat flag `store_settings.require_staff_mfa`, default **mati** (login staf tanpa QR); test RLS mencakup kedua mode
 - [x] Helper auth: `requireUser()`, `requireRole([...])`, `requireStaff()`, `checkRole()` di `src/lib/auth/guards.ts`
 - [x] `supabase gen types` dan seed data contoh (kategori, merek/model kendaraan, produk dummy)
 
@@ -210,7 +210,7 @@ Versi dokumen: 0.5 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (
 - [ ] Domain, DNS, SSL [P-09]
 - [ ] Backup database terjadwal
 - [ ] Import produk final + review draft bersama klien
-- [ ] Akun owner/admin klien dengan MFA
+- [ ] Akun owner/admin klien; putuskan ulang flag `require_staff_mfa` sebelum launch (D-20, rekomendasi: nyalakan)
 - [ ] Panduan singkat admin (kelola produk, pesanan, resi, promo)
 - [ ] Pendaftaran PSE [P-08]
 
@@ -230,3 +230,4 @@ Versi dokumen: 0.5 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (
 - 0.3 (2026-10-01): Repo GitHub ter-push, akun Supabase/Resend dibuat user, Cloudinary pakai akun bersama dengan root `nzo/` (D-16).
 - 0.4 (2026-10-01): Supabase siap (D-17), env tervalidasi.
 - 0.5 (2026-10-01): Fase 1 dikerjakan (kecuali uji email & SMTP Resend), catatan fase diisi.
+- 0.6 (2026-10-02): D-20 (MFA staf lewat flag, default mati), fix reset password akun ber-TOTP, uji auth user.

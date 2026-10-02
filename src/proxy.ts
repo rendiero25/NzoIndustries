@@ -76,10 +76,12 @@ export async function proxy(request: NextRequest) {
       return isAdminLogin ? supabaseResponse : redirectWithCookies("/admin/login");
     }
 
-    const [{ data: profile }, { data: aalData }] = await Promise.all([
-      supabase.from("profiles").select("role, is_blocked").eq("id", user.id).maybeSingle(),
-      supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
-    ]);
+    const [{ data: profile }, { data: aalData }, { data: mfaRequired, error: mfaError }] =
+      await Promise.all([
+        supabase.from("profiles").select("role, is_blocked").eq("id", user.id).maybeSingle(),
+        supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+        supabase.rpc("staff_mfa_required"),
+      ]);
 
     const decision = decideAccess(
       {
@@ -89,6 +91,8 @@ export async function proxy(request: NextRequest) {
         aal: aalData?.currentLevel === "aal2" ? "aal2" : "aal1",
       },
       STAFF_ROLES,
+      // D-20: MFA staf mengikuti store_settings.require_staff_mfa (gagal baca = wajib).
+      { requireMfa: mfaError ? true : mfaRequired === true },
     );
 
     if (decision.ok) {

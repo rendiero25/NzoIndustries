@@ -209,14 +209,51 @@ describe("isolasi pelanggan", () => {
 });
 
 describe("staf & MFA", () => {
-  test("staf tanpa MFA (aal1) diperlakukan tanpa akses staf", async () => {
-    const { data: drafts } = await staffNoMfa.client
-      .from("products")
-      .select("sku")
-      .eq("sku", "DEMO-AKS-002");
-    assert.equal(drafts?.length ?? 0, 0);
-    const { data: orders } = await staffNoMfa.client.from("orders").select("id").eq("id", orderA);
-    assert.equal(orders?.length ?? 0, 0);
+  test("D-20: staf aal1 ditolak saat require_staff_mfa=true, diizinkan saat false", async () => {
+    const { data: setting } = await admin
+      .from("store_settings")
+      .select("require_staff_mfa")
+      .single();
+    const original = setting?.require_staff_mfa ?? false;
+
+    try {
+      await admin.from("store_settings").update({ require_staff_mfa: true }).eq("id", true);
+      const { data: draftsStrict } = await staffNoMfa.client
+        .from("products")
+        .select("sku")
+        .eq("sku", "DEMO-AKS-002");
+      assert.equal(draftsStrict?.length ?? 0, 0, "aal1 tidak boleh akses saat MFA wajib");
+      const { data: ordersStrict } = await staffNoMfa.client
+        .from("orders")
+        .select("id")
+        .eq("id", orderA);
+      assert.equal(ordersStrict?.length ?? 0, 0);
+
+      await admin.from("store_settings").update({ require_staff_mfa: false }).eq("id", true);
+      const { data: draftsRelaxed } = await staffNoMfa.client
+        .from("products")
+        .select("sku")
+        .eq("sku", "DEMO-AKS-002");
+      assert.equal(draftsRelaxed?.length, 1, "aal1 boleh akses saat MFA tidak wajib");
+
+      // Customer tetap tidak mendapat akses staf apa pun.
+      const { data: customerDrafts } = await customerA.client
+        .from("products")
+        .select("sku")
+        .eq("sku", "DEMO-AKS-002");
+      assert.equal(customerDrafts?.length ?? 0, 0);
+    } finally {
+      await admin.from("store_settings").update({ require_staff_mfa: original }).eq("id", true);
+    }
+  });
+
+  test("hanya owner yang bisa mengubah require_staff_mfa", async () => {
+    const { data: byAdmin } = await adminUser.client
+      .from("store_settings")
+      .update({ require_staff_mfa: true })
+      .eq("id", true)
+      .select("id");
+    assert.equal(byAdmin?.length ?? 0, 0);
   });
 
   test("admin aal2 melihat draft, mengubah produk, dan tercatat di audit log", async () => {

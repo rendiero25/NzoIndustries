@@ -73,8 +73,8 @@ function AdminLoginContent() {
         resetTurnstile();
         return;
       }
-      // Langkah wajib berikutnya: verifikasi / pendaftaran TOTP.
-      window.location.href = "/admin/mfa";
+      // /admin/mfa hanya bila MFA staf diwajibkan (D-20).
+      window.location.href = result.next;
     } catch {
       toast.error("Terjadi kesalahan tidak terduga. Coba lagi.");
       resetTurnstile();
