@@ -45,9 +45,9 @@ const PERIOD_OPTIONS: { label: string; value: Period }[] = [
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl border border-[#e0e0e0] bg-white px-3 py-2 shadow-sm">
-      <p className="text-[12px] font-semibold text-[#1d1d1f]">{label}</p>
-      <p className="mt-0.5 text-[13px] font-semibold text-[#EA5329]">
+    <div className="rounded-xl border border-border bg-white px-3 py-2 shadow-sm">
+      <p className="text-[12px] font-semibold text-foreground">{label}</p>
+      <p className="mt-0.5 text-[13px] font-semibold text-foreground">
         {formatRupiahFull(payload[0].value)}
       </p>
     </div>
@@ -64,7 +64,7 @@ export function SpendingChart({ data12 }: Props) {
   return (
     <section className="mt-10 flex flex-col">
       <div className="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <h2 className="text-[21px] leading-[1.19] font-semibold text-[#1d1d1f]">Pengeluaran</h2>
+        <h2 className="text-[21px] leading-[1.19] font-semibold text-foreground">Pengeluaran</h2>
         <div className="flex flex-wrap items-center gap-1.5">
           {PERIOD_OPTIONS.map((opt) => (
             <Button
@@ -81,11 +81,11 @@ export function SpendingChart({ data12 }: Props) {
       </div>
 
       {!hasData ? (
-        <p className="mt-6 text-[17px] leading-[1.47] text-[#5c5c5c]">
+        <p className="mt-6 text-base leading-[1.47] text-steel-700">
           Belum ada data pengeluaran untuk periode ini.
         </p>
       ) : (
-        <div className="mt-6 flex flex-1 flex-col overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white p-4 sm:p-5">
+        <div className="mt-6 flex flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-white p-4 sm:p-5">
           <div className="min-h-[180px] flex-1">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -112,16 +112,16 @@ export function SpendingChart({ data12 }: Props) {
                   {sliced.map((entry) => (
                     <Cell
                       key={entry.month}
-                      fill={entry.total === maxVal && maxVal > 0 ? "#EA5329" : "#f0ede9"}
+                      fill={entry.total === maxVal && maxVal > 0 ? "#000000" : "#f0ede9"}
                     />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <p className="mt-2 shrink-0 text-right text-[11px] text-[#7a7a7a]">
+          <p className="mt-2 shrink-0 text-right text-[11px] text-muted-foreground">
             Total {period} bulan terakhir:{" "}
-            <span className="font-semibold text-[#1d1d1f]">
+            <span className="font-semibold text-foreground">
               {formatRupiahFull(sliced.reduce((s, d) => s + d.total, 0))}
             </span>
           </p>

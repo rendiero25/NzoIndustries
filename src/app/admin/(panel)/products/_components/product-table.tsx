@@ -318,7 +318,7 @@ export function ProductTable({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#e0e0e0] bg-muted/30">
+              <tr className="border-b border-border bg-muted/30">
                 <th className="w-10 px-4 py-3">
                   <Checkbox
                     checked={allSelected}
@@ -351,7 +351,7 @@ export function ProductTable({
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#e0e0e0]">
+            <tbody className="divide-y divide-border">
               {products.map((product) => {
                 const primaryImage = getPrimaryImage(product.product_images);
                 const totalStock = getTotalStock(product.product_variants);
@@ -372,7 +372,7 @@ export function ProductTable({
                     </td>
 
                     <td className="px-4 py-3">
-                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md border border-[#e0e0e0] bg-muted">
+                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md border border-border bg-muted">
                         {primaryImage ? (
                           <Image
                             src={primaryImage}
@@ -515,7 +515,7 @@ export function ProductTable({
             >
               <ChevronLeft size={14} />
             </Button>
-            <span className="flex h-8 items-center border-y border-[#e0e0e0] px-3 text-xs font-semibold uppercase">
+            <span className="flex h-8 items-center border-y border-border px-3 text-xs font-semibold uppercase">
               {page} / {totalPages}
             </span>
             <Button
@@ -534,10 +534,10 @@ export function ProductTable({
 
       {/* Single delete confirm dialog */}
       <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-        <DialogContent className="max-w-sm rounded-lg border-[#e0e0e0]">
+        <DialogContent className="max-w-sm rounded-lg border-border">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold uppercase">Hapus Produk?</DialogTitle>
-            <DialogDescription className="text-[17px] leading-[1.47]">
+            <DialogDescription className="text-base leading-[1.47]">
               Produk{" "}
               <span className="font-semibold text-foreground">
                 &quot;{deleteTarget?.name}&quot;
@@ -571,12 +571,12 @@ export function ProductTable({
 
       {/* Bulk delete confirm dialog */}
       <Dialog open={bulkDeleteOpen} onOpenChange={(open) => !open && setBulkDeleteOpen(false)}>
-        <DialogContent className="max-w-sm rounded-lg border-[#e0e0e0]">
+        <DialogContent className="max-w-sm rounded-lg border-border">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold uppercase">
               Hapus {selectedIds.size} Produk?
             </DialogTitle>
-            <DialogDescription className="text-[17px] leading-[1.47]">
+            <DialogDescription className="text-base leading-[1.47]">
               Semua produk yang dipilih akan dihapus secara permanen. Tindakan ini tidak dapat
               dibatalkan.
             </DialogDescription>
@@ -612,10 +612,10 @@ export function ProductTable({
           if (!open) setConditionDialogOpen(false);
         }}
       >
-        <DialogContent className="max-w-sm rounded-lg border-[#e0e0e0]">
+        <DialogContent className="max-w-sm rounded-lg border-border">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold uppercase">Ganti Kondisi</DialogTitle>
-            <DialogDescription className="text-[17px] leading-[1.47]">
+            <DialogDescription className="text-base leading-[1.47]">
               Pilih kondisi baru untuk {selectedIds.size} produk yang dipilih.
             </DialogDescription>
           </DialogHeader>
@@ -629,7 +629,7 @@ export function ProductTable({
                   className={`h-9 flex-1 rounded-md border text-xs font-semibold uppercase transition-colors ${
                     selectedCondition === val
                       ? "border-brand bg-brand/10 text-brand"
-                      : "border-[#e0e0e0] bg-transparent text-foreground hover:border-foreground hover:text-foreground"
+                      : "border-border bg-transparent text-foreground hover:border-foreground hover:text-foreground"
                   }`}
                 >
                   {val === "new" ? "Baru" : "Second"}
@@ -671,10 +671,10 @@ export function ProductTable({
           }
         }}
       >
-        <DialogContent className="max-w-sm rounded-lg border-[#e0e0e0]">
+        <DialogContent className="max-w-sm rounded-lg border-border">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold uppercase">Ganti Merek</DialogTitle>
-            <DialogDescription className="text-[17px] leading-[1.47]">
+            <DialogDescription className="text-base leading-[1.47]">
               Pilih merek baru untuk {selectedIds.size} produk yang dipilih.
             </DialogDescription>
           </DialogHeader>

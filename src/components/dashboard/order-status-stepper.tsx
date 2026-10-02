@@ -112,9 +112,9 @@ export function OrderStatusStepper({ currentStatus, statusHistory }: OrderStatus
               <div
                 className={[
                   "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
-                  state === "done" ? "bg-[#EA5329]" : "",
-                  state === "active" ? "bg-[#EA5329] ring-4 ring-[#EA5329]/20" : "",
-                  state === "pending" ? "border border-[#d0d0d0] bg-white" : "",
+                  state === "done" ? "bg-primary" : "",
+                  state === "active" ? "bg-primary ring-4 ring-ring/20" : "",
+                  state === "pending" ? "border border-border bg-white" : "",
                   state === "terminal-bad" ? "bg-red-500" : "",
                 ]
                   .filter(Boolean)
@@ -138,7 +138,7 @@ export function OrderStatusStepper({ currentStatus, statusHistory }: OrderStatus
                 <div
                   className={[
                     "my-1 w-px flex-1",
-                    state === "done" ? "bg-[#EA5329]/30" : "bg-[#e0e0e0]",
+                    state === "done" ? "bg-primary/30" : "bg-steel-200",
                   ].join(" ")}
                   style={{ minHeight: 24 }}
                 />
@@ -149,10 +149,10 @@ export function OrderStatusStepper({ currentStatus, statusHistory }: OrderStatus
             <div className={["min-w-0", isLast ? "pb-0" : "pb-5"].join(" ")}>
               <p
                 className={[
-                  "text-sm leading-snug font-semibold tracking-[-0.224px]",
-                  state === "done" ? "text-[#1d1d1f]" : "",
-                  state === "active" ? "text-[#EA5329]" : "",
-                  state === "pending" ? "font-normal text-[#a0a0a0]" : "",
+                  "text-sm leading-snug font-semibold",
+                  state === "done" ? "text-foreground" : "",
+                  state === "active" ? "text-foreground" : "",
+                  state === "pending" ? "font-normal text-muted-foreground" : "",
                   state === "terminal-bad" ? "text-red-600" : "",
                 ]
                   .filter(Boolean)
@@ -161,10 +161,10 @@ export function OrderStatusStepper({ currentStatus, statusHistory }: OrderStatus
                 {step.label}
               </p>
               {(state === "done" || state === "active" || state === "terminal-bad") && (
-                <p className="mt-0.5 text-xs text-[#7a7a7a]">{step.description}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{step.description}</p>
               )}
               {timestamp && (
-                <p className="mt-0.5 text-[11px] text-[#a0a0a0]">
+                <p className="mt-0.5 text-[11px] text-muted-foreground">
                   {formatDate(timestamp, {
                     day: "numeric",
                     month: "short",

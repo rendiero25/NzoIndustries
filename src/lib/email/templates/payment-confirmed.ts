@@ -34,15 +34,15 @@ export function paymentConfirmedHtml(params: {
     <p style="margin:0 0 12px;font-size:14px;font-weight:600;color:#1d1d1f;">Selanjutnya:</p>
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;">
       <tr>
-        <td style="width:28px;vertical-align:top;font-size:14px;color:#EA5329;font-weight:700;">1.</td>
+        <td style="width:28px;vertical-align:top;font-size:14px;color:#000000;font-weight:700;">1.</td>
         <td style="font-size:14px;color:#3d3d3d;line-height:1.6;padding-bottom:8px;">Tim kami mengemas pesananmu dengan hati-hati.</td>
       </tr>
       <tr>
-        <td style="width:28px;vertical-align:top;font-size:14px;color:#EA5329;font-weight:700;">2.</td>
+        <td style="width:28px;vertical-align:top;font-size:14px;color:#000000;font-weight:700;">2.</td>
         <td style="font-size:14px;color:#3d3d3d;line-height:1.6;padding-bottom:8px;">Kurir menjemput paket dari toko kami.</td>
       </tr>
       <tr>
-        <td style="width:28px;vertical-align:top;font-size:14px;color:#EA5329;font-weight:700;">3.</td>
+        <td style="width:28px;vertical-align:top;font-size:14px;color:#000000;font-weight:700;">3.</td>
         <td style="font-size:14px;color:#3d3d3d;line-height:1.6;">Kamu akan mendapat notifikasi begitu paket dikirim beserta nomor resi.</td>
       </tr>
     </table>
@@ -50,7 +50,7 @@ export function paymentConfirmedHtml(params: {
     ${ctaButton(orderUrl, "Pantau Status Pesanan")}
 
     <p style="margin:8px 0 0;font-size:13px;color:#6e6e73;line-height:1.6;">
-      Ada pertanyaan? Hubungi kami di <a href="${params.appUrl}/about#kontak" style="color:#EA5329;text-decoration:none;">halaman kontak</a>.
+      Ada pertanyaan? Hubungi kami di <a href="${params.appUrl}/about#kontak" style="color:#000000;text-decoration:none;">halaman kontak</a>.
     </p>`;
 
   return emailShell({

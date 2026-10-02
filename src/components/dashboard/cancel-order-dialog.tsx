@@ -142,7 +142,7 @@ export function CancelOrderDialog({
               <div className="mx-auto mb-2 flex h-11 w-11 items-center justify-center rounded-full bg-red-50">
                 <AlertTriangle className="h-5 w-5 text-red-500" />
               </div>
-              <DialogTitle className="text-center text-[17px]">Batalkan pesanan ini?</DialogTitle>
+              <DialogTitle className="text-center text-base">Batalkan pesanan ini?</DialogTitle>
               <DialogDescription className="text-center">
                 Pesanan <span className="font-mono font-semibold">{orderNumber}</span> akan
                 dibatalkan dan tidak dapat dikembalikan.
@@ -182,7 +182,7 @@ export function CancelOrderDialog({
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle className="text-[17px]">Info rekening pengembalian dana</DialogTitle>
+              <DialogTitle className="text-base">Info rekening pengembalian dana</DialogTitle>
               <DialogDescription>
                 Dana akan dikembalikan ke rekening berikut dalam 3–14 hari kerja setelah diproses
                 admin.
@@ -201,7 +201,7 @@ export function CancelOrderDialog({
                     setErrors((e) => ({ ...e, bankName: undefined }));
                   }}
                 >
-                  <SelectTrigger id="cancel-bank-name" className="mt-1 border-[#e0e0e0]">
+                  <SelectTrigger id="cancel-bank-name" className="mt-1 border-border">
                     <SelectValue placeholder="Pilih bank..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -223,7 +223,7 @@ export function CancelOrderDialog({
                 </Label>
                 <Input
                   id="cancel-account-name"
-                  className="mt-1 border-[#e0e0e0]"
+                  className="mt-1 border-border"
                   placeholder="Sesuai buku tabungan / ATM"
                   value={accountName}
                   onChange={(e) => {
@@ -242,7 +242,7 @@ export function CancelOrderDialog({
                 </Label>
                 <Input
                   id="cancel-account-number"
-                  className="mt-1 border-[#e0e0e0] font-mono"
+                  className="mt-1 border-border font-mono"
                   inputMode="numeric"
                   placeholder="Contoh: 1234567890"
                   value={accountNumber}

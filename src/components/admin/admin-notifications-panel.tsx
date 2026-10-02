@@ -92,14 +92,14 @@ export function AdminNotificationsPanel({ items }: { items: Row[] }) {
           Tandai semua dibaca
         </Button>
       </div>
-      <ul className="divide-y divide-[#e0e0e0] rounded-xl border border-[#e0e0e0] bg-card">
+      <ul className="divide-y divide-border rounded-xl border border-border bg-card">
         {items.map((n) => {
           const url = getAdminNotificationUrl(n.type, n.data);
           return (
             <li
               key={n.id}
               onClick={() => handleRowClick(n)}
-              className={`px-4 py-4 transition-colors ${n.is_read ? "hover:bg-muted/40" : "bg-[#EA5329]/5 hover:bg-[#EA5329]/10"} ${url ? "cursor-pointer" : ""}`}
+              className={`px-4 py-4 transition-colors ${n.is_read ? "hover:bg-muted/40" : "bg-primary/5 hover:bg-primary/10"} ${url ? "cursor-pointer" : ""}`}
             >
               <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>

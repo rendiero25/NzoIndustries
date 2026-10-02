@@ -25,7 +25,7 @@ export default async function AdminSettingsShippingPage() {
       <div>
         <p className="text-swiss-eyebrow">Toko</p>
         <h1 className="text-[34px] font-semibold text-foreground uppercase">Pengiriman</h1>
-        <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+        <p className="mt-1 text-base leading-[1.47] text-foreground">
           Alamat origin toko untuk kalkulasi ongkir dan pengiriman.
         </p>
       </div>
@@ -33,9 +33,9 @@ export default async function AdminSettingsShippingPage() {
       <SettingsNav />
 
       <div className="admin-utility-card overflow-hidden p-0">
-        <div className="border-b border-[#e0e0e0] px-5 py-4">
+        <div className="border-b border-border px-5 py-4">
           <h2 className="admin-section-title">Alamat Origin Toko</h2>
-          <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+          <p className="mt-1 text-base leading-[1.47] text-foreground">
             Alamat pengirim yang digunakan saat kalkulasi ongkos kirim dan pembuatan pengiriman.
           </p>
         </div>

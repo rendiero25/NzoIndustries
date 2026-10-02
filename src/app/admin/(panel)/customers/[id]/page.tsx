@@ -115,14 +115,14 @@ export default async function AdminCustomerDetailPage({ params, searchParams }: 
           <h1 className="text-[34px] font-semibold text-foreground uppercase">
             {profile.full_name ?? <span className="text-foreground italic">Belum diisi</span>}
           </h1>
-          <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+          <p className="mt-1 text-base leading-[1.47] text-foreground">
             Bergabung{" "}
             {formatDate(profile.created_at, { day: "numeric", month: "long", year: "numeric" })}
             {lastSignIn ? ` · Login terakhir ${formatRelativeDate(lastSignIn)}` : ""}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex shrink-0 items-center rounded-full border border-[#e0e0e0] px-3 py-1.5 text-xs font-semibold text-foreground uppercase">
+          <span className="inline-flex shrink-0 items-center rounded-full border border-border px-3 py-1.5 text-xs font-semibold text-foreground uppercase">
             {profile.role}
           </span>
           <CustomerEditDialog
@@ -138,7 +138,7 @@ export default async function AdminCustomerDetailPage({ params, searchParams }: 
         {/* Photo + contact + account info */}
         <div className="flex flex-wrap gap-6 p-6">
           {/* Avatar */}
-          <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-[#e0e0e0] bg-muted">
+          <div className="h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
             {profile.avatar_url ? (
               <Image
                 src={profile.avatar_url}
@@ -197,17 +197,17 @@ export default async function AdminCustomerDetailPage({ params, searchParams }: 
 
         {/* Addresses */}
         {addresses && addresses.length > 0 && (
-          <div className="border-t border-[#e0e0e0]">
+          <div className="border-t border-border">
             <p className="px-6 py-3 text-[11px] font-semibold text-foreground uppercase">
               Alamat Tersimpan ({addresses.length})
             </p>
-            <div className="grid gap-px bg-[#e0e0e0] sm:grid-cols-2">
+            <div className="grid gap-px bg-steel-200 sm:grid-cols-2">
               {addresses.map((addr) => (
                 <div key={addr.id} className="bg-background px-6 py-3 text-sm">
                   <div className="flex items-start justify-between gap-2">
                     <p className="font-semibold">{addr.recipient}</p>
                     {addr.is_default && (
-                      <span className="shrink-0 rounded-md border border-[#e0e0e0] px-1.5 py-0 text-[9px] font-semibold text-foreground uppercase">
+                      <span className="shrink-0 rounded-md border border-border px-1.5 py-0 text-[9px] font-semibold text-foreground uppercase">
                         Utama
                       </span>
                     )}
@@ -229,7 +229,7 @@ export default async function AdminCustomerDetailPage({ params, searchParams }: 
 
       {/* Stats */}
       <div className="admin-utility-card overflow-hidden p-0">
-        <div className="grid divide-y divide-[#e0e0e0] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <div className="grid divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
           <StatCard label="Total Order" value={String(totalOrderCount)} />
           <StatCard label="Order Selesai" value={String(completedOrders)} />
           <StatCard label="Total Belanja" value={formatRupiah(totalSpent, true)} />
@@ -244,7 +244,7 @@ export default async function AdminCustomerDetailPage({ params, searchParams }: 
 
         {orders.length > 0 ? (
           <>
-            <div className="divide-y divide-[#e0e0e0]">
+            <div className="divide-y divide-border">
               {orders.map((order) => {
                 const first = order.order_items[0] ?? null;
                 const extraCount = order.order_items.length - 1;
@@ -316,7 +316,7 @@ export default async function AdminCustomerDetailPage({ params, searchParams }: 
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between border-t border-[#e0e0e0] px-4 py-3">
+              <div className="flex items-center justify-between border-t border-border px-4 py-3">
                 <p className="text-xs text-foreground">
                   Halaman {ordersPage} dari {totalPages}
                 </p>
@@ -367,12 +367,12 @@ function PaginationLink({
   children: React.ReactNode;
 }) {
   if (disabled) {
-    return <span className="rounded-lg border border-[#e0e0e0] p-2 opacity-40">{children}</span>;
+    return <span className="rounded-lg border border-border p-2 opacity-40">{children}</span>;
   }
   return (
     <Link
       href={href}
-      className="rounded-lg border border-[#e0e0e0] p-2 transition-colors hover:bg-muted"
+      className="rounded-lg border border-border p-2 transition-colors hover:bg-muted"
     >
       {children}
     </Link>

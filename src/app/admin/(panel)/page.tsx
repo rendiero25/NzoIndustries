@@ -381,7 +381,7 @@ export default async function AdminDashboardPage() {
               const Icon = cfg.icon;
               return (
                 <Link key={status} href={`/admin/orders?status=${status}`} className="group">
-                  <Card className="relative cursor-pointer overflow-hidden py-0 transition-all duration-200 hover:bg-[#EA5329]/15">
+                  <Card className="relative cursor-pointer overflow-hidden py-0 transition-all duration-200 hover:bg-primary/15">
                     <CardContent className="px-4 py-4">
                       {/* Header row */}
                       <div className="flex items-start justify-between gap-2">
@@ -468,7 +468,7 @@ export default async function AdminDashboardPage() {
               Lihat semua <ArrowRight size={12} />
             </Link>
           </div>
-          <div className="divide-y divide-[#e0e0e0]">
+          <div className="divide-y divide-border">
             {lowStockVariants.map(
               (v: {
                 id: string;
@@ -519,7 +519,7 @@ export default async function AdminDashboardPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#e0e0e0] text-left">
+              <tr className="border-b border-border text-left">
                 {TABLE_HEADERS.map((h) => (
                   <th
                     key={h}
@@ -530,7 +530,7 @@ export default async function AdminDashboardPage() {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#e0e0e0]">
+            <tbody className="divide-y divide-border">
               {recentOrders.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-5 py-8 text-center text-sm text-foreground">
@@ -609,7 +609,7 @@ export default async function AdminDashboardPage() {
               Lihat semua <ArrowRight size={12} />
             </Link>
           </div>
-          <ul className="divide-y divide-[#e0e0e0]">
+          <ul className="divide-y divide-border">
             {recentCustomers.length === 0 ? (
               <li className="px-5 py-6 text-center text-sm text-foreground">Belum ada pelanggan</li>
             ) : (
@@ -658,7 +658,7 @@ export default async function AdminDashboardPage() {
               Lihat semua <ArrowRight size={12} />
             </Link>
           </div>
-          <ul className="divide-y divide-[#e0e0e0]">
+          <ul className="divide-y divide-border">
             {recentReviews.length === 0 ? (
               <li className="px-5 py-6 text-center text-sm text-foreground">Belum ada ulasan</li>
             ) : (

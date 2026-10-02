@@ -46,14 +46,14 @@ export function PendingPaymentSection({ initialOrders, userId }: Props) {
   if (orders.length === 0) return null;
 
   return (
-    <div className="mt-6 overflow-hidden rounded-2xl border border-[#EA5329]/20 bg-[#FFF8F5]">
+    <div className="mt-6 overflow-hidden rounded-2xl border border-foreground/20 bg-muted">
       {/* Header */}
-      <div className="flex items-center justify-between gap-3 border-b border-[#EA5329]/10 px-5 py-4">
+      <div className="flex items-center justify-between gap-3 border-b border-foreground/10 px-5 py-4">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#EA5329]/10">
-            <AlertCircle className="h-4 w-4 text-[#EA5329]" />
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10">
+            <AlertCircle className="h-4 w-4 text-foreground" />
           </span>
-          <p className="text-[15px] font-semibold text-[#1d1d1f]">
+          <p className="text-[15px] font-semibold text-foreground">
             {orders.length === 1
               ? "1 pesanan menunggu pembayaran"
               : `${orders.length} pesanan menunggu pembayaran`}
@@ -62,7 +62,7 @@ export function PendingPaymentSection({ initialOrders, userId }: Props) {
         {orders.length > 1 && (
           <Link
             href="/dashboard/orders?status=pending_payment"
-            className="shrink-0 text-[12px] font-medium text-[#EA5329] underline-offset-2 hover:underline"
+            className="shrink-0 text-[12px] font-medium text-foreground underline-offset-2 hover:underline"
           >
             Lihat semua →
           </Link>
@@ -70,7 +70,7 @@ export function PendingPaymentSection({ initialOrders, userId }: Props) {
       </div>
 
       {/* Subtitle */}
-      <p className="px-5 pt-3 text-[13px] leading-relaxed text-[#5c5c5c]">
+      <p className="px-5 pt-3 text-[13px] leading-relaxed text-steel-700">
         Segera selesaikan pembayaran sebelum pesanan otomatis dibatalkan.
       </p>
 
@@ -90,11 +90,11 @@ export function PendingPaymentSection({ initialOrders, userId }: Props) {
           return (
             <li
               key={o.id}
-              className="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-[#EA5329]/10"
+              className="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-ring/10"
             >
               {/* Card header: order number + countdown */}
-              <div className="flex items-center justify-between gap-3 border-b border-[#f0f0f0] px-4 py-2.5">
-                <p className="font-mono text-[12px] font-bold tracking-tight text-[#1d1d1f]">
+              <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-2.5">
+                <p className="font-mono text-[12px] font-bold tracking-tight text-foreground">
                   {o.order_number}
                 </p>
                 {o.expiryTime && <PaymentCountdown expiryTime={o.expiryTime} />}
@@ -103,12 +103,12 @@ export function PendingPaymentSection({ initialOrders, userId }: Props) {
               {/* Card body */}
               <div className="px-4 pt-3 pb-4">
                 {o.previewName && (
-                  <p className="truncate text-[13px] leading-snug font-medium text-[#1d1d1f]">
+                  <p className="truncate text-[13px] leading-snug font-medium text-foreground">
                     {o.previewName}
                   </p>
                 )}
                 {(methodLabel ?? ref) && (
-                  <div className="mt-2.5 rounded-lg bg-[#f5f5f7] px-3 py-2">
+                  <div className="mt-2.5 rounded-lg bg-muted px-3 py-2">
                     {methodLabel && (
                       <div className="flex items-center gap-2">
                         {logoSrc && (
@@ -119,15 +119,17 @@ export function PendingPaymentSection({ initialOrders, userId }: Props) {
                             className="h-4 w-auto max-w-[36px] shrink-0 object-contain"
                           />
                         )}
-                        <span className="text-[11px] font-semibold text-[#5c5c5c]">
+                        <span className="text-[11px] font-semibold text-steel-700">
                           {methodLabel}
                         </span>
                       </div>
                     )}
                     {ref && refLabel && (
                       <div className={`flex items-center gap-2 ${methodLabel ? "mt-1" : ""}`}>
-                        <span className="shrink-0 text-[10px] text-[#7a7a7a]">{refLabel}:</span>
-                        <span className="min-w-0 truncate font-mono text-[12px] font-semibold text-[#1d1d1f] select-all">
+                        <span className="shrink-0 text-[10px] text-muted-foreground">
+                          {refLabel}:
+                        </span>
+                        <span className="min-w-0 truncate font-mono text-[12px] font-semibold text-foreground select-all">
                           {ref}
                         </span>
                       </div>
@@ -135,7 +137,7 @@ export function PendingPaymentSection({ initialOrders, userId }: Props) {
                   </div>
                 )}
                 <div className="mt-3 flex items-center justify-between gap-3">
-                  <p className="text-[16px] font-bold text-[#1d1d1f] tabular-nums">
+                  <p className="text-[16px] font-bold text-foreground tabular-nums">
                     {formatRupiah(o.total)}
                   </p>
                   <Button

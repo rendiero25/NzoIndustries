@@ -78,14 +78,14 @@ export default async function ShippingLabelPage({ params }: Props) {
   const host = appHost();
 
   return (
-    <div className="min-h-screen bg-[#f5f5f7] py-8 print:min-h-0 print:bg-white print:py-0">
+    <div className="min-h-screen bg-muted py-8 print:min-h-0 print:bg-white print:py-0">
       {/* Ukuran kertas A5 hanya bisa diatur lewat @page — tidak ada padanan className. */}
       <style>{"@page { size: A5 portrait; margin: 0; }"}</style>
 
       <div className="mx-auto mb-4 flex w-[148mm] max-w-full items-center justify-between gap-3 px-4 sm:px-0 print:hidden">
         <Link
           href={`/admin/orders/${order.id}`}
-          className="inline-flex items-center gap-1.5 text-sm text-[#5c5c5c] hover:text-[#1d1d1f]"
+          className="inline-flex items-center gap-1.5 text-sm text-steel-700 hover:text-foreground"
         >
           <ArrowLeft size={14} />
           Kembali ke pesanan
@@ -149,7 +149,7 @@ export default async function ShippingLabelPage({ params }: Props) {
           {awb ? (
             <>
               <Code128Barcode value={awb} barHeight={40} className="mx-auto mt-1 h-[20mm] w-full" />
-              <p className="mt-1 font-mono text-[17px] font-bold tracking-wider">{awb}</p>
+              <p className="mt-1 font-mono text-base font-bold tracking-wider">{awb}</p>
             </>
           ) : (
             <p className="py-5 text-[13px] font-bold uppercase">Resi belum terbit</p>

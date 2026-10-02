@@ -8,7 +8,7 @@ export function lowStockAlertHtml(params: {
   orderNumber: string;
   appUrl: string;
 }): string {
-  const urgencyColor = params.stock === 0 ? "#EA5329" : params.stock <= 2 ? "#e6a817" : "#3d3d3d";
+  const urgencyColor = params.stock === 0 ? "#000000" : params.stock <= 2 ? "#e6a817" : "#3d3d3d";
   const urgencyLabel = params.stock === 0 ? "HABIS" : params.stock <= 2 ? "KRITIS" : "MENIPIS";
 
   const body = `

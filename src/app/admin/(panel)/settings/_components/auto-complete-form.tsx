@@ -43,7 +43,7 @@ export function AutoCompleteForm({ initialValue }: AutoCompleteFormProps) {
           min={1}
           value={days}
           onChange={(e) => setDays(e.target.value)}
-          className="h-10 w-full max-w-[7rem] rounded-lg border-[#e0e0e0] text-sm sm:w-28"
+          className="h-10 w-full max-w-[7rem] rounded-lg border-border text-sm sm:w-28"
         />
       </div>
       <Button

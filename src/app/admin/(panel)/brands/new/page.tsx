@@ -20,7 +20,7 @@ export default function NewBrandPage() {
       <div>
         <p className="text-swiss-eyebrow">Katalog</p>
         <h1 className="text-[34px] font-semibold text-foreground uppercase">Tambah Merek</h1>
-        <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+        <p className="mt-1 text-base leading-[1.47] text-foreground">
           Buat merek baru untuk dihubungkan ke produk.
         </p>
       </div>

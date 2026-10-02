@@ -27,7 +27,7 @@ export default async function AdminCouponsPage() {
         <div>
           <p className="text-swiss-eyebrow">Pemasaran</p>
           <h1 className="text-[34px] font-semibold text-foreground uppercase">Kupon</h1>
-          <p className="mt-1 text-[17px] leading-[1.47] text-foreground">{rows.length} kupon</p>
+          <p className="mt-1 text-base leading-[1.47] text-foreground">{rows.length} kupon</p>
         </div>
         <Button asChild variant="primary" size="sm" className="shrink-0 gap-2">
           <Link href="/admin/coupons/new">

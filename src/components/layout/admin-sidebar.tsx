@@ -223,7 +223,7 @@ function NavAdmin() {
                 onClick={handleLogout}
                 className={cn(
                   HEADER_DROPDOWN_MENU_ITEM_CLASS,
-                  "border-t border-[#e0e0e0] text-destructive focus:bg-destructive/10 focus:text-destructive",
+                  "border-t border-border text-destructive focus:bg-destructive/10 focus:text-destructive",
                 )}
               >
                 <LogOut className="size-4" />

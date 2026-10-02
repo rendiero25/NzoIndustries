@@ -15,7 +15,7 @@ export function ProductDetailMoreChoicesSection({
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-24">
         <h2
           id="more-choices-heading"
-          className="mb-10 text-[clamp(1.25rem,3vw,1.5rem)] font-semibold text-[#1d1d1f]"
+          className="mb-10 text-[clamp(1.25rem,3vw,1.5rem)] font-semibold text-foreground"
         >
           Mungkin kamu suka ini!
         </h2>
@@ -25,7 +25,7 @@ export function ProductDetailMoreChoicesSection({
               <HomeProductTile
                 product={p}
                 layout="promoRow"
-                className="h-full overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white"
+                className="h-full overflow-hidden rounded-2xl border border-border bg-white"
               />
             </div>
           ))}

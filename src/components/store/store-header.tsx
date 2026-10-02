@@ -386,7 +386,7 @@ export function StoreHeader({
                         {avatarUrl ? (
                           <AvatarImage src={avatarUrl} alt="" referrerPolicy="no-referrer" />
                         ) : null}
-                        <AvatarFallback className="bg-[#1d1d1f] text-[10px] font-black text-white">
+                        <AvatarFallback className="bg-primary text-[10px] font-black text-white">
                           {userInitials}
                         </AvatarFallback>
                       </Avatar>
@@ -432,7 +432,7 @@ export function StoreHeader({
                         disabled={isLoggingOut}
                         className={cn(
                           HEADER_DROPDOWN_MENU_ITEM_CLASS,
-                          "border-t border-[#e0e0e0] text-destructive focus:bg-destructive/10 focus:text-destructive",
+                          "border-t border-border text-destructive focus:bg-destructive/10 focus:text-destructive",
                         )}
                       >
                         <LogOut size={14} />

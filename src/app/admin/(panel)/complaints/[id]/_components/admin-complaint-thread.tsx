@@ -68,7 +68,7 @@ export function AdminComplaintThread({
               <div
                 className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed ${
                   isAdmin
-                    ? "rounded-br-sm bg-[#EA5329] text-white"
+                    ? "rounded-br-sm bg-primary text-white"
                     : "rounded-bl-sm bg-muted text-foreground"
                 }`}
               >

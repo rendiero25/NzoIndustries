@@ -29,7 +29,7 @@ export default async function FlashSalePage({ params }: Props) {
 
   return (
     <>
-      <nav aria-label="Breadcrumb" className="border-b border-[#e0e0e0] bg-white py-3">
+      <nav aria-label="Breadcrumb" className="border-b border-border bg-white py-3">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-24">
           <ol className="scrollbar-none flex min-w-0 items-center gap-2 overflow-x-auto py-1 text-[13px]">
             <li className="flex items-center gap-2">
@@ -41,7 +41,7 @@ export default async function FlashSalePage({ params }: Props) {
               </Link>
             </li>
             <li className="flex items-center gap-2">
-              <span className="text-[#c8c8cc]" aria-hidden>
+              <span className="text-steel-200" aria-hidden>
                 /
               </span>
               <span className="font-medium text-foreground" aria-current="page">

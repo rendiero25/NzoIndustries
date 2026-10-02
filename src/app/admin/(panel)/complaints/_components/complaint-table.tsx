@@ -75,7 +75,7 @@ export function ComplaintTable({ complaints, page, totalPages }: ComplaintTableP
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#e0e0e0] bg-muted/30">
+              <tr className="border-b border-border bg-muted/30">
                 <th className="px-4 py-3 text-left text-[10px] font-semibold text-foreground uppercase">
                   Pelanggan
                 </th>
@@ -99,7 +99,7 @@ export function ComplaintTable({ complaints, page, totalPages }: ComplaintTableP
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#e0e0e0]">
+            <tbody className="divide-y divide-border">
               {complaints.map((complaint) => {
                 const statusCfg = STATUS_CONFIG[complaint.status] ?? {
                   label: complaint.status,
@@ -109,7 +109,7 @@ export function ComplaintTable({ complaints, page, totalPages }: ComplaintTableP
                 return (
                   <tr key={complaint.id} className="transition-colors hover:bg-muted/30">
                     <td className="px-4 py-3">
-                      <span className="text-[17px] font-medium">
+                      <span className="text-base font-medium">
                         {complaint.profiles?.full_name ?? "—"}
                       </span>
                     </td>

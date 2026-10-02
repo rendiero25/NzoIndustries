@@ -3,13 +3,18 @@
 @import "shadcn/tailwind.css";
 @import "sonner/dist/styles.css";
 
-@theme inline {
-  /* Font — mapping ke CSS vars yang di-inject Next.js font */
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-geist-sans);
+/* Dark mode hanya dipakai dashboard admin (design-system.md §2). */
+@custom-variant dark (&:is(.dark *));
 
-  /* Warna semantik */
+/* ============================================================
+   NZO Industries — design tokens (design-system.md §2–4, §8)
+   Hitam/putih dari logo + satu aksen `signal` (lampu sein).
+   ============================================================ */
+@theme inline {
+  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+
+  /* shadcn semantic */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -30,14 +35,12 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* Chart */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  /* Sidebar */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -47,59 +50,86 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  /* Easing — Emil-style strong ease-out for button press feedback */
-  --transition-timing-function-spring: cubic-bezier(0.23, 1, 0.32, 1);
+  /* Palet brand (nama sesuai design-system.md) */
+  --color-brand-black: #000000;
+  --color-asphalt: #1e1f22;
+  --color-asphalt-raised: #26282c;
+  --color-steel-50: #f4f5f6;
+  --color-steel-200: #e3e5e8;
+  --color-steel-500: #6b7079;
+  --color-steel-700: #3a3d42;
+  --color-signal: #ffb300;
+  --color-signal-hover: #e6a100;
+  --color-signal-soft: #fff4d6;
 
-  /* Radius */
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  /* Semantik status (bukan dekorasi) */
+  --color-success: #1f8a4c;
+  --color-danger: #d92d20;
+  --color-info: #2563eb;
+  --color-warning: #b54708;
+  --color-rating: #ffb300;
 
-  /* GeekyTech Swiss — brand & palette */
-  --color-brand: #ea5329;
-  --color-brand-hover: #d44820;
+  /* Kompatibilitas class lama: "brand" sekarang = hitam NZO */
+  --color-brand: #000000;
+  --color-brand-hover: #3a3d42;
   --color-brand-foreground: #ffffff;
-  --color-rating: oklch(0.8 0.15 83);
   --color-swiss-black: #000000;
   --color-swiss-white: #ffffff;
-  --color-swiss-gray-100: oklch(0.97 0 0);
-  --color-swiss-gray-200: oklch(0.93 0 0);
-  --color-swiss-gray-300: oklch(0.87 0 0);
-  --color-swiss-gray-500: oklch(0.6 0 0);
-  --color-swiss-gray-700: oklch(0.38 0 0);
-  --color-swiss-gray-900: oklch(0.15 0 0);
+  --color-swiss-gray-100: #f4f5f6;
+  --color-swiss-gray-200: #e3e5e8;
+  --color-swiss-gray-300: #e3e5e8;
+  --color-swiss-gray-500: #6b7079;
+  --color-swiss-gray-700: #3a3d42;
+  --color-swiss-gray-900: #1e1f22;
 
-  /* Spacing Swiss — base 4px */
-  --spacing-px: 1px;
-  --spacing-0: 0;
-  --spacing-1: 0.25rem;
-  --spacing-2: 0.5rem;
-  --spacing-3: 0.75rem;
-  --spacing-4: 1rem;
-  --spacing-5: 1.25rem;
-  --spacing-6: 1.5rem;
-  --spacing-8: 2rem;
-  --spacing-10: 2.5rem;
-  --spacing-12: 3rem;
-  --spacing-16: 4rem;
-  --spacing-20: 5rem;
-  --spacing-24: 6rem;
-  --spacing-32: 8rem;
+  /* Radius berjenjang (§4) */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-4xl: 28px;
 
-  /* Swiss container max-widths */
-  --container-sm: 640px;
-  --container-md: 768px;
-  --container-lg: 1024px;
-  --container-xl: 1280px;
+  /* Tipografi (§3) */
+  --text-display: 2.25rem;
+  --text-display--line-height: 2.5rem;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+
+  /* Motion (§8) */
+  --ease-out-nzo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-nzo: cubic-bezier(0.4, 0, 1, 1);
+  --transition-timing-function-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-base: 300ms;
+  --duration-slow: 500ms;
+
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+
   --container-2xl: 1440px;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
 }
 
 :root {
-  /* Swiss: putih, hitam, aksen #EA5329 */
   --background: #ffffff;
   --foreground: #000000;
   --card: #ffffff;
@@ -108,33 +138,66 @@
   --popover-foreground: #000000;
   --primary: #000000;
   --primary-foreground: #ffffff;
-  --secondary: oklch(0.97 0 0);
+  --secondary: #f4f5f6;
   --secondary-foreground: #000000;
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.45 0 0);
-  --accent: #ea5329;
-  --accent-foreground: #ffffff;
-  --destructive: oklch(0.55 0.22 27);
+  --muted: #f4f5f6;
+  --muted-foreground: #6b7079;
+  --accent: #ffb300;
+  --accent-foreground: #000000;
+  --destructive: #d92d20;
   --destructive-foreground: #ffffff;
-  --border: #000000;
-  --input: oklch(0.92 0 0);
-  --ring: #ea5329;
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: #ffffff;
+  --border: #e3e5e8;
+  --input: #e3e5e8;
+  --ring: #000000;
+  --chart-1: #000000;
+  --chart-2: #ffb300;
+  --chart-3: #6b7079;
+  --chart-4: #1f8a4c;
+  --chart-5: #2563eb;
+  --radius: 12px;
+  --sidebar: #f4f5f6;
   --sidebar-foreground: #000000;
   --sidebar-primary: #000000;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: rgba(234, 83, 41, 0.25);
-  --sidebar-accent-foreground: #ea5329;
-  --sidebar-border: #e0e0e0;
-  --sidebar-ring: #ea5329;
-  --toast-border: #e0e0e0;
-  --toast-description: #7a7a7a;
+  --sidebar-accent: #e3e5e8;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #e3e5e8;
+  --sidebar-ring: #000000;
+  --toast-border: #e3e5e8;
+  --toast-description: #6b7079;
+}
+
+/* Dashboard admin dark mode (§2). Storefront selalu light. */
+.dark {
+  --background: #1e1f22;
+  --foreground: #ffffff;
+  --card: #26282c;
+  --card-foreground: #ffffff;
+  --popover: #26282c;
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: #000000;
+  --secondary: #26282c;
+  --secondary-foreground: #ffffff;
+  --muted: #26282c;
+  --muted-foreground: #a3a8b0;
+  --accent: #ffb300;
+  --accent-foreground: #000000;
+  --border: #3a3d42;
+  --input: #3a3d42;
+  --ring: #ffffff;
+  --chart-1: #ffffff;
+  --chart-3: #a3a8b0;
+  --sidebar: #17181a;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #26282c;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #3a3d42;
+  --sidebar-ring: #ffffff;
+  --toast-border: #3a3d42;
+  --toast-description: #a3a8b0;
 }
 
 @layer base {
@@ -155,241 +218,228 @@
 
   body {
     @apply bg-background text-foreground;
+    font-size: 1rem;
+    line-height: 1.625;
   }
 
-  /* Interaktif — pointer konsisten untuk tautan & tombol */
   a[href],
   button:not(:disabled) {
     @apply cursor-pointer;
   }
 
-  /* Swiss Style — heading hierarchy */
+  /* Skala heading §3: sentence case, -0.02em, bobot 600–800 */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    @apply font-heading leading-tight font-black;
+    @apply font-heading text-balance;
+    letter-spacing: -0.02em;
   }
-
   h1 {
-    @apply text-4xl sm:text-5xl;
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: 700;
   }
   h2 {
-    @apply text-3xl sm:text-4xl;
+    font-size: 1.5rem;
+    line-height: 1.875rem;
+    font-weight: 700;
   }
   h3 {
-    @apply text-2xl sm:text-3xl;
+    font-size: 1.375rem;
+    line-height: 1.75rem;
+    font-weight: 600;
   }
   h4 {
-    @apply text-xl sm:text-2xl;
+    font-size: 1.125rem;
+    line-height: 1.625rem;
+    font-weight: 600;
   }
-  h5 {
-    @apply text-lg sm:text-xl;
-  }
+  h5,
   h6 {
-    @apply text-base sm:text-lg;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+  }
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 2.5rem;
+      line-height: 3rem;
+    }
+    h2 {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+    }
   }
 
-  /* Focus visible — Swiss tepi tegas */
+  /* Fokus keyboard: ring 2px + offset (§13) */
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-ring;
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 
-  /* Scrollbar Swiss */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    @apply bg-muted;
-  }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/30;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/60;
-  }
-
-  /* Selection */
   ::selection {
-    background-color: #ea5329;
-    color: #ffffff;
+    background-color: var(--color-signal);
+    color: #000000;
+  }
+
+  /* Reduced motion: matikan transform/animasi, sisakan perubahan instan (§8) */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
 @layer components {
-  /* Tombol/link dengan latar --color-swiss-black → hover brand */
-  button.bg-swiss-black:not(:disabled):hover,
-  a.bg-swiss-black:hover,
-  input[type="submit"].bg-swiss-black:not(:disabled):hover,
-  input[type="button"].bg-swiss-black:not(:disabled):hover {
-    background-color: var(--color-brand);
-    color: var(--color-brand-foreground);
+  /* Kontainer storefront §4: maks 1280px, padding 16/24/32 */
+  .nzo-container {
+    @apply mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8;
   }
 
-  button.bg-swiss-black:not(:disabled),
-  a.bg-swiss-black,
-  input[type="submit"].bg-swiss-black:not(:disabled),
-  input[type="button"].bg-swiss-black:not(:disabled) {
-    transition-property: color, background-color, border-color, opacity;
-    transition-duration: 150ms;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  /* Admin panel — design.mdc: {colors.canvas-parchment} canvas, store-utility-card grammar */
+  /* Kelas admin lama didefinisikan ulang ke token NZO */
   .admin-shell {
-    @apply min-h-screen bg-[#f5f5f7];
+    @apply min-h-screen bg-background;
   }
-
   .admin-sidebar-surface {
-    @apply flex h-screen w-60 flex-col border-r border-[#e0e0e0] bg-card;
+    @apply flex h-screen w-60 flex-col border-r border-sidebar-border bg-sidebar;
   }
-
   .admin-topbar-surface {
-    @apply border-b border-[#e0e0e0] bg-card/85 backdrop-blur-md backdrop-saturate-150;
+    @apply border-b border-border bg-background;
   }
-
   .admin-utility-card {
-    @apply rounded-2xl border border-[#e0e0e0] bg-card text-card-foreground;
+    @apply rounded-lg border border-border bg-card text-card-foreground;
   }
-
   .admin-utility-card-header {
-    @apply flex items-center justify-between border-b border-[#e0e0e0] px-5 py-3;
+    @apply flex items-center justify-between border-b border-border px-5 py-3;
   }
-
   .admin-section-title {
-    @apply text-[14px] font-semibold text-foreground;
+    @apply text-sm font-semibold text-foreground;
   }
-
   .admin-text-link {
-    @apply text-[17px] leading-[1.47] font-normal tracking-[-0.374px] text-brand transition-colors hover:text-brand-hover;
+    @apply text-base font-medium text-foreground underline underline-offset-4 transition-colors hover:text-steel-700;
   }
 
-  /* Sonner — shadcn cn-toast, soft hairline (bukan border Swiss hitam) */
+  /* Sonner §9 */
   [data-sonner-toaster] {
     --normal-bg: var(--popover);
     --normal-text: var(--popover-foreground);
     --normal-border: var(--toast-border);
     --border-radius: var(--radius-lg);
+    font-family: var(--font-sans);
   }
-
   .cn-toast {
     border-color: var(--toast-border) !important;
     background: var(--popover) !important;
     color: var(--popover-foreground) !important;
-    box-shadow: 0 4px 12px rgb(0 0 0 / 0.08) !important;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.08) !important;
   }
-
   .cn-toast-description {
     color: var(--toast-description) !important;
     opacity: 1 !important;
   }
-
   .cn-toast-action {
     @apply rounded-md bg-primary text-primary-foreground;
   }
-
   .cn-toast-cancel {
     @apply rounded-md bg-muted text-muted-foreground;
   }
 }
 
 /* ============================================================
-   Swiss Typography Utilities
+   Utilitas tipografi. Nama lama (swiss-*) dipertahankan agar halaman
+   starter ikut berubah; isinya mengikuti skala NZO (sentence case).
    ============================================================ */
 @layer utilities {
-  /* Display — headline besar halaman */
+  .text-display,
   .text-swiss-display {
-    font-size: clamp(2.5rem, 8vw, 5rem);
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -0.04em;
     font-family: var(--font-heading);
-    text-transform: uppercase;
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  @media (min-width: 768px) {
+    .text-display,
+    .text-swiss-display {
+      font-size: 3.5rem;
+      line-height: 3.75rem;
+    }
   }
 
-  /* Section heading */
   .text-swiss-heading {
-    font-size: clamp(1.75rem, 4vw, 2.5rem);
-    font-weight: 900;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
     font-family: var(--font-heading);
-    text-transform: uppercase;
+    font-size: 1.5rem;
+    line-height: 1.875rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  @media (min-width: 768px) {
+    .text-swiss-heading {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+    }
   }
 
-  /* Eyebrow / label kecil di atas heading */
-  .text-swiss-eyebrow {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
+  .text-swiss-eyebrow,
+  .text-swiss-label {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 500;
     @apply text-muted-foreground;
   }
 
-  /* Label form / badge / chip */
-  .text-swiss-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-  }
-
-  /* Body copy nyaman dibaca */
   .text-swiss-body {
     font-size: 1rem;
-    line-height: 1.65;
+    line-height: 1.625;
     font-weight: 400;
   }
 
-  /* Price tag */
+  .text-price,
   .text-swiss-price {
-    font-size: 1.5rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
   }
 
-  /* Brand color utilities */
-  .text-brand {
-    color: #ea5329;
-  }
-  .bg-brand {
-    background-color: #ea5329;
-  }
-  .border-brand {
-    border-color: #ea5329;
-  }
-  .ring-brand {
-    --tw-ring-color: #ea5329;
+  .tabular {
+    font-variant-numeric: tabular-nums;
   }
 
-  /* Swiss divider — garis tegas */
   .swiss-divider {
-    @apply border-t border-foreground;
+    @apply border-t border-border;
   }
-
-  /* Swiss box — kotak dengan border tegas */
   .swiss-box {
-    @apply rounded-none border border-foreground;
+    @apply rounded-lg border border-border;
   }
-
-  /* Swiss grid — 12 kolom ketat */
   .swiss-grid {
     display: grid;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: 1rem;
   }
 
-  /* Transition standar */
   .transition-swiss {
     transition-property: color, background-color, border-color, opacity, transform;
-    transition-duration: 150ms;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: var(--duration-fast);
+    transition-timing-function: var(--ease-out-nzo);
   }
 
-  /* Scroll horizontal tanpa bilah (nav kategori, tab) */
+  /* Tekan tombol: scale 0.97 (§8) */
+  .press {
+    transition: transform var(--duration-instant) var(--ease-out-nzo);
+  }
+  .press:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
   .scrollbar-none {
     scrollbar-width: none;
     -ms-overflow-style: none;

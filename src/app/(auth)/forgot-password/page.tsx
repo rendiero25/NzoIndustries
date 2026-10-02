@@ -110,15 +110,15 @@ export default function ForgotPasswordPage() {
   if (isSent) {
     return (
       <div className="space-y-10">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#EA5329]/10">
-          <MailCheck className="text-[#EA5329]" size={28} />
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+          <MailCheck className="text-foreground" size={28} />
         </div>
 
         <div className="space-y-3">
-          <h1 className="text-[28px] leading-[1.14] font-semibold text-[#1d1d1f]">
+          <h1 className="text-[28px] leading-[1.14] font-semibold text-foreground">
             Cek Email Kamu
           </h1>
-          <p className="text-[17px] leading-[1.47] font-normal text-[#1d1d1f]">
+          <p className="text-base leading-[1.47] font-normal text-foreground">
             Link reset password telah dikirim ke <span className="font-semibold">{sentEmail}</span>.
             Cek inbox dan folder spam kamu.
           </p>
@@ -154,17 +154,17 @@ export default function ForgotPasswordPage() {
   return (
     <div className="space-y-10">
       <div className="space-y-2">
-        <h1 className="text-[28px] leading-[1.14] font-semibold text-[#1d1d1f]">
+        <h1 className="text-[28px] leading-[1.14] font-semibold text-foreground">
           Lupa Kata Sandi?
         </h1>
-        <p className="text-[17px] leading-[1.47] font-normal text-[#1d1d1f]">
+        <p className="text-base leading-[1.47] font-normal text-foreground">
           Masukkan emailmu dan kami kirimkan link untuk membuat kata sandi baru.
         </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-[14px] leading-[1.43] font-normal text-[#1d1d1f]">
+          <Label htmlFor="email" className="text-[14px] leading-[1.43] font-normal text-foreground">
             Email
           </Label>
           <Input
@@ -192,7 +192,7 @@ export default function ForgotPasswordPage() {
 
       <Link
         href="/login"
-        className="flex items-center gap-2 text-[14px] leading-[1.43] font-normal text-[#7a7a7a] transition-colors hover:text-[#1d1d1f]"
+        className="flex items-center gap-2 text-[14px] leading-[1.43] font-normal text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft size={14} />
         Kembali ke halaman masuk

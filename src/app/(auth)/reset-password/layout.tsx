@@ -11,7 +11,7 @@ export default function ResetPasswordLayout({ children }: { children: React.Reac
             <br />
             sandi baru.
             <br />
-            <span className="text-[#EA5329] normal-case">NZO Industries.</span>
+            <span className="text-foreground normal-case">NZO Industries.</span>
           </p>
           <p className="mt-6 max-w-md text-[16px] leading-relaxed font-normal text-white lg:max-w-xs">
             Pilih kata sandi yang kuat untuk melindungi akunmu.

@@ -43,7 +43,7 @@ export function AWBForm({ orderId, currentAWB }: AWBFormProps) {
     return (
       <div className="space-y-1.5">
         <Label className={labelClass}>Nomor Resi (AWB)</Label>
-        <div className="flex h-10 items-center gap-2 rounded-lg border border-[#e0e0e0] bg-muted/40 px-3">
+        <div className="flex h-10 items-center gap-2 rounded-lg border border-border bg-muted/40 px-3">
           <Package size={13} className="shrink-0 text-muted-foreground" />
           <span className="flex-1 font-mono text-sm font-semibold">{currentAWB}</span>
           <Lock size={12} className="shrink-0 text-muted-foreground" />
@@ -62,7 +62,7 @@ export function AWBForm({ orderId, currentAWB }: AWBFormProps) {
           ref={inputRef}
           id="awb"
           placeholder="Masukkan nomor resi..."
-          className="h-10 rounded-lg border-[#e0e0e0] font-mono text-sm"
+          className="h-10 rounded-lg border-border font-mono text-sm"
           disabled={isPending}
           onBlur={save}
           onKeyDown={handleKeyDown}

@@ -47,7 +47,7 @@ export function NotificationsPanel({ items }: { items: Row[] }) {
   return (
     <div className="w-full space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-[#5c5c5c]">
+        <p className="text-sm text-steel-700">
           {items.filter((i) => !i.is_read).length} belum dibaca
         </p>
         <Button
@@ -72,19 +72,21 @@ export function NotificationsPanel({ items }: { items: Row[] }) {
           Tandai semua dibaca
         </Button>
       </div>
-      <ul className="divide-y divide-[#e0e0e0] rounded-xl border border-[#e0e0e0] bg-white">
+      <ul className="divide-y divide-border rounded-xl border border-border bg-white">
         {items.map((n) => {
           const url = getNotificationUrl(n.type, n.data);
           return (
-            <li key={n.id} className={`px-4 py-4 ${n.is_read ? "bg-white" : "bg-[#fafafa]"}`}>
+            <li key={n.id} className={`px-4 py-4 ${n.is_read ? "bg-white" : "bg-muted"}`}>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <span className="mb-1 inline-block rounded-full bg-[#f5f5f7] px-2 py-0.5 text-[10px] font-semibold text-[#7a7a7a] uppercase">
+                  <span className="mb-1 inline-block rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold text-muted-foreground uppercase">
                     {getNotificationTypeLabel(n.type)}
                   </span>
-                  <p className="font-semibold text-[#1d1d1f]">{n.title}</p>
-                  <p className="mt-1 text-sm leading-relaxed text-[#5c5c5c]">{n.body}</p>
-                  <p className="mt-2 text-xs text-[#7a7a7a]">{formatRelativeDate(n.created_at)}</p>
+                  <p className="font-semibold text-foreground">{n.title}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-steel-700">{n.body}</p>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {formatRelativeDate(n.created_at)}
+                  </p>
                 </div>
                 <div className="flex shrink-0 gap-2">
                   {url && (

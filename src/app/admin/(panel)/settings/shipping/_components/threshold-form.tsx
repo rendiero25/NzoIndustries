@@ -36,8 +36,8 @@ export function ThresholdForm({ initialValue }: ThresholdFormProps) {
     <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-end">
       <div className="space-y-1.5">
         <label className={labelClass}>Minimum Pembelian (Rp)</label>
-        <div className="flex h-10 items-center overflow-hidden rounded-lg border border-[#e0e0e0]">
-          <span className="flex h-full items-center border-r border-[#e0e0e0] px-3 text-sm text-muted-foreground">
+        <div className="flex h-10 items-center overflow-hidden rounded-lg border border-border">
+          <span className="flex h-full items-center border-r border-border px-3 text-sm text-muted-foreground">
             Rp
           </span>
           <Input

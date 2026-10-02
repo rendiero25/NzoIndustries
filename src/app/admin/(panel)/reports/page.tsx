@@ -165,7 +165,7 @@ export default async function AdminReportsPage() {
         <div>
           <p className="text-swiss-eyebrow">Analitik</p>
           <h1 className="text-[34px] font-semibold text-foreground uppercase">Laporan</h1>
-          <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+          <p className="mt-1 text-base leading-[1.47] text-foreground">
             Ringkasan performa penjualan
           </p>
         </div>
@@ -225,7 +225,7 @@ export default async function AdminReportsPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#e0e0e0] text-left">
+              <tr className="border-b border-border text-left">
                 {BESTSELLERS_HEADERS.map((h) => (
                   <th
                     key={h}
@@ -236,10 +236,10 @@ export default async function AdminReportsPage() {
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#e0e0e0]">
+            <tbody className="divide-y divide-border">
               {bestSellerList.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-5 py-8 text-center text-[17px] text-foreground">
+                  <td colSpan={4} className="px-5 py-8 text-center text-base text-foreground">
                     Belum ada data penjualan
                   </td>
                 </tr>

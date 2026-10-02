@@ -74,8 +74,8 @@ export function RegisterForm() {
   return (
     <div className="space-y-10">
       <div className="space-y-2">
-        <h1 className="text-[28px] leading-[1.14] font-semibold text-[#1d1d1f]">Buat Akun Baru</h1>
-        <p className="text-[17px] leading-[1.47] font-normal text-[#1d1d1f]">
+        <h1 className="text-[28px] leading-[1.14] font-semibold text-foreground">Buat Akun Baru</h1>
+        <p className="text-base leading-[1.47] font-normal text-foreground">
           Daftar untuk mulai belanja di NZO Industries.
         </p>
       </div>
@@ -85,7 +85,7 @@ export function RegisterForm() {
           <div className="space-y-2">
             <Label
               htmlFor="first_name"
-              className="text-[14px] leading-[1.43] font-normal text-[#1d1d1f]"
+              className="text-[14px] leading-[1.43] font-normal text-foreground"
             >
               Nama Depan
             </Label>
@@ -105,7 +105,7 @@ export function RegisterForm() {
           <div className="space-y-2">
             <Label
               htmlFor="last_name"
-              className="text-[14px] leading-[1.43] font-normal text-[#1d1d1f]"
+              className="text-[14px] leading-[1.43] font-normal text-foreground"
             >
               Nama Belakang
             </Label>
@@ -128,7 +128,7 @@ export function RegisterForm() {
           <div className="space-y-2">
             <Label
               htmlFor="phone"
-              className="text-[14px] leading-[1.43] font-normal text-[#1d1d1f]"
+              className="text-[14px] leading-[1.43] font-normal text-foreground"
             >
               No Telepon
             </Label>
@@ -148,7 +148,7 @@ export function RegisterForm() {
           <div className="space-y-2">
             <Label
               htmlFor="email"
-              className="text-[14px] leading-[1.43] font-normal text-[#1d1d1f]"
+              className="text-[14px] leading-[1.43] font-normal text-foreground"
             >
               Email
             </Label>
@@ -171,7 +171,7 @@ export function RegisterForm() {
           <div className="space-y-2">
             <Label
               htmlFor="password"
-              className="text-[14px] leading-[1.43] font-normal text-[#1d1d1f]"
+              className="text-[14px] leading-[1.43] font-normal text-foreground"
             >
               Kata Sandi
             </Label>
@@ -199,7 +199,7 @@ export function RegisterForm() {
           <div className="space-y-2">
             <Label
               htmlFor="confirm_password"
-              className="text-[14px] leading-[1.43] font-normal text-[#1d1d1f]"
+              className="text-[14px] leading-[1.43] font-normal text-foreground"
             >
               Konfirmasi Kata Sandi
             </Label>
@@ -233,18 +233,18 @@ export function RegisterForm() {
           onError={resetTurnstile}
         />
 
-        <p className="text-[12px] leading-relaxed font-normal text-[#7a7a7a]">
+        <p className="text-[12px] leading-relaxed font-normal text-muted-foreground">
           Dengan mendaftar, kamu setuju dengan{" "}
           <Link
             href="/syarat-ketentuan"
-            className="text-[#EA5329] underline-offset-2 hover:underline"
+            className="text-foreground underline-offset-2 hover:underline"
           >
             Syarat & Ketentuan
           </Link>{" "}
           dan{" "}
           <Link
             href="/kebijakan-privasi"
-            className="text-[#EA5329] underline-offset-2 hover:underline"
+            className="text-foreground underline-offset-2 hover:underline"
           >
             Kebijakan Privasi
           </Link>{" "}
@@ -256,11 +256,11 @@ export function RegisterForm() {
         </Button>
       </form>
 
-      <p className="text-center text-[17px] leading-[1.47] font-normal text-[#1d1d1f]">
+      <p className="text-center text-base leading-[1.47] font-normal text-foreground">
         Sudah punya akun?{" "}
         <Link
           href="/login"
-          className="font-semibold text-[#EA5329] underline-offset-4 transition-colors hover:text-[#d44820] hover:underline"
+          className="font-semibold text-foreground underline-offset-4 transition-colors hover:text-steel-700 hover:underline"
         >
           masuk
         </Link>

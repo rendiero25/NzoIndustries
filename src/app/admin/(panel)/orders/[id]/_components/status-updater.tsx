@@ -80,12 +80,12 @@ export function StatusUpdater({ orderId, currentStatus }: StatusUpdaterProps) {
       )}
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-sm rounded-lg border-[#e0e0e0]">
+        <DialogContent className="max-w-sm rounded-lg border-border">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold uppercase">
               Ubah Status Pesanan
             </DialogTitle>
-            <DialogDescription className="text-[17px] leading-[1.47]">
+            <DialogDescription className="text-base leading-[1.47]">
               Pilih status baru. Perubahan akan dicatat di riwayat.
             </DialogDescription>
           </DialogHeader>
@@ -96,7 +96,7 @@ export function StatusUpdater({ orderId, currentStatus }: StatusUpdaterProps) {
               <select
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value as OrderStatus)}
-                className="h-10 w-full rounded-lg border border-[#e0e0e0] bg-background px-3 text-sm text-foreground focus:ring-2 focus:ring-brand/30 focus:outline-none"
+                className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:ring-2 focus:ring-brand/30 focus:outline-none"
               >
                 <option value="">— Pilih status —</option>
                 {validNext.map((s) => (
@@ -113,7 +113,7 @@ export function StatusUpdater({ orderId, currentStatus }: StatusUpdaterProps) {
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
                 placeholder="Alasan perubahan status..."
-                className="h-20 resize-none rounded-lg border-[#e0e0e0] text-sm"
+                className="h-20 resize-none rounded-lg border-border text-sm"
               />
             </div>
 

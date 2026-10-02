@@ -21,9 +21,9 @@ export default async function ProfilePage() {
 
   return (
     <div className="w-full">
-      <p className="text-[10px] font-bold text-[#7a7a7a] uppercase">Akun</p>
-      <h1 className="mt-2 text-2xl font-bold text-[#1d1d1f] sm:text-3xl">Profil</h1>
-      <p className="mt-2 text-sm text-[#5c5c5c]">{user.email}</p>
+      <p className="text-[10px] font-bold text-muted-foreground uppercase">Akun</p>
+      <h1 className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">Profil</h1>
+      <p className="mt-2 text-sm text-steel-700">{user.email}</p>
       <div className="mt-10">
         <ProfileForm profile={profile} />
       </div>

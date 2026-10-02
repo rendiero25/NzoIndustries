@@ -84,7 +84,7 @@ export function CategoryTable({ rows, page, totalPages, totalCount, perPage }: C
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#e0e0e0] bg-muted/30">
+              <tr className="border-b border-border bg-muted/30">
                 <th className="px-4 py-3 text-left text-[10px] font-semibold text-foreground uppercase">
                   Nama
                 </th>
@@ -102,7 +102,7 @@ export function CategoryTable({ rows, page, totalPages, totalCount, perPage }: C
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#e0e0e0]">
+            <tbody className="divide-y divide-border">
               {rows.map((row) => (
                 <tr key={row.id} className="transition-colors hover:bg-muted/30">
                   <td className="px-4 py-3">
@@ -113,7 +113,7 @@ export function CategoryTable({ rows, page, totalPages, totalCount, perPage }: C
                       <div>
                         <p
                           className={`leading-tight font-semibold ${
-                            row.depth === 0 ? "text-[17px]" : "text-xs text-foreground"
+                            row.depth === 0 ? "text-base" : "text-xs text-foreground"
                           }`}
                         >
                           {row.name}
@@ -185,7 +185,7 @@ export function CategoryTable({ rows, page, totalPages, totalCount, perPage }: C
             >
               <ChevronLeft size={14} />
             </Button>
-            <span className="flex h-8 items-center border-y border-[#e0e0e0] px-3 text-xs font-semibold uppercase">
+            <span className="flex h-8 items-center border-y border-border px-3 text-xs font-semibold uppercase">
               {page} / {totalPages}
             </span>
             <Button

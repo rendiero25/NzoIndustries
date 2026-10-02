@@ -15,7 +15,7 @@ export function ProductsCatalogGrid({ products, hasActiveFilters }: ProductsCata
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
         <div
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-[#f5f5f7]"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-muted"
           aria-hidden
         >
           <SearchX className="h-6 w-6 text-muted-foreground" />

@@ -25,7 +25,7 @@ export function formatWIB(isoDate: string | null | undefined): string {
 export function ctaButton(href: string, label: string): string {
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 4px;">
   <tr>
-    <td style="background:#EA5329;border-radius:10px;">
+    <td style="background:#000000;border-radius:10px;">
       <a href="${href}" style="display:inline-block;padding:13px 30px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;letter-spacing:-0.1px;">${label}</a>
     </td>
   </tr>

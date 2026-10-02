@@ -41,7 +41,7 @@ export function CourierBrandForm({ activeCodes }: CourierBrandFormProps) {
         {BITESHIP_COURIER_BRANDS.map((brand) => (
           <label
             key={brand.code}
-            className="flex cursor-pointer items-center gap-2 rounded-md border border-[#e0e0e0] px-3 py-2 transition-colors hover:border-brand/50"
+            className="flex cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2 transition-colors hover:border-brand/50"
           >
             <Checkbox
               checked={selected.has(brand.code)}
@@ -59,7 +59,7 @@ export function CourierBrandForm({ activeCodes }: CourierBrandFormProps) {
         ))}
       </div>
 
-      <div className="border-t border-[#e0e0e0] pt-6">
+      <div className="border-t border-border pt-6">
         <Button type="button" variant="primary" size="sm" onClick={handleSave} loading={isPending}>
           Simpan
         </Button>

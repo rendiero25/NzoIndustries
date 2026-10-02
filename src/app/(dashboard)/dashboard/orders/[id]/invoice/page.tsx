@@ -30,9 +30,9 @@ export default async function OrderInvoicePage({ params }: { params: Promise<{ i
 
   if (!paidPayment) {
     return (
-      <div className="rounded-xl border border-[#e0e0e0] bg-white p-8 text-center">
-        <p className="text-base font-semibold text-[#1d1d1f]">Invoice belum tersedia</p>
-        <p className="mt-2 text-sm text-[#7a7a7a]">
+      <div className="rounded-xl border border-border bg-white p-8 text-center">
+        <p className="text-base font-semibold text-foreground">Invoice belum tersedia</p>
+        <p className="mt-2 text-sm text-muted-foreground">
           Invoice hanya tersedia setelah pembayaran dikonfirmasi.
         </p>
       </div>

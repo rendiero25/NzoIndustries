@@ -133,7 +133,7 @@ export function FlashSaleTable({ flashSales }: FlashSaleTableProps) {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-[#e0e0e0] bg-muted/30">
+            <tr className="border-b border-border bg-muted/30">
               <th className="px-4 py-3 text-left text-[10px] font-semibold text-foreground uppercase">
                 Nama
               </th>
@@ -154,7 +154,7 @@ export function FlashSaleTable({ flashSales }: FlashSaleTableProps) {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#e0e0e0]">
+          <tbody className="divide-y divide-border">
             {flashSales.map((sale) => {
               const status = getStatus(sale);
               return (

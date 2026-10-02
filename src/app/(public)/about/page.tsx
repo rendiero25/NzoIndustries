@@ -87,36 +87,36 @@ export default async function AboutPage() {
       {/* Hero — light tile */}
       <section className="w-full bg-white px-6 py-20 text-center md:pt-[80px] md:pb-0">
         <div className="mx-auto max-w-[980px]">
-          <p className="mb-4 text-[14px] font-semibold text-[#EA5329]">Tentang Kami</p>
-          <h1 className="mb-6 text-[28px] leading-[1.07] font-semibold text-[#1d1d1f] sm:text-[40px] lg:text-[56px]">
+          <p className="mb-4 text-[14px] font-semibold text-foreground">Tentang Kami</p>
+          <h1 className="mb-6 text-[28px] leading-[1.07] font-semibold text-foreground sm:text-[40px] lg:text-[56px]">
             Gadget terbaik,
             <br className="hidden sm:block" /> di tangan yang tepat.
           </h1>
-          <p className="text-[#1d1d1f][#cccccc] mx-auto max-w-[600px] text-[17px] leading-[1.5] font-light">
+          <p className="text-foreground[#cccccc] mx-auto max-w-[600px] text-base leading-[1.5] font-light">
             NZO Industries hadir untuk memastikan semua orang bisa mengakses teknologi terbaik
             dengan mudah, aman, dan terpercaya.
           </p>
-          <p className="mt-4 mb-6 text-[17px] font-black text-black">
+          <p className="mt-4 mb-6 text-base font-black text-black">
             Dioperasikan oleh {LEGAL_ENTITY_NAME}.
           </p>
         </div>
       </section>
 
       {/* Story — dark tile */}
-      <section className="w-full bg-[#272729] px-6 py-[80px]">
+      <section className="w-full bg-asphalt px-6 py-[80px]">
         <div className="mx-auto grid max-w-[980px] items-center gap-12 md:grid-cols-2">
           <div>
-            <p className="mb-4 text-[14px] font-semibold text-[#FFAD88]">Cerita Kami</p>
+            <p className="mb-4 text-[14px] font-semibold text-steel-200">Cerita Kami</p>
             <h2 className="mb-6 text-[34px] leading-[1.1] font-semibold text-white">
               Berawal dari passion,
               <br /> berkembang bersama kepercayaan.
             </h2>
-            <p className="mb-4 text-[17px] leading-[1.47] font-normal text-[#cccccc]">
+            <p className="mb-4 text-base leading-[1.47] font-normal text-steel-200">
               NZO Industries dimulai dari kecintaan mendalam terhadap teknologi dan keinginan untuk
               berbagi akses ke gadget terbaik dengan harga yang adil. Kami memulai perjalanan di
               Tokopedia dan membangun kepercayaan satu per satu bersama pelanggan kami.
             </p>
-            <p className="text-[17px] leading-[1.47] font-normal text-[#cccccc]">
+            <p className="text-base leading-[1.47] font-normal text-steel-200">
               Kini, dengan lebih dari 23.000 transaksi yang telah diselesaikan, kami hadir dengan
               platform sendiri untuk memberikan pengalaman belanja yang lebih baik — lebih cepat,
               lebih personal, dan lebih terpercaya.
@@ -126,11 +126,11 @@ export default async function AboutPage() {
           {/* Stats grid */}
           <div className="grid grid-cols-2 gap-6">
             {stats.map((stat) => (
-              <div key={stat.label} className="rounded-[18px] bg-[#2a2a2c] p-6 text-center">
+              <div key={stat.label} className="rounded-[18px] bg-primary p-6 text-center">
                 <p className="mb-2 text-[40px] leading-[1.1] font-semibold text-white">
                   {stat.value}
                 </p>
-                <p className="text-[14px] font-normal text-[#cccccc]">{stat.label}</p>
+                <p className="text-[14px] font-normal text-steel-200">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -138,11 +138,11 @@ export default async function AboutPage() {
       </section>
 
       {/* Values — parchment tile */}
-      <section className="bg-[#f5f5f7][#1a1a1a] w-full px-6 py-[80px]">
+      <section className="bg-muted[#1a1a1a] w-full px-6 py-[80px]">
         <div className="mx-auto max-w-[980px]">
           <div className="mb-12 text-center">
-            <p className="mb-4 text-[14px] font-semibold text-[#EA5329]">Nilai Kami</p>
-            <h2 className="text-[34px] leading-[1.1] font-semibold text-[#1d1d1f]">
+            <p className="mb-4 text-[14px] font-semibold text-foreground">Nilai Kami</p>
+            <h2 className="text-[34px] leading-[1.1] font-semibold text-foreground">
               Mengapa memilih NZO Industries?
             </h2>
           </div>
@@ -151,12 +151,12 @@ export default async function AboutPage() {
             {values.map((value) => (
               <div
                 key={value.title}
-                className="bg-white[#272729] border-[#e0e0e0][#3a3a3a] rounded-[18px] border p-6"
+                className="bg-white[#272729] border-border[#3a3a3a] rounded-[18px] border p-6"
               >
-                <h3 className="mb-3 text-[17px] leading-[1.24] font-semibold text-[#1d1d1f]">
+                <h3 className="mb-3 text-base leading-[1.24] font-semibold text-foreground">
                   {value.title}
                 </h3>
-                <p className="text-[#7a7a7a][#cccccc] text-[17px] leading-[1.47] font-normal">
+                <p className="text-muted-foreground[#cccccc] text-base leading-[1.47] font-normal">
                   {value.description}
                 </p>
               </div>
@@ -166,13 +166,13 @@ export default async function AboutPage() {
       </section>
 
       {/* Mission — dark tile */}
-      <section className="w-full bg-[#252527] px-6 py-[80px] text-center">
+      <section className="w-full bg-asphalt px-6 py-[80px] text-center">
         <div className="mx-auto max-w-[680px]">
-          <p className="mb-4 text-[14px] font-semibold text-[#FFAD88]">Misi Kami</p>
+          <p className="mb-4 text-[14px] font-semibold text-steel-200">Misi Kami</p>
           <h2 className="mb-6 text-[34px] leading-[1.1] font-semibold text-white">
             Mendekatkan teknologi ke semua orang.
           </h2>
-          <p className="mx-auto max-w-[560px] text-[17px] leading-[1.5] font-light text-[#cccccc]">
+          <p className="mx-auto max-w-[560px] text-base leading-[1.5] font-light text-steel-200">
             Kami percaya bahwa teknologi yang tepat dapat mengubah cara kamu bekerja, berkreasi, dan
             menikmati hidup. Itulah mengapa kami berkomitmen untuk selalu menghadirkan produk
             terbaik, dukungan tulus, dan pengalaman belanja yang menyenangkan.
@@ -181,10 +181,10 @@ export default async function AboutPage() {
       </section>
 
       {/* Contact Channels — dark tile */}
-      <section id="kontak" className="w-full scroll-mt-20 bg-[#272729] px-6 py-[80px]">
+      <section id="kontak" className="w-full scroll-mt-20 bg-asphalt px-6 py-[80px]">
         <div className="mx-auto max-w-[1440px]">
           <div className="mb-12 text-center">
-            <p className="mb-4 text-[14px] font-semibold text-[#FFAD88]">Cara Menghubungi</p>
+            <p className="mb-4 text-[14px] font-semibold text-steel-200">Cara Menghubungi</p>
             <h2 className="text-[34px] leading-[1.1] font-semibold text-white">
               Pilih cara komunikasi yang paling mudah
             </h2>
@@ -197,16 +197,16 @@ export default async function AboutPage() {
                 <a
                   key={channel.title}
                   href={channel.href ?? undefined}
-                  className="group rounded-[18px] bg-[#2a2a2c] p-6 transition-colors hover:bg-[#333335]"
+                  className="group rounded-[18px] bg-primary p-6 transition-colors hover:bg-primary"
                 >
                   <div className="mb-4">
-                    <Icon className="h-8 w-8 text-[#FFAD88]" />
+                    <Icon className="h-8 w-8 text-steel-200" />
                   </div>
-                  <h3 className="mb-2 text-[17px] font-semibold text-white">{channel.title}</h3>
-                  <p className="mb-3 text-[14px] font-normal text-[#cccccc]">
+                  <h3 className="mb-2 text-base font-semibold text-white">{channel.title}</h3>
+                  <p className="mb-3 text-[14px] font-normal text-steel-200">
                     {channel.description}
                   </p>
-                  <p className="mb-4 text-[14px] font-semibold text-[#FFAD88]">{channel.value}</p>
+                  <p className="mb-4 text-[14px] font-semibold text-steel-200">{channel.value}</p>
                   {channel.label && (
                     <span className="text-[14px] font-normal text-brand transition-colors group-hover:text-brand-hover">
                       {channel.label} →
@@ -223,11 +223,11 @@ export default async function AboutPage() {
       <section className="w-full bg-white px-6 py-[80px]">
         <div className="mx-auto max-w-[600px]">
           <div className="mb-12 text-center">
-            <p className="mb-4 text-[14px] font-semibold text-[#EA5329]">Formulir Kontak</p>
-            <h2 className="mb-3 text-[34px] leading-[1.1] font-semibold text-[#1d1d1f]">
+            <p className="mb-4 text-[14px] font-semibold text-foreground">Formulir Kontak</p>
+            <h2 className="mb-3 text-[34px] leading-[1.1] font-semibold text-foreground">
               Kirim pesan ke kami
             </h2>
-            <p className="text-[#7a7a7a][#cccccc] text-[17px] leading-[1.47] font-normal">
+            <p className="text-muted-foreground[#cccccc] text-base leading-[1.47] font-normal">
               Isi form di bawah dan kami akan membalas dalam waktu singkat.
             </p>
           </div>
@@ -239,10 +239,10 @@ export default async function AboutPage() {
       {/* CTA — white tile */}
       <section className="w-full bg-white px-6 py-[80px] text-center">
         <div className="mx-auto max-w-[680px]">
-          <h2 className="mb-4 text-[40px] leading-[1.1] font-semibold text-[#1d1d1f]">
+          <h2 className="mb-4 text-[40px] leading-[1.1] font-semibold text-foreground">
             Siap eksplor koleksi kami?
           </h2>
-          <p className="text-[#1d1d1f][#cccccc] mb-8 text-[21px] leading-[1.19] font-normal">
+          <p className="text-foreground[#cccccc] mb-8 text-[21px] leading-[1.19] font-normal">
             107 produk tech & gadget original menunggumu.
           </p>
           <div className="flex flex-wrap justify-center gap-4">

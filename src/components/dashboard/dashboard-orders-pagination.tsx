@@ -41,7 +41,7 @@ export function DashboardOrdersPagination({
 
   return (
     <div className="mt-6 flex items-center justify-between gap-2">
-      <p className="text-xs text-[#7a7a7a]">
+      <p className="text-xs text-muted-foreground">
         Halaman {currentPage} dari {totalPages} · {total} pesanan
       </p>
       <div className="flex items-center gap-1">
@@ -63,7 +63,7 @@ export function DashboardOrdersPagination({
 
         {pages.map((p, i) =>
           p === "…" ? (
-            <span key={`ellipsis-${i}`} className="px-1 text-sm text-[#7a7a7a]">
+            <span key={`ellipsis-${i}`} className="px-1 text-sm text-muted-foreground">
               …
             </span>
           ) : (

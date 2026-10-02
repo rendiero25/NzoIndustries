@@ -17,7 +17,7 @@ export default async function MainBannerPage() {
       <div className="flex flex-col gap-2">
         <p className="text-swiss-eyebrow">Promosi</p>
         <h1 className="text-[34px] font-semibold text-foreground uppercase">Main Banner</h1>
-        <p className="text-[17px] leading-[1.47] text-foreground">
+        <p className="text-base leading-[1.47] text-foreground">
           Hero banner utama yang ditampilkan di bagian atas halaman beranda.
         </p>
       </div>

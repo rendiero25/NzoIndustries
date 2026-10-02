@@ -11,7 +11,7 @@ export default function VerifyEmailLayout({ children }: { children: React.ReactN
             <br />
             Cek email kamu.
             <br />
-            <span className="text-[#EA5329] normal-case">NZO Industries.</span>
+            <span className="text-foreground normal-case">NZO Industries.</span>
           </p>
           <p className="mt-6 max-w-md text-[16px] font-normal text-white lg:max-w-xs">
             Satu langkah lagi untuk mulai berbelanja gadget & aksesoris pilihan terbaik.

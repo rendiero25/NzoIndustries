@@ -55,7 +55,7 @@ export function StockVariantsTable({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#e0e0e0] text-left">
+              <tr className="border-b border-border text-left">
                 {["Produk", "Varian", "SKU", "Stok", "Reserved", "Tersedia", "Status"].map((h) => (
                   <th
                     key={h}
@@ -66,7 +66,7 @@ export function StockVariantsTable({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#e0e0e0]">
+            <tbody className="divide-y divide-border">
               {variants.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-5 py-8 text-center text-sm text-foreground">
@@ -136,7 +136,7 @@ export function StockVariantsTable({
             >
               <ChevronLeft size={14} />
             </Button>
-            <span className="flex h-8 items-center border-y border-[#e0e0e0] px-3 text-xs font-semibold uppercase">
+            <span className="flex h-8 items-center border-y border-border px-3 text-xs font-semibold uppercase">
               {page} / {totalPages}
             </span>
             <Button

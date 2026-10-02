@@ -95,19 +95,19 @@ function AdminLoginContent() {
 
           {/* Header */}
           <div className="mb-9">
-            <div className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-[#EA5329]/20 bg-[#EA5329]/6 px-3 py-1.5">
-              <Lock className="h-3 w-3 text-[#EA5329]" strokeWidth={2.5} />
-              <span className="text-[10px] font-bold tracking-[0.14em] text-[#EA5329] uppercase">
+            <div className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-foreground/20 bg-primary/6 px-3 py-1.5">
+              <Lock className="h-3 w-3 text-foreground" strokeWidth={2.5} />
+              <span className="text-[10px] font-bold tracking-[0.14em] text-foreground uppercase">
                 Akses Terbatas
               </span>
             </div>
 
-            <h1 className="text-[28px] leading-[1.1] font-semibold tracking-[-0.374px] text-[#1d1d1f]">
+            <h1 className="text-[28px] leading-[1.1] font-semibold text-foreground">
               Masuk ke
               <br />
               Admin Panel
             </h1>
-            <p className="mt-2.5 text-[14px] leading-[1.47] text-[#7a7a7a]">
+            <p className="mt-2.5 text-[14px] leading-[1.47] text-muted-foreground">
               Gunakan email dan password administrator Anda.
             </p>
           </div>
@@ -121,7 +121,7 @@ function AdminLoginContent() {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="gap-1.5">
-                    <FormLabel className="text-[10px] font-bold tracking-[0.12em] text-[#a0a0a0] uppercase">
+                    <FormLabel className="text-[10px] font-bold tracking-[0.12em] text-muted-foreground uppercase">
                       Email
                     </FormLabel>
                     <FormControl>
@@ -129,7 +129,7 @@ function AdminLoginContent() {
                         type="email"
                         autoComplete="email"
                         placeholder="admin@nzo-industries.test"
-                        className="h-11 rounded-none border-x-0 border-t-0 border-b-2 border-[#e0e0e0] bg-transparent px-0 text-[15px] shadow-none placeholder:text-[#c8c8c8] focus-visible:border-[#1d1d1f] focus-visible:ring-0"
+                        className="h-11 rounded-none border-x-0 border-t-0 border-b-2 border-border bg-transparent px-0 text-[15px] shadow-none placeholder:text-muted-foreground focus-visible:border-foreground focus-visible:ring-0"
                         {...field}
                       />
                     </FormControl>
@@ -144,7 +144,7 @@ function AdminLoginContent() {
                 name="password"
                 render={({ field }) => (
                   <FormItem className="gap-1.5">
-                    <FormLabel className="text-[10px] font-bold tracking-[0.12em] text-[#a0a0a0] uppercase">
+                    <FormLabel className="text-[10px] font-bold tracking-[0.12em] text-muted-foreground uppercase">
                       Password
                     </FormLabel>
                     <FormControl>
@@ -153,7 +153,7 @@ function AdminLoginContent() {
                           type={showPassword ? "text" : "password"}
                           autoComplete="current-password"
                           placeholder="••••••••"
-                          className="h-11 rounded-none border-x-0 border-t-0 border-b-2 border-[#e0e0e0] bg-transparent px-0 pr-10 text-[15px] shadow-none placeholder:text-[#c8c8c8] focus-visible:border-[#1d1d1f] focus-visible:ring-0"
+                          className="h-11 rounded-none border-x-0 border-t-0 border-b-2 border-border bg-transparent px-0 pr-10 text-[15px] shadow-none placeholder:text-muted-foreground focus-visible:border-foreground focus-visible:ring-0"
                           {...field}
                         />
                         <PasswordVisibilityToggle
@@ -181,7 +181,7 @@ function AdminLoginContent() {
               <Button
                 type="submit"
                 loading={isLoading}
-                className="h-11 w-full rounded-none bg-[#1d1d1f] text-[14px] font-semibold tracking-[-0.224px] text-white hover:bg-[#2a2a2c] active:scale-[0.98]"
+                className="h-11 w-full rounded-none bg-primary text-[14px] font-semibold text-white hover:bg-primary active:scale-[0.98]"
               >
                 Masuk ke Admin Panel
               </Button>
@@ -189,10 +189,10 @@ function AdminLoginContent() {
           </Form>
 
           {/* Footer */}
-          <div className="mt-8 border-t border-[#f0f0f0] pt-6">
+          <div className="mt-8 border-t border-border pt-6">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-[13px] text-[#7a7a7a] transition-colors hover:text-[#1d1d1f]"
+              className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               Kembali ke website

@@ -35,12 +35,12 @@ function statusBadgeClasses(status: OrderStatus): string {
     return "bg-red-50 text-red-700 ring-1 ring-red-100";
   }
   if (status === "shipped" || status === "processing" || status === "paid") {
-    return "bg-[#FFF0E8] text-[#b45309] ring-1 ring-[#EA5329]/25";
+    return "bg-muted text-warning ring-1 ring-ring/25";
   }
   if (status === "pending_payment") {
     return "bg-amber-50 text-amber-900 ring-1 ring-amber-100";
   }
-  return "bg-[#f5f5f7] text-[#333333] ring-1 ring-[#e0e0e0]";
+  return "bg-muted text-foreground ring-1 ring-border";
 }
 
 type NotifType = string | null;
@@ -72,7 +72,7 @@ function notifIconBg(type: NotifType): string {
       return "bg-blue-50 text-blue-600";
     case "shipping":
     case "shipment":
-      return "bg-[#FFF0E8] text-[#EA5329]";
+      return "bg-muted text-foreground";
     case "promo":
     case "voucher":
     case "coupon":
@@ -81,7 +81,7 @@ function notifIconBg(type: NotifType): string {
     case "review":
       return "bg-purple-50 text-purple-600";
     default:
-      return "bg-[#f5f5f7] text-[#5c5c5c]";
+      return "bg-muted text-steel-700";
   }
 }
 
@@ -122,10 +122,10 @@ export default async function DashboardOverviewPage() {
 
   return (
     <div className="w-full">
-      <h1 className="text-[28px] leading-[1.14] font-semibold text-[#1d1d1f] sm:text-[32px]">
+      <h1 className="text-[28px] leading-[1.14] font-semibold text-foreground sm:text-[32px]">
         Hi, {firstName}! Selamat datang kembali.
       </h1>
-      <p className="mt-2 text-[17px] leading-[1.47] text-[#5c5c5c]">
+      <p className="mt-2 text-base leading-[1.47] text-steel-700">
         Ringkasan pesanan dan aktivitas akun Anda.
       </p>
 
@@ -162,7 +162,7 @@ export default async function DashboardOverviewPage() {
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/dashboard/orders"
-                className={`${cellCls} overflow-hidden rounded-md bg-[#2a2a2c] p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5`}
+                className={`${cellCls} overflow-hidden rounded-md bg-primary p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5`}
               >
                 {cardBody(
                   "Diproses",
@@ -172,19 +172,19 @@ export default async function DashboardOverviewPage() {
               </Link>
               <Link
                 href="/dashboard/orders?status=shipped"
-                className={`${cellCls} overflow-hidden rounded-md bg-[#272729] p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5`}
+                className={`${cellCls} overflow-hidden rounded-md bg-asphalt p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5`}
               >
                 {cardBody("Dikirim", String(orderStats.shippedCount), "Dalam pengiriman")}
               </Link>
               <Link
                 href="/dashboard/orders?status=completed"
-                className={`${cellCls} overflow-hidden rounded-md bg-[#2a2a2c] p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5`}
+                className={`${cellCls} overflow-hidden rounded-md bg-primary p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5`}
               >
                 {cardBody("Selesai", String(orderStats.completedCount), "Pesanan selesai")}
               </Link>
               <Link
                 href="/dashboard/orders"
-                className={`${cellCls} overflow-hidden rounded-md bg-[#252527] p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5`}
+                className={`${cellCls} overflow-hidden rounded-md bg-asphalt p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5`}
               >
                 {cardBody(
                   "Total belanja",
@@ -198,20 +198,20 @@ export default async function DashboardOverviewPage() {
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/dashboard/orders?status=completed"
-                className={`${cellCls} overflow-hidden rounded-md bg-[#272729] p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5`}
+                className={`${cellCls} overflow-hidden rounded-md bg-asphalt p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5`}
               >
                 {cardBody("Ulasan tertunda", String(pendingReviews), "Pesanan belum diulas")}
               </Link>
               <Link
                 href="/dashboard/wishlist"
-                className={`${cellCls} overflow-hidden rounded-md bg-[#2a2a2c] p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5`}
+                className={`${cellCls} overflow-hidden rounded-md bg-primary p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5`}
               >
                 {cardBody("Wishlist", String(overview.wishlistCount), "Produk tersimpan")}
               </Link>
               {/* Total Pesanan — flex-1, mengisi sisa ruang baris 2 */}
               <Link
                 href="/dashboard/orders"
-                className="min-w-0 flex-1 overflow-hidden rounded-md bg-[#252527] p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5"
+                className="min-w-0 flex-1 overflow-hidden rounded-md bg-asphalt p-4 text-white ring-1 ring-black/5 transition active:scale-[0.99] xl:p-5"
               >
                 {cardBody("Total pesanan", String(orderStats.totalOrders), "Semua waktu")}
               </Link>
@@ -227,12 +227,12 @@ export default async function DashboardOverviewPage() {
         {notifications.length > 0 && (
           <section className="mt-10">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-              <h2 className="text-[21px] leading-[1.19] font-semibold text-[#1d1d1f]">
+              <h2 className="text-[21px] leading-[1.19] font-semibold text-foreground">
                 Notifikasi
               </h2>
               <Link
                 href="/dashboard/notifications"
-                className="text-[14px] font-medium text-[#EA5329] underline-offset-2 hover:underline"
+                className="text-[14px] font-medium text-foreground underline-offset-2 hover:underline"
               >
                 Lihat semua
               </Link>
@@ -243,7 +243,7 @@ export default async function DashboardOverviewPage() {
                   key={n.id}
                   className={cn(
                     "flex items-start gap-3 rounded-2xl border px-4 py-3",
-                    n.is_read ? "border-[#e0e0e0] bg-white" : "border-[#EA5329]/20 bg-[#FFF8F5]",
+                    n.is_read ? "border-border bg-white" : "border-foreground/20 bg-muted",
                   )}
                 >
                   <div
@@ -255,11 +255,11 @@ export default async function DashboardOverviewPage() {
                     {notifIcon(n.type)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[13px] leading-snug font-semibold text-[#1d1d1f]">
+                    <p className="text-[13px] leading-snug font-semibold text-foreground">
                       {n.title}
                     </p>
                     {n.body && (
-                      <p className="mt-0.5 line-clamp-2 text-[12px] leading-relaxed text-[#5c5c5c]">
+                      <p className="mt-0.5 line-clamp-2 text-[12px] leading-relaxed text-steel-700">
                         {n.body}
                       </p>
                     )}
@@ -274,7 +274,7 @@ export default async function DashboardOverviewPage() {
                     </p>
                   </div>
                   {!n.is_read && (
-                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#EA5329]" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary" />
                   )}
                 </li>
               ))}
@@ -286,25 +286,25 @@ export default async function DashboardOverviewPage() {
       {/* Recent orders */}
       <section className="mt-12">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <h2 className="text-[21px] leading-[1.19] font-semibold text-[#1d1d1f]">
+          <h2 className="text-[21px] leading-[1.19] font-semibold text-foreground">
             Pesanan terakhir
           </h2>
           <Link
             href="/dashboard/orders"
-            className="text-[14px] font-medium text-[#EA5329] underline-offset-2 hover:underline"
+            className="text-[14px] font-medium text-foreground underline-offset-2 hover:underline"
           >
             Lihat semua
           </Link>
         </div>
 
         {recentOrders.length === 0 ? (
-          <p className="mt-6 text-[17px] leading-[1.47] text-[#5c5c5c]">Belum ada pesanan.</p>
+          <p className="mt-6 text-base leading-[1.47] text-steel-700">Belum ada pesanan.</p>
         ) : (
-          <ul className="mt-6 flex flex-col divide-y divide-[#f0f0f0] overflow-hidden rounded-2xl border border-[#e0e0e0] bg-white">
+          <ul className="mt-6 flex flex-col divide-y divide-border overflow-hidden rounded-2xl border border-border bg-white">
             {recentOrders.map((o) => (
               <li
                 key={o.id}
-                className="flex flex-col gap-2 px-4 py-3 hover:bg-[#fafafa] motion-safe:transition-colors motion-safe:duration-150 sm:px-5 sm:py-4"
+                className="flex flex-col gap-2 px-4 py-3 hover:bg-muted motion-safe:transition-colors motion-safe:duration-150 sm:px-5 sm:py-4"
               >
                 {complaintOrderIds.has(o.id) && (
                   <div className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-2.5 py-1.5 text-[11px] font-semibold text-amber-800">
@@ -314,7 +314,7 @@ export default async function DashboardOverviewPage() {
                 )}
                 <div className="flex flex-row items-center gap-3 sm:gap-4">
                   {/* Thumbnail */}
-                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-[#e0e0e0] bg-[#f5f5f7] sm:h-16 sm:w-16">
+                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-border bg-muted sm:h-16 sm:w-16">
                     {o.previewImage ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={o.previewImage} alt="" className="h-full w-full object-cover" />
@@ -331,15 +331,15 @@ export default async function DashboardOverviewPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">
-                        <p className="truncate font-mono text-[12px] font-semibold text-[#1d1d1f] sm:text-[13px]">
+                        <p className="truncate font-mono text-[12px] font-semibold text-foreground sm:text-[13px]">
                           {o.order_number}
                         </p>
                         {o.previewName && (
-                          <p className="mt-0.5 truncate text-[12px] text-[#5c5c5c] sm:text-[13px]">
+                          <p className="mt-0.5 truncate text-[12px] text-steel-700 sm:text-[13px]">
                             {o.previewName}
                           </p>
                         )}
-                        <p className="mt-0.5 text-[11px] text-[#7a7a7a]">
+                        <p className="mt-0.5 text-[11px] text-muted-foreground">
                           {formatDate(o.created_at, {
                             day: "numeric",
                             month: "short",
@@ -360,7 +360,7 @@ export default async function DashboardOverviewPage() {
 
                   {/* Total + CTA */}
                   <div className="flex shrink-0 flex-col items-end gap-2">
-                    <p className="text-[13px] font-semibold text-[#1d1d1f] tabular-nums sm:text-[14px]">
+                    <p className="text-[13px] font-semibold text-foreground tabular-nums sm:text-[14px]">
                       {formatRupiah(o.total)}
                     </p>
                     <Button
@@ -384,16 +384,18 @@ export default async function DashboardOverviewPage() {
       {/* Active vouchers */}
       <section className="mt-12">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <h2 className="text-[21px] leading-[1.19] font-semibold text-[#1d1d1f]">Voucher aktif</h2>
+          <h2 className="text-[21px] leading-[1.19] font-semibold text-foreground">
+            Voucher aktif
+          </h2>
           <Link
             href="/dashboard/vouchers"
-            className="text-[14px] font-medium text-[#EA5329] underline-offset-2 hover:underline"
+            className="text-[14px] font-medium text-foreground underline-offset-2 hover:underline"
           >
             Lihat semua
           </Link>
         </div>
         {coupons.length === 0 ? (
-          <p className="mt-6 text-[17px] leading-[1.47] text-[#5c5c5c]">
+          <p className="mt-6 text-base leading-[1.47] text-steel-700">
             Tidak ada promo aktif saat ini.
           </p>
         ) : (
@@ -401,9 +403,9 @@ export default async function DashboardOverviewPage() {
             {coupons.slice(0, 4).map((c) => (
               <li
                 key={c.id}
-                className="flex items-center gap-4 rounded-2xl border border-[#e0e0e0] bg-white p-4"
+                className="flex items-center gap-4 rounded-2xl border border-border bg-white p-4"
               >
-                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-[#FFF0E8]">
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-muted">
                   {c.image_url ? (
                     <Image
                       src={c.image_url}
@@ -414,32 +416,32 @@ export default async function DashboardOverviewPage() {
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
-                      <Tag className="h-6 w-6 text-[#EA5329]" />
+                      <Tag className="h-6 w-6 text-foreground" />
                     </div>
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
                   {c.title && (
-                    <p className="text-[13px] leading-snug font-semibold text-[#1d1d1f]">
+                    <p className="text-[13px] leading-snug font-semibold text-foreground">
                       {c.title}
                     </p>
                   )}
                   <p
                     className={cn(
-                      "font-mono font-black text-[#EA5329]",
+                      "font-mono font-black text-foreground",
                       c.title ? "mt-0.5 text-[13px]" : "text-[15px]",
                     )}
                   >
                     {c.code}
                   </p>
-                  <p className="mt-0.5 text-[13px] text-[#5c5c5c]">
+                  <p className="mt-0.5 text-[13px] text-steel-700">
                     {c.type === "percentage"
                       ? `Diskon ${c.value}%`
                       : `Potongan Rp${c.value.toLocaleString("id-ID")}`}
                     {c.min_purchase > 0 && ` · min. Rp${c.min_purchase.toLocaleString("id-ID")}`}
                   </p>
                   {c.valid_until && (
-                    <p className="mt-0.5 text-[11px] text-[#7a7a7a]">
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">
                       s/d {formatDate(c.valid_until)}
                     </p>
                   )}

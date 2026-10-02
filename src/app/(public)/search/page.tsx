@@ -41,11 +41,13 @@ export default async function SearchPage({ searchParams }: Props) {
     <div className="mx-auto max-w-[1440px] space-y-12 px-4 py-8 sm:px-6 lg:px-24">
       {/* Header */}
       <div>
-        <p className="text-[11px] font-bold tracking-widest text-[#7a7a7a] uppercase">Pencarian</p>
+        <p className="text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
+          Pencarian
+        </p>
         <h1 className="mt-1 text-[28px] leading-tight font-semibold text-foreground uppercase sm:text-[34px]">
           &ldquo;{result.query}&rdquo;
         </h1>
-        <p className="mt-1 text-[15px] text-[#7a7a7a]">
+        <p className="mt-1 text-[15px] text-muted-foreground">
           {isEmpty ? "Tidak ada produk ditemukan" : `${result.totalCount} produk ditemukan`}
         </p>
       </div>
@@ -53,7 +55,7 @@ export default async function SearchPage({ searchParams }: Props) {
       {/* Empty state */}
       {isEmpty && (
         <div className="space-y-4 py-16 text-center">
-          <p className="text-[15px] text-[#7a7a7a]">
+          <p className="text-[15px] text-muted-foreground">
             Coba kata kunci lain, atau lihat semua produk kami.
           </p>
           <Button asChild variant="dark" size="sm" className="text-xs font-bold uppercase">
@@ -66,7 +68,7 @@ export default async function SearchPage({ searchParams }: Props) {
       {result.categories.map((cat) => (
         <section key={cat.id} className="space-y-8">
           <div>
-            <p className="text-[11px] font-bold tracking-widest text-[#7a7a7a] uppercase">
+            <p className="text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
               Kategori
             </p>
             <h2 className="mt-0.5 text-2xl font-semibold text-foreground uppercase">{cat.name}</h2>
@@ -74,7 +76,7 @@ export default async function SearchPage({ searchParams }: Props) {
           <div className="space-y-8">
             {cat.groups.map((group) => (
               <div key={group.brandId} className="space-y-3">
-                <p className="text-[11px] font-bold tracking-widest text-[#7a7a7a] uppercase">
+                <p className="text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
                   {group.brandName}
                 </p>
                 <BrandStoreProductGrid products={group.products} />
@@ -88,7 +90,9 @@ export default async function SearchPage({ searchParams }: Props) {
       {result.brands.map((brand) => (
         <section key={brand.id} className="space-y-4">
           <div>
-            <p className="text-[11px] font-bold tracking-widest text-[#7a7a7a] uppercase">Brand</p>
+            <p className="text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
+              Brand
+            </p>
             <h2 className="mt-0.5 text-2xl font-semibold text-foreground uppercase">
               {brand.name}
             </h2>
@@ -102,7 +106,7 @@ export default async function SearchPage({ searchParams }: Props) {
         <section className="space-y-4">
           {hasMultipleSections && (
             <div>
-              <p className="text-[11px] font-bold tracking-widest text-[#7a7a7a] uppercase">
+              <p className="text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
                 Produk
               </p>
               <h2 className="mt-0.5 text-2xl font-semibold text-foreground uppercase">Lainnya</h2>

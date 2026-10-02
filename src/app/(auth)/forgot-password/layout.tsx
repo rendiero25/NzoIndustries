@@ -11,7 +11,7 @@ export default function ForgotPasswordLayout({ children }: { children: React.Rea
             <br />
             kata sandi.
             <br />
-            <span className="text-[#EA5329] normal-case">NZO Industries.</span>
+            <span className="text-foreground normal-case">NZO Industries.</span>
           </p>
           <p className="mt-6 max-w-md text-[16px] leading-relaxed font-normal text-white lg:max-w-xs">
             Kami akan kirimkan link reset ke emailmu. Proses hanya butuh beberapa detik.

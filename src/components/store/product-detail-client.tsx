@@ -243,11 +243,11 @@ export function ProductDetailClient({
   const currentReview = reviews[reviewIndex] ?? null;
   if (product.variants.length === 0) {
     return (
-      <div className="bg-white px-4 py-20 text-center text-[#1d1d1f]">
-        <p className="text-[17px] text-[#7a7a7a]">Produk ini belum memiliki varian aktif.</p>
+      <div className="bg-white px-4 py-20 text-center text-foreground">
+        <p className="text-base text-muted-foreground">Produk ini belum memiliki varian aktif.</p>
         <Link
           href="/"
-          className="mt-6 inline-block text-[15px] font-semibold text-[#EA5329] hover:underline"
+          className="mt-6 inline-block text-[15px] font-semibold text-foreground hover:underline"
         >
           Kembali ke beranda
         </Link>
@@ -256,7 +256,7 @@ export function ProductDetailClient({
   }
 
   return (
-    <div className="bg-white text-[#1d1d1f]">
+    <div className="bg-white text-foreground">
       {/* Atas: kiri info + galeri, kanan kartu belanja */}
       <section className="py-8">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-24">
@@ -277,7 +277,7 @@ export function ProductDetailClient({
                         priority
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-sm text-[#7a7a7a]">
+                      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
                         Tanpa gambar
                       </div>
                     )}
@@ -324,7 +324,7 @@ export function ProductDetailClient({
                               }}
                               className={cn(
                                 "relative h-16 w-16 shrink-0 overflow-hidden rounded-none border-2 bg-transparent p-0",
-                                isActive ? "border-[#EA5329]" : "border-transparent",
+                                isActive ? "border-foreground" : "border-transparent",
                               )}
                               aria-label={`Gambar ${i + 1}`}
                               aria-current={isActive ? "true" : undefined}
@@ -353,7 +353,7 @@ export function ProductDetailClient({
                     {variant ? ` - ${variant.name}` : ""}
                   </h1>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-semibold text-[#EA5329]">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-semibold text-foreground">
                     <div className="flex items-center gap-1.5">
                       <Truck className="h-4 w-4 shrink-0" aria-hidden />
                       Bebas Ongkir
@@ -365,10 +365,10 @@ export function ProductDetailClient({
                   </div>
 
                   {product.category ? (
-                    <p className="text-sm text-[#1d1d1f]">{product.category.name}</p>
+                    <p className="text-sm text-foreground">{product.category.name}</p>
                   ) : null}
 
-                  <div className="flex flex-wrap items-center gap-2 text-sm text-[#7a7a7a]">
+                  <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                     {product.reviewCount > 0 ? (
                       <>
                         <span className="inline-flex items-center gap-1">
@@ -384,31 +384,31 @@ export function ProductDetailClient({
                             {product.averageRating.toFixed(1)}
                           </span>
                         </span>
-                        <span className="text-[#d4d4d4]">·</span>
+                        <span className="text-steel-200">·</span>
                         <span>({product.reviewCount} rating)</span>
-                        <span className="text-[#d4d4d4]">·</span>
+                        <span className="text-steel-200">·</span>
                       </>
                     ) : null}
-                    <span className="text-[#1d1d1f]">{product.totalSold} terjual</span>
+                    <span className="text-foreground">{product.totalSold} terjual</span>
                   </div>
 
                   <div className="space-y-2 py-2">
                     <p className="text-4xl font-bold">{formatRupiah(unitPrice)}</p>
                     {discountPercent != null && discountPercent > 0 ? (
-                      <div className="flex flex-wrap items-center gap-2 text-[17px]">
-                        <span className="text-[#7a7a7a] line-through">
+                      <div className="flex flex-wrap items-center gap-2 text-base">
+                        <span className="text-muted-foreground line-through">
                           {formatRupiah(listPrice)}
                         </span>
-                        <span className="rounded-full bg-[#EA5329]/10 px-2.5 py-0.5 text-xs font-bold text-[#EA5329]">
+                        <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-bold text-foreground">
                           {discountPercent}% off
                         </span>
                       </div>
                     ) : null}
                   </div>
 
-                  <div className="border-t border-[#f0f0f0] pt-5 pb-2 sm:max-w-sm">
-                    <p className="text-sm font-bold text-[#1d1d1f]">Detail Produk</p>
-                    <p className="mt-2 line-clamp-3 text-sm text-[#1d1d1f]">
+                  <div className="border-t border-border pt-5 pb-2 sm:max-w-sm">
+                    <p className="text-sm font-bold text-foreground">Detail Produk</p>
+                    <p className="mt-2 line-clamp-3 text-sm text-foreground">
                       {description || "Belum ada deskripsi untuk produk ini."}
                     </p>
                     <button
@@ -419,45 +419,45 @@ export function ProductDetailClient({
                           .getElementById("detail-produk-tabs")
                           ?.scrollIntoView({ behavior: "smooth" });
                       }}
-                      className="mt-2 text-xs font-semibold text-[#EA5329]"
+                      className="mt-2 text-xs font-semibold text-foreground"
                     >
                       Lihat Selengkapnya
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 border-t border-[#f0f0f0] pt-2 text-sm sm:max-w-sm">
+                  <div className="grid grid-cols-2 gap-3 border-t border-border pt-2 text-sm sm:max-w-sm">
                     <div>
-                      <p className="text-[#7a7a7a]">Kondisi</p>
+                      <p className="text-muted-foreground">Kondisi</p>
                       <p className="font-medium">
                         {product.condition === "second" ? "Second" : "Baru"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[#7a7a7a]">Min. Pembelian</p>
+                      <p className="text-muted-foreground">Min. Pembelian</p>
                       <p className="font-medium">{product.minOrderQty} pcs</p>
                     </div>
                     {product.brand ? (
                       <div>
-                        <p className="text-[#7a7a7a]">Merek</p>
+                        <p className="text-muted-foreground">Merek</p>
                         <p className="font-medium">{product.brand.name}</p>
                       </div>
                     ) : null}
                     {variant ? (
                       <div>
-                        <p className="text-[#7a7a7a]">Berat Satuan</p>
+                        <p className="text-muted-foreground">Berat Satuan</p>
                         <p className="font-medium">{variant.weight} gram</p>
                       </div>
                     ) : null}
                   </div>
 
-                  <div className="border-t border-[#f0f0f0] pt-5 sm:max-w-sm">
+                  <div className="border-t border-border pt-5 sm:max-w-sm">
                     <button
                       type="button"
                       onClick={() => setShippingDialogOpen(true)}
                       className="flex w-full items-center justify-between gap-3 text-left"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-bold text-[#1d1d1f]">Pilihan Pengiriman</p>
+                        <p className="text-sm font-bold text-foreground">Pilihan Pengiriman</p>
                         <div className="mt-2 flex items-center gap-2.5">
                           {BITESHIP_COURIER_BRANDS.filter((b) => b.logo && !b.onDemand)
                             .slice(0, 6)
@@ -474,7 +474,7 @@ export function ProductDetailClient({
                             ))}
                         </div>
                       </div>
-                      <span className="shrink-0 text-xs font-semibold text-[#EA5329]">
+                      <span className="shrink-0 text-xs font-semibold text-foreground">
                         Lihat Selengkapnya
                       </span>
                     </button>
@@ -485,10 +485,10 @@ export function ProductDetailClient({
 
             {/* Kartu belanja */}
             <aside className="w-full shrink-0 lg:max-w-[21rem] lg:min-w-[19rem] xl:max-w-[22rem] xl:min-w-[20rem]">
-              <div className="rounded-[18px] border border-[#f0e8e4] bg-[#faf5f3] p-5 pb-4 shadow-[0_1px_0_rgba(0,0,0,0.04)] md:p-6 md:pb-5 lg:p-6 lg:pb-5">
+              <div className="rounded-[18px] border border-muted bg-muted p-5 pb-4 shadow-[0_1px_0_rgba(0,0,0,0.04)] md:p-6 md:pb-5 lg:p-6 lg:pb-5">
                 {product.variants.length > 1 ? (
                   <div className="pb-3">
-                    <p className="mb-2 text-xs font-semibold text-[#1d1d1f]">Pilih Varian</p>
+                    <p className="mb-2 text-xs font-semibold text-foreground">Pilih Varian</p>
                     <div className="flex flex-wrap gap-2">
                       {product.variants.map((v) => (
                         <ChoiceChip
@@ -510,7 +510,7 @@ export function ProductDetailClient({
 
                 <div
                   className={cn(
-                    "flex items-center gap-3 border-b border-[#eadfd8] pb-5",
+                    "flex items-center gap-3 border-b border-border pb-5",
                     product.variants.length > 1 && "pt-3",
                   )}
                 >
@@ -527,7 +527,9 @@ export function ProductDetailClient({
                   </div>
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{product.name}</p>
-                    {variant ? <p className="text-xs text-[#7a7a7a]">{variant.name}</p> : null}
+                    {variant ? (
+                      <p className="text-xs text-muted-foreground">{variant.name}</p>
+                    ) : null}
                   </div>
                 </div>
 
@@ -542,7 +544,7 @@ export function ProductDetailClient({
                     onDecrease={() => setQty((q) => clampQty(q - 1))}
                     onIncrease={() => setQty((q) => clampQty(q + 1))}
                   />
-                  <p className="max-w-[14rem] text-right text-xs leading-snug text-[#1d1d1f]">
+                  <p className="max-w-[14rem] text-right text-xs leading-snug text-foreground">
                     {maxQty < 1
                       ? "Stok habis untuk varian ini."
                       : maxQty <= 20
@@ -551,19 +553,19 @@ export function ProductDetailClient({
                   </p>
                 </div>
 
-                <div className="mt-5 space-y-2 border-t border-[#eadfd8] pt-5">
+                <div className="mt-5 space-y-2 border-t border-border pt-5">
                   <div className="flex items-baseline justify-between gap-3">
-                    <p className="text-sm text-[#7a7a7a]">Subtotal</p>
-                    <span className="text-xl font-bold text-[#1d1d1f]">
+                    <p className="text-sm text-muted-foreground">Subtotal</p>
+                    <span className="text-xl font-bold text-foreground">
                       {formatRupiah(subtotal)}
                     </span>
                   </div>
                   {discountPercent != null && discountPercent > 0 ? (
                     <div className="flex flex-wrap items-center gap-2 text-sm">
-                      <span className="text-[#7a7a7a] line-through">
+                      <span className="text-muted-foreground line-through">
                         {formatRupiah(subtotalList)}
                       </span>
-                      <span className="rounded-full bg-[#EA5329]/12 px-2 py-0.5 text-xs font-bold text-[#EA5329]">
+                      <span className="rounded-full bg-primary/12 px-2 py-0.5 text-xs font-bold text-foreground">
                         Hemat {discountPercent}%
                       </span>
                     </div>
@@ -607,7 +609,7 @@ export function ProductDetailClient({
                     />
                     Wishlist
                   </Button>
-                  <span className="text-[#e0e0e0]" aria-hidden>
+                  <span className="text-steel-200" aria-hidden>
                     |
                   </span>
                   <Button
@@ -615,7 +617,7 @@ export function ProductDetailClient({
                     variant="link"
                     size="xs"
                     onClick={() => setShareOpen(true)}
-                    className="gap-1 px-0 whitespace-nowrap text-[#EA5329]"
+                    className="gap-1 px-0 whitespace-nowrap text-foreground"
                   >
                     <Share2 className="h-3.5 w-3.5" aria-hidden />
                     Share
@@ -660,13 +662,13 @@ export function ProductDetailClient({
                 >
                   <TabsTrigger
                     value="detail"
-                    className="rounded-none border-0 border-b-2 border-transparent bg-transparent px-0 pb-3 text-[17px] font-semibold text-[#7a7a7a] shadow-none data-[state=active]:border-[#1d1d1f] data-[state=active]:bg-transparent data-[state=active]:text-[#1d1d1f]"
+                    className="rounded-none border-0 border-b-2 border-transparent bg-transparent px-0 pb-3 text-base font-semibold text-muted-foreground shadow-none data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground"
                   >
                     Detail
                   </TabsTrigger>
                   <TabsTrigger
                     value="extra"
-                    className="rounded-none border-0 border-b-2 border-transparent bg-transparent px-0 pb-3 text-[17px] font-semibold text-[#7a7a7a] shadow-none data-[state=active]:border-[#1d1d1f] data-[state=active]:bg-transparent data-[state=active]:text-[#1d1d1f]"
+                    className="rounded-none border-0 border-b-2 border-transparent bg-transparent px-0 pb-3 text-base font-semibold text-muted-foreground shadow-none data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground"
                   >
                     Informasi lainnya
                   </TabsTrigger>
@@ -676,7 +678,7 @@ export function ProductDetailClient({
                   <div className="space-y-4">
                     {description ? (
                       <>
-                        <div className="text-[17px] leading-[1.47] whitespace-pre-wrap text-[#1d1d1f]">
+                        <div className="text-base leading-[1.47] whitespace-pre-wrap text-foreground">
                           {descriptionPreview}
                           {!descExpanded && showDescToggle ? "…" : null}
                         </div>
@@ -693,7 +695,7 @@ export function ProductDetailClient({
                         ) : null}
                       </>
                     ) : (
-                      <p className="text-[17px] text-[#7a7a7a]">
+                      <p className="text-base text-muted-foreground">
                         Belum ada deskripsi untuk produk ini.
                       </p>
                     )}
@@ -701,11 +703,11 @@ export function ProductDetailClient({
                 </TabsContent>
 
                 <TabsContent value="extra" className="mt-0">
-                  <div className="space-y-6 text-[17px] leading-relaxed">
+                  <div className="space-y-6 text-base leading-relaxed">
                     {product.tags.length > 0 ? (
                       <div>
                         <p className="mb-2 font-semibold">Tag</p>
-                        <ul className="list-inside list-disc text-[#1d1d1f]">
+                        <ul className="list-inside list-disc text-foreground">
                           {product.tags.map((t) => (
                             <li key={t}>{t}</li>
                           ))}
@@ -714,10 +716,10 @@ export function ProductDetailClient({
                     ) : null}
                     <div>
                       <p className="mb-2 font-semibold">Varian & SKU</p>
-                      <ul className="space-y-1 text-[#7a7a7a]">
+                      <ul className="space-y-1 text-muted-foreground">
                         {product.variants.map((v) => (
                           <li key={v.id}>
-                            <span className="text-[#1d1d1f]">{v.name}</span> — {v.sku}
+                            <span className="text-foreground">{v.name}</span> — {v.sku}
                           </li>
                         ))}
                       </ul>
@@ -734,32 +736,34 @@ export function ProductDetailClient({
                   <p className="text-4xl leading-none font-bold">
                     {product.averageRating.toFixed(1)}
                   </p>
-                  <p className="mt-1 text-sm text-[#7a7a7a]">/5</p>
-                  <p className="mt-2 text-sm text-[#7a7a7a]">({totalReviews} rating)</p>
+                  <p className="mt-1 text-sm text-muted-foreground">/5</p>
+                  <p className="mt-2 text-sm text-muted-foreground">({totalReviews} rating)</p>
                 </div>
                 <div className="min-w-0 flex-1 space-y-2">
                   {histogram.map((h) => (
                     <div key={h.stars} className="flex items-center gap-3">
-                      <span className="w-3 text-xs text-[#7a7a7a]">{h.stars}</span>
-                      <div className="h-2 flex-1 overflow-hidden rounded-full bg-[#f0f0f0]">
+                      <span className="w-3 text-xs text-muted-foreground">{h.stars}</span>
+                      <div className="h-2 flex-1 overflow-hidden rounded-full bg-steel-200">
                         <div
-                          className="h-full rounded-full bg-[#1d1d1f]"
+                          className="h-full rounded-full bg-primary"
                           style={{ width: `${(h.count / histMax) * 100}%` }}
                         />
                       </div>
-                      <span className="w-8 text-right text-xs text-[#7a7a7a]">{h.count}</span>
+                      <span className="w-8 text-right text-xs text-muted-foreground">
+                        {h.count}
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {reviews.length > 0 && currentReview ? (
-                <div className="mt-8 rounded-[18px] border border-[#f0e8e4] bg-[#faf5f3] p-6">
+                <div className="mt-8 rounded-[18px] border border-muted bg-muted p-6">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="font-semibold">{currentReview.authorName}</p>
                       <StarRatingDisplay rating={currentReview.rating} size="md" className="mt-1" />
-                      <p className="mt-1 text-xs text-[#7a7a7a]">
+                      <p className="mt-1 text-xs text-muted-foreground">
                         {formatDate(currentReview.createdAt)}
                       </p>
                     </div>
@@ -767,7 +771,7 @@ export function ProductDetailClient({
                       <CarouselNavButton
                         direction="prev"
                         surface="surface"
-                        className="border border-[#e0e0e0] bg-white"
+                        className="border border-border bg-white"
                         aria-label="Ulasan sebelumnya"
                         onClick={() =>
                           setReviewIndex((i) => (i - 1 + reviews.length) % reviews.length)
@@ -776,18 +780,20 @@ export function ProductDetailClient({
                       <CarouselNavButton
                         direction="next"
                         surface="surface"
-                        className="border border-[#e0e0e0] bg-white"
+                        className="border border-border bg-white"
                         aria-label="Ulasan berikutnya"
                         onClick={() => setReviewIndex((i) => (i + 1) % reviews.length)}
                       />
                     </div>
                   </div>
                   {currentReview.comment ? (
-                    <p className="mt-4 text-[15px] leading-relaxed text-[#1d1d1f]">
+                    <p className="mt-4 text-[15px] leading-relaxed text-foreground">
                       {currentReview.comment}
                     </p>
                   ) : (
-                    <p className="mt-4 text-sm text-[#7a7a7a] italic">Tanpa komentar teks.</p>
+                    <p className="mt-4 text-sm text-muted-foreground italic">
+                      Tanpa komentar teks.
+                    </p>
                   )}
                   <ReviewPhotos
                     key={currentReview.id}
@@ -796,7 +802,9 @@ export function ProductDetailClient({
                   />
                 </div>
               ) : (
-                <p className="mt-8 text-sm text-[#7a7a7a]">Belum ada ulasan yang dipublikasikan.</p>
+                <p className="mt-8 text-sm text-muted-foreground">
+                  Belum ada ulasan yang dipublikasikan.
+                </p>
               )}
             </div>
           </div>

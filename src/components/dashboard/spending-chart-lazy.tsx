@@ -11,7 +11,7 @@ const SpendingChart = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="mt-10 h-[280px] animate-pulse rounded-2xl bg-[#f5f5f7]" aria-hidden />
+      <div className="mt-10 h-[280px] animate-pulse rounded-2xl bg-muted" aria-hidden />
     ),
   },
 );

@@ -378,7 +378,7 @@ export function CheckoutPageClient({
 
   return (
     <>
-      <div className="bg-gradient-to-b from-[#f4f1ea]/50 to-transparent pt-6 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] text-[#1d1d1f] sm:pt-8 md:pb-20 lg:pb-20">
+      <div className="bg-gradient-to-b from-muted/50 to-transparent pt-6 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] text-foreground sm:pt-8 md:pb-20 lg:pb-20">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-24">
           <div className="py-2 sm:py-3">
             <CartCheckoutStepper current={2} />
@@ -386,21 +386,21 @@ export function CheckoutPageClient({
 
           <div className="mt-6 md:mt-8 md:grid md:grid-cols-12 md:items-start md:gap-6 lg:gap-8">
             <div className="md:col-span-7">
-              <div className="rounded-md border border-[#e8e4dc] bg-white p-4 sm:p-6">
-                <h1 className="text-xl font-bold text-[#1d1d1f] sm:text-2xl">Checkout</h1>
-                <p className="mt-1 text-sm text-[#5c5c5c]">
+              <div className="rounded-md border border-border bg-white p-4 sm:p-6">
+                <h1 className="text-xl font-bold text-foreground sm:text-2xl">Checkout</h1>
+                <p className="mt-1 text-sm text-steel-700">
                   Periksa barang sebelum memilih pengiriman dan pembayaran.
                 </p>
                 <ul className="mt-8 space-y-10">
                   {lines.map((line) => (
                     <li
                       key={line.lineId}
-                      className="border-b border-[#ece8e0] pb-10 last:border-0 last:pb-0"
+                      className="border-b border-border pb-10 last:border-0 last:pb-0"
                     >
                       {eligibleLineIds.has(line.lineId) && (
-                        <div className="mb-3 flex items-center gap-1.5 rounded-lg bg-[#EA5329]/10 px-3 py-1.5">
-                          <Tag className="h-3.5 w-3.5 shrink-0 text-[#EA5329]" />
-                          <span className="text-[12px] font-semibold text-[#EA5329]">
+                        <div className="mb-3 flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-1.5">
+                          <Tag className="h-3.5 w-3.5 shrink-0 text-foreground" />
+                          <span className="text-[12px] font-semibold text-foreground">
                             Dapat potongan kupon {couponInput.toUpperCase()}
                           </span>
                         </div>
@@ -413,14 +413,14 @@ export function CheckoutPageClient({
             </div>
 
             <aside className="mt-6 space-y-4 md:col-span-5 md:mt-0">
-              <div className="overflow-hidden rounded-md border border-[#e0e0e0] bg-white">
-                <div className="flex items-center justify-between bg-[#2a2a2c] px-4 py-3 text-white">
+              <div className="overflow-hidden rounded-md border border-border bg-white">
+                <div className="flex items-center justify-between bg-primary px-4 py-3 text-white">
                   <span className="text-sm font-semibold uppercase">Pilih alamat</span>
                   <ChevronDown className="h-4 w-4 opacity-80" aria-hidden />
                 </div>
                 <div className="p-4">
                   {addresses.length === 0 ? (
-                    <p className="text-sm text-[#5c5c5c]">Belum ada alamat tersimpan.</p>
+                    <p className="text-sm text-steel-700">Belum ada alamat tersimpan.</p>
                   ) : (
                     <>
                       <Select value={addressId} onValueChange={setAddressId}>
@@ -436,23 +436,23 @@ export function CheckoutPageClient({
                         </SelectContent>
                       </Select>
                       {selectedAddress ? (
-                        <div className="mt-3 text-sm leading-relaxed text-[#333333]">
-                          <p className="font-semibold text-[#1d1d1f]">
+                        <div className="mt-3 text-sm leading-relaxed text-foreground">
+                          <p className="font-semibold text-foreground">
                             {selectedAddress.recipient}
                           </p>
-                          <p className="mt-1 text-[#5c5c5c]">
+                          <p className="mt-1 text-steel-700">
                             {selectedAddress.full_address}, {selectedAddress.district},{" "}
                             {selectedAddress.city}, {selectedAddress.province}{" "}
                             {selectedAddress.postal_code}
                           </p>
-                          <p className="mt-1 text-[#5c5c5c]">{selectedAddress.phone}</p>
+                          <p className="mt-1 text-steel-700">{selectedAddress.phone}</p>
                         </div>
                       ) : null}
                     </>
                   )}
                   <Link
                     href="/dashboard/addresses/new?redirectTo=/checkout"
-                    className="mt-4 inline-block text-sm font-semibold text-[#EA5329] hover:underline"
+                    className="mt-4 inline-block text-sm font-semibold text-foreground hover:underline"
                   >
                     Tambah alamat baru
                   </Link>
@@ -462,7 +462,7 @@ export function CheckoutPageClient({
               <Collapsible
                 open={shippingOpen}
                 onOpenChange={setShippingOpen}
-                className="overflow-hidden rounded-md border border-[#e0e0e0] bg-white"
+                className="overflow-hidden rounded-md border border-border bg-white"
               >
                 <CollapsibleTrigger asChild>
                   <Button
@@ -471,8 +471,8 @@ export function CheckoutPageClient({
                     className={cn(
                       "h-auto w-full justify-between rounded-none px-4 py-4 hover:bg-transparent",
                       selectedShipping && !shippingOpen
-                        ? "bg-white text-[#1d1d1f]"
-                        : "bg-[#2a2a2c] text-white hover:bg-[#2a2a2c]",
+                        ? "bg-white text-foreground"
+                        : "bg-primary text-white hover:bg-primary",
                     )}
                   >
                     <span className="text-sm font-semibold uppercase">Metode pengiriman</span>
@@ -484,15 +484,15 @@ export function CheckoutPageClient({
                           className="h-6 w-auto max-w-[56px]"
                         />
                         <span className="flex flex-col items-end">
-                          <span className="text-sm leading-tight font-semibold text-[#1d1d1f]">
+                          <span className="text-sm leading-tight font-semibold text-foreground">
                             {selectedShipping.serviceName} · {formatRupiah(selectedShipping.price)}
                           </span>
-                          <span className="text-[11px] leading-tight text-[#7a7a7a]">
+                          <span className="text-[11px] leading-tight text-muted-foreground">
                             {selectedShipping.etd}
                           </span>
                         </span>
                         <ChevronDown
-                          className="h-4 w-4 shrink-0 text-[#1d1d1f] opacity-50"
+                          className="h-4 w-4 shrink-0 text-foreground opacity-50"
                           aria-hidden
                         />
                       </span>
@@ -505,7 +505,7 @@ export function CheckoutPageClient({
                 </CollapsibleTrigger>
                 <CollapsibleContent className="space-y-2 p-4">
                   {ratesLoading ? (
-                    <div className="flex items-center gap-2 text-sm text-[#5c5c5c]">
+                    <div className="flex items-center gap-2 text-sm text-steel-700">
                       <Spinner className="size-4" />
                       Menghitung ongkir…
                     </div>
@@ -521,8 +521,8 @@ export function CheckoutPageClient({
                             className={cn(
                               "flex cursor-pointer items-start gap-3 rounded-xl border px-3 py-2.5 text-sm transition",
                               selected
-                                ? "border-[#EA5329] bg-[#fff8f5]"
-                                : "border-[#e0e0e0] bg-[#fafafa] hover:border-[#EA5329]/40",
+                                ? "border-foreground bg-muted"
+                                : "border-border bg-muted hover:border-foreground/40",
                             )}
                             onClick={() => {
                               setSelectedShipping(opt);
@@ -532,7 +532,7 @@ export function CheckoutPageClient({
                             <input
                               type="radio"
                               name="ship"
-                              className="mt-1 accent-[#EA5329]"
+                              className="mt-1 accent-foreground"
                               checked={selected}
                               onChange={() => {
                                 setSelectedShipping(opt);
@@ -542,13 +542,13 @@ export function CheckoutPageClient({
                             <span className="flex flex-1 items-center gap-3">
                               <CourierLogo code={opt.courierCode} name={opt.courierName} />
                               <span>
-                                <span className="font-semibold text-[#1d1d1f]">
+                                <span className="font-semibold text-foreground">
                                   {opt.courierName} — {opt.serviceName}
                                 </span>
-                                <span className="mt-0.5 block text-xs text-[#7a7a7a]">
+                                <span className="mt-0.5 block text-xs text-muted-foreground">
                                   {opt.etd}
                                 </span>
-                                <span className="mt-1 block text-sm font-bold text-[#1d1d1f] tabular-nums">
+                                <span className="mt-1 block text-sm font-bold text-foreground tabular-nums">
                                   {formatRupiah(opt.price)}
                                 </span>
                               </span>
@@ -561,7 +561,7 @@ export function CheckoutPageClient({
                 </CollapsibleContent>
               </Collapsible>
 
-              <div className="overflow-hidden rounded-md border border-[#1a1a1a]/40 bg-[#1a1a1a] text-white">
+              <div className="overflow-hidden rounded-md border border-foreground/40 bg-primary text-white">
                 <div className="px-5 pt-5">
                   <h2 className="text-lg font-bold">Ringkasan pesanan</h2>
                   <dl className="mt-5 space-y-3 border-b border-white/15 pb-5 text-sm">
@@ -574,7 +574,7 @@ export function CheckoutPageClient({
                     {regularDiscount > 0 && (
                       <div className="flex justify-between gap-4">
                         <dt className="text-white/75">Diskon produk</dt>
-                        <dd className="shrink-0 font-semibold text-[#ffb4a1] tabular-nums">
+                        <dd className="shrink-0 font-semibold text-steel-200 tabular-nums">
                           −{formatRupiah(regularDiscount)}
                         </dd>
                       </div>
@@ -582,7 +582,7 @@ export function CheckoutPageClient({
                     {flashSaleDiscount > 0 && (
                       <div className="flex justify-between gap-4">
                         <dt className="text-white/75">Diskon flash sale</dt>
-                        <dd className="shrink-0 font-semibold text-[#ffb4a1] tabular-nums">
+                        <dd className="shrink-0 font-semibold text-steel-200 tabular-nums">
                           −{formatRupiah(flashSaleDiscount)}
                         </dd>
                       </div>
@@ -591,7 +591,7 @@ export function CheckoutPageClient({
                       <div className="flex flex-col gap-0.5">
                         <div className="flex justify-between gap-4">
                           <dt className="text-white/75">Diskon kupon</dt>
-                          <dd className="shrink-0 font-semibold text-[#ffb4a1] tabular-nums">
+                          <dd className="shrink-0 font-semibold text-steel-200 tabular-nums">
                             −{formatRupiah(couponDiscount)}
                           </dd>
                         </div>
@@ -644,8 +644,8 @@ export function CheckoutPageClient({
                       )}
                     </div>
                     {couponDiscount > 0 ? (
-                      <div className="mt-2 flex items-center gap-3 rounded-lg border border-[#EA5329]/40 bg-[#EA5329]/10 px-3 py-2.5">
-                        <CheckCircle2 className="h-4 w-4 shrink-0 text-[#EA5329]" />
+                      <div className="mt-2 flex items-center gap-3 rounded-lg border border-foreground/40 bg-primary/10 px-3 py-2.5">
+                        <CheckCircle2 className="h-4 w-4 shrink-0 text-foreground" />
                         <span className="min-w-0 flex-1 text-sm font-semibold text-white">
                           {couponInput.toUpperCase()} · {couponLabel}
                         </span>
@@ -670,7 +670,7 @@ export function CheckoutPageClient({
                           value={couponInput}
                           onChange={(e) => setCouponInput(e.target.value)}
                           placeholder="Kode kupon"
-                          className="h-11 min-w-0 flex-1 rounded-lg border-white/20 bg-black/20 text-sm text-white placeholder:text-white/40 focus-visible:ring-[#EA5329]/40"
+                          className="h-11 min-w-0 flex-1 rounded-lg border-white/20 bg-black/20 text-sm text-white placeholder:text-white/40 focus-visible:ring-ring/40"
                         />
                         <Button
                           type="button"
@@ -701,7 +701,7 @@ export function CheckoutPageClient({
                 </div>
               </div>
 
-              <div className="rounded-md border border-[#e8e4dc] bg-white p-5">
+              <div className="rounded-md border border-border bg-white p-5">
                 <Button
                   type="button"
                   variant="primary"
@@ -712,7 +712,7 @@ export function CheckoutPageClient({
                 >
                   Beli sekarang
                 </Button>
-                <p className="mt-3 text-center text-[10px] leading-relaxed text-[#9a9590]">
+                <p className="mt-3 text-center text-[10px] leading-relaxed text-muted-foreground">
                   Pilih metode pembayaran di langkah berikutnya. Dengan melanjutkan, Anda menyetujui
                   syarat pembayaran Mayar dan kebijakan toko.
                 </p>
@@ -724,8 +724,8 @@ export function CheckoutPageClient({
 
       <Dialog open={promoOpen} onOpenChange={setPromoOpen}>
         <DialogContent className="max-h-[85vh] max-w-lg overflow-hidden p-0">
-          <DialogHeader className="flex-row items-center justify-between border-b border-[#e0e0e0] px-6 py-4">
-            <DialogTitle className="text-[17px] font-semibold text-[#1d1d1f]">
+          <DialogHeader className="flex-row items-center justify-between border-b border-border px-6 py-4">
+            <DialogTitle className="text-base font-semibold text-foreground">
               Promo tersedia
             </DialogTitle>
             <Button
@@ -741,7 +741,9 @@ export function CheckoutPageClient({
 
           <div className="overflow-y-auto px-6 pt-4 pb-6">
             {availableCoupons.length === 0 ? (
-              <p className="py-8 text-center text-sm text-[#7a7a7a]">Tidak ada promo tersedia.</p>
+              <p className="py-8 text-center text-sm text-muted-foreground">
+                Tidak ada promo tersedia.
+              </p>
             ) : (
               <ul className="space-y-3">
                 {couponEligibilityList.map(({ c, notEligible }) => (
@@ -749,11 +751,11 @@ export function CheckoutPageClient({
                     <div
                       className={cn(
                         "overflow-hidden rounded-md border bg-white transition",
-                        notEligible ? "border-[#e0e0e0] opacity-60" : "border-[#e0e0e0]",
+                        notEligible ? "border-border opacity-60" : "border-border",
                       )}
                     >
                       {c.image_url && (
-                        <div className="relative h-28 w-full bg-[#f5f5f7]">
+                        <div className="relative h-28 w-full bg-muted">
                           <Image
                             src={c.image_url}
                             alt={c.title ?? c.code}
@@ -770,28 +772,28 @@ export function CheckoutPageClient({
                               className={cn(
                                 "inline-block rounded-full px-2.5 py-0.5 text-[11px] font-bold tracking-wide uppercase",
                                 notEligible
-                                  ? "bg-[#e0e0e0] text-[#9a9590]"
-                                  : "bg-[#EA5329]/10 text-[#EA5329]",
+                                  ? "bg-steel-200 text-muted-foreground"
+                                  : "bg-primary/10 text-foreground",
                               )}
                             >
                               {c.type === "percentage"
                                 ? `${c.value}% OFF`
                                 : `−${formatRupiah(c.value)}`}
                             </span>
-                            <p className="mt-1.5 font-mono text-lg font-bold tracking-widest text-[#1d1d1f]">
+                            <p className="mt-1.5 font-mono text-lg font-bold tracking-widest text-foreground">
                               {c.code}
                             </p>
                             {c.title && (
-                              <p className="mt-0.5 text-sm font-semibold text-[#1d1d1f]">
+                              <p className="mt-0.5 text-sm font-semibold text-foreground">
                                 {c.title}
                               </p>
                             )}
                             {c.description && (
-                              <p className="mt-1 text-sm leading-relaxed text-[#5c5c5c]">
+                              <p className="mt-1 text-sm leading-relaxed text-steel-700">
                                 {c.description}
                               </p>
                             )}
-                            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-[#7a7a7a]">
+                            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
                               {c.min_purchase > 0 && (
                                 <span>Min. belanja {formatRupiah(c.min_purchase)}</span>
                               )}
@@ -811,7 +813,7 @@ export function CheckoutPageClient({
                               )}
                             </div>
                             {notEligible && (
-                              <p className="mt-2 text-[11px] font-semibold text-[#EA5329]">
+                              <p className="mt-2 text-[11px] font-semibold text-foreground">
                                 {notEligible}
                               </p>
                             )}

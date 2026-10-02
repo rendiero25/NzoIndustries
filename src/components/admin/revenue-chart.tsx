@@ -36,7 +36,7 @@ function CustomTooltip({
 }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-lg border border-[#e0e0e0] bg-card px-3 py-2 text-xs">
+    <div className="rounded-lg border border-border bg-card px-3 py-2 text-xs">
       <p className="mb-1 font-bold">{label}</p>
       {payload.map((p) => (
         <p key={p.name} className="text-muted-foreground">
@@ -58,8 +58,8 @@ export function RevenueChart({ data }: RevenueChartProps) {
         <AreaChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
           <defs>
             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#EA5329" stopOpacity={0.15} />
-              <stop offset="95%" stopColor="#EA5329" stopOpacity={0} />
+              <stop offset="5%" stopColor="#000000" stopOpacity={0.15} />
+              <stop offset="95%" stopColor="#000000" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="currentColor" strokeOpacity={0.1} />
@@ -81,7 +81,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
           <Area
             type="monotone"
             dataKey="revenue"
-            stroke="#EA5329"
+            stroke="#000000"
             strokeWidth={2}
             fill="url(#colorRevenue)"
             dot={false}
@@ -117,7 +117,7 @@ export function OrdersChart({ data }: RevenueChartProps) {
             width={28}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Bar dataKey="orders" fill="#EA5329" radius={[4, 4, 0, 0]} maxBarSize={20} />
+          <Bar dataKey="orders" fill="#000000" radius={[4, 4, 0, 0]} maxBarSize={20} />
         </BarChart>
       </ResponsiveContainer>
     </div>

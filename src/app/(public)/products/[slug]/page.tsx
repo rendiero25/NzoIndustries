@@ -19,22 +19,22 @@ type PageParams = Promise<{ slug: string }>;
 
 function ProductBreadcrumbs({ product }: { product: ProductDetailPublic }) {
   return (
-    <nav aria-label="Breadcrumb" className="text-[14px] text-[#7a7a7a]">
+    <nav aria-label="Breadcrumb" className="text-[14px] text-muted-foreground">
       <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <li>
-          <Link href="/" className="transition hover:text-[#EA5329]">
+          <Link href="/" className="transition hover:text-foreground">
             Home
           </Link>
         </li>
         {product.brand ? (
           <>
-            <li aria-hidden className="text-[#d4d4d4]">
+            <li aria-hidden className="text-steel-200">
               /
             </li>
             <li>
               <Link
                 href={`/brands/${encodeURIComponent(product.brand.slug)}`}
-                className="transition hover:text-[#EA5329]"
+                className="transition hover:text-foreground"
               >
                 {product.brand.name}
               </Link>
@@ -43,24 +43,24 @@ function ProductBreadcrumbs({ product }: { product: ProductDetailPublic }) {
         ) : null}
         {product.category ? (
           <>
-            <li aria-hidden className="text-[#d4d4d4]">
+            <li aria-hidden className="text-steel-200">
               /
             </li>
             <li>
               <Link
                 href={`/products?category=${encodeURIComponent(product.category.slug)}`}
-                className="transition hover:text-[#EA5329]"
+                className="transition hover:text-foreground"
               >
                 {product.category.name}
               </Link>
             </li>
           </>
         ) : null}
-        <li aria-hidden className="text-[#d4d4d4]">
+        <li aria-hidden className="text-steel-200">
           /
         </li>
         <li
-          className="max-w-[min(100%,28rem)] truncate font-medium text-[#1d1d1f]"
+          className="max-w-[min(100%,28rem)] truncate font-medium text-foreground"
           aria-current="page"
         >
           {product.name}
@@ -104,7 +104,7 @@ export default async function ProductDetailPage({ params }: { params: PageParams
 
   return (
     <div className="bg-white">
-      <div className="border-b border-[#e0e0e0] py-4">
+      <div className="border-b border-border py-4">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-24">
           <ProductBreadcrumbs product={product} />
         </div>

@@ -120,8 +120,8 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
   return (
     <div className="space-y-10">
       <div className="space-y-2">
-        <h1 className="text-[28px] font-semibold text-[#1d1d1f]">Selamat Datang</h1>
-        <p className="text-[17px] font-normal text-[#1d1d1f]">Silahkan masukan detail Anda.</p>
+        <h1 className="text-[28px] font-semibold text-foreground">Selamat Datang</h1>
+        <p className="text-base font-normal text-foreground">Silahkan masukan detail Anda.</p>
       </div>
 
       {urlMessage ? (
@@ -138,7 +138,7 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-[14px] leading-[1.43] font-normal text-[#1d1d1f]">
+          <Label htmlFor="email" className="text-[14px] leading-[1.43] font-normal text-foreground">
             Email
           </Label>
           <Input
@@ -158,7 +158,7 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
         <div className="space-y-2">
           <Label
             htmlFor="password"
-            className="text-[14px] leading-[1.43] font-normal text-[#1d1d1f]"
+            className="text-[14px] leading-[1.43] font-normal text-foreground"
           >
             Kata Sandi
           </Label>
@@ -183,17 +183,17 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <label className="flex cursor-pointer items-center gap-2.5 text-[14px] leading-[1.43] font-normal text-[#1d1d1f]">
+          <label className="flex cursor-pointer items-center gap-2.5 text-[14px] leading-[1.43] font-normal text-foreground">
             <Checkbox
               checked={rememberMe}
               onCheckedChange={(v) => setRememberMe(v === true)}
-              className="size-[18px] rounded-[4px] border-[#e0e0e0] data-checked:border-[#EA5329] data-checked:bg-[#EA5329]"
+              className="size-[18px] rounded-[4px] border-border data-checked:border-foreground data-checked:bg-primary"
             />
             Ingat saya
           </label>
           <Link
             href="/forgot-password"
-            className="text-[14px] leading-[1.43] font-semibold text-[#1d1d1f] underline-offset-4 transition-colors hover:text-[#EA5329] hover:underline"
+            className="text-[14px] leading-[1.43] font-semibold text-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
           >
             Lupa Kata Sandi
           </Link>
@@ -211,11 +211,11 @@ export function LoginForm({ redirectTo, urlError, urlMessage }: LoginFormProps) 
         </Button>
       </form>
 
-      <p className="text-center text-[17px] leading-[1.47] font-normal text-[#1d1d1f]">
+      <p className="text-center text-base leading-[1.47] font-normal text-foreground">
         Tidak punya akun?{" "}
         <Link
           href="/register"
-          className="font-semibold text-[#EA5329] underline-offset-4 transition-colors hover:text-[#d44820] hover:underline"
+          className="font-semibold text-foreground underline-offset-4 transition-colors hover:text-steel-700 hover:underline"
         >
           daftar
         </Link>

@@ -23,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { createCoupon, updateCoupon, type CouponFormData } from "../_actions";
 
 const labelClass = "text-[11px] font-semibold text-foreground";
-const inputClass = "h-10 rounded-lg border-[#e0e0e0] text-[17px]";
+const inputClass = "h-10 rounded-lg border-border text-base";
 
 type InitialData = {
   id: string;
@@ -235,7 +235,7 @@ export function CouponForm({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Contoh: Diskon 10% untuk semua produk, berlaku s.d. 31 Desember."
               rows={3}
-              className="resize-none rounded-lg border-[#e0e0e0] text-[15px] leading-relaxed"
+              className="resize-none rounded-lg border-border text-[15px] leading-relaxed"
             />
             <p className="text-[11px] text-muted-foreground">
               Keterangan singkat syarat dan ketentuan kupon.
@@ -341,7 +341,7 @@ export function CouponForm({
                 setFilterBrandId("all");
               }}
             >
-              <SelectTrigger className="h-10 rounded-lg border-[#e0e0e0]">
+              <SelectTrigger className="h-10 rounded-lg border-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -390,12 +390,12 @@ export function CouponForm({
                       placeholder={`Cari ${label}...`}
                       value={itemSearch}
                       onChange={(e) => setItemSearch(e.target.value)}
-                      className="h-9 flex-1 rounded-md border-[#e0e0e0] text-sm"
+                      className="h-9 flex-1 rounded-md border-border text-sm"
                     />
                     {isProduct && (
                       <>
                         <Select value={filterCategoryId} onValueChange={setFilterCategoryId}>
-                          <SelectTrigger className="h-9 w-full rounded-md border-[#e0e0e0] text-sm sm:w-44">
+                          <SelectTrigger className="h-9 w-full rounded-md border-border text-sm sm:w-44">
                             <SelectValue placeholder="Semua Kategori" />
                           </SelectTrigger>
                           <SelectContent>
@@ -408,7 +408,7 @@ export function CouponForm({
                           </SelectContent>
                         </Select>
                         <Select value={filterBrandId} onValueChange={setFilterBrandId}>
-                          <SelectTrigger className="h-9 w-full rounded-md border-[#e0e0e0] text-sm sm:w-40">
+                          <SelectTrigger className="h-9 w-full rounded-md border-border text-sm sm:w-40">
                             <SelectValue placeholder="Semua Merek" />
                           </SelectTrigger>
                           <SelectContent>
@@ -425,7 +425,7 @@ export function CouponForm({
                   </div>
 
                   {/* Item list */}
-                  <div className="max-h-52 overflow-y-auto rounded-lg border border-[#e0e0e0]">
+                  <div className="max-h-52 overflow-y-auto rounded-lg border border-border">
                     {filteredGeneric.length === 0 ? (
                       <p className="px-3 py-4 text-center text-xs text-muted-foreground">
                         Tidak ada {label} ditemukan.
@@ -435,7 +435,7 @@ export function CouponForm({
                         {filteredGeneric.map((item, idx) => (
                           <li
                             key={item.id}
-                            className={`flex cursor-pointer items-center gap-3 px-3 py-2.5 transition-colors hover:bg-muted/50 ${idx !== 0 ? "border-t border-[#e0e0e0]" : ""}`}
+                            className={`flex cursor-pointer items-center gap-3 px-3 py-2.5 transition-colors hover:bg-muted/50 ${idx !== 0 ? "border-t border-border" : ""}`}
                             onClick={() => toggleId(item.id)}
                           >
                             <Checkbox
@@ -532,7 +532,7 @@ export function CouponForm({
 
           {imageUrl ? (
             <div
-              className="group relative w-full overflow-hidden rounded-lg border border-[#e0e0e0] bg-muted"
+              className="group relative w-full overflow-hidden rounded-lg border border-border bg-muted"
               style={{ aspectRatio: "2/1" }}
             >
               <Image
@@ -556,7 +556,7 @@ export function CouponForm({
               type="button"
               onClick={() => imageRef.current?.click()}
               disabled={uploading}
-              className="flex w-full flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-[#e0e0e0] py-10 text-muted-foreground transition-colors hover:border-brand/40 hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-border py-10 text-muted-foreground transition-colors hover:border-brand/40 hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
             >
               {uploading ? <Spinner className="size-5" /> : <ImagePlus size={20} />}
               <span className="text-xs font-semibold">

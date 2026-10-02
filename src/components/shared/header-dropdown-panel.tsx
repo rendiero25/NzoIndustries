@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 /** Panel shell — selaras dropdown notifikasi (rounded 18px, hairline, shadow-md). */
 export const HEADER_DROPDOWN_PANEL_CLASS =
-  "overflow-hidden rounded-[18px] border border-[#e0e0e0] bg-white shadow-md";
+  "overflow-hidden rounded-[18px] border border-border bg-white shadow-md";
 
 export const HEADER_DROPDOWN_MENU_CONTENT_CLASS = cn(HEADER_DROPDOWN_PANEL_CLASS, "gap-0 p-0");
 
@@ -24,7 +24,7 @@ export function HeaderDropdownPanelHeader({
   return (
     <div
       className={cn(
-        "flex shrink-0 items-center justify-between gap-2 border-b border-black/10 bg-[#2a2a2c] px-4 py-3 text-white",
+        "flex shrink-0 items-center justify-between gap-2 border-b border-black/10 bg-primary px-4 py-3 text-white",
         className,
       )}
     >
@@ -47,4 +47,4 @@ export function HeaderDropdownPanelBody({ children, className }: HeaderDropdownP
 }
 
 export const HEADER_DROPDOWN_MENU_ITEM_CLASS =
-  "cursor-pointer rounded-none px-4 py-2.5 text-[14px] leading-[1.43] text-[#1d1d1f] focus:bg-transparent focus:text-[#EA5329] focus:[&_svg]:!text-[#EA5329]";
+  "cursor-pointer rounded-none px-4 py-2.5 text-[14px] leading-[1.43] text-foreground focus:bg-transparent focus:text-foreground focus:[&_svg]:!text-foreground";

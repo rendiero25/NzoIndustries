@@ -10,7 +10,7 @@ export function BrandStoreProductGrid({
 }) {
   if (products.length === 0) {
     return (
-      <p className="py-12 text-center text-sm text-[#7a7a7a]">
+      <p className="py-12 text-center text-sm text-muted-foreground">
         Tidak ada produk yang cocok dengan filter.
       </p>
     );

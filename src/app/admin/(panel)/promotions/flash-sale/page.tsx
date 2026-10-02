@@ -42,7 +42,7 @@ export default async function AdminFlashSalePage() {
         <div>
           <p className="text-swiss-eyebrow">Promosi</p>
           <h1 className="text-[34px] font-semibold text-foreground uppercase">Flash Sale</h1>
-          <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+          <p className="mt-1 text-base leading-[1.47] text-foreground">
             {flashSales?.length ?? 0} flash sale
           </p>
         </div>

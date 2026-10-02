@@ -92,7 +92,7 @@ export function StockFilters({ categories, brands }: StockFiltersProps) {
             if (debounceRef.current) clearTimeout(debounceRef.current);
             debounceRef.current = setTimeout(() => updateParam("q", val), 400);
           }}
-          className="h-11 rounded-md border-[#e0e0e0] pl-10 text-[17px] leading-[1.47]"
+          className="h-11 rounded-md border-border pl-10 text-base leading-[1.47]"
         />
       </div>
 

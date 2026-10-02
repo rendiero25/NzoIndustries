@@ -29,7 +29,7 @@ export function ReturnsTable({ rows }: { rows: ReturnRow[] }) {
     <div className="overflow-x-auto">
       <table className="w-full text-[14px]">
         <thead>
-          <tr className="border-b border-[#e0e0e0] text-left text-[11px] font-semibold text-muted-foreground uppercase">
+          <tr className="border-b border-border text-left text-[11px] font-semibold text-muted-foreground uppercase">
             <th className="pr-4 pb-3">No. Order</th>
             <th className="pr-4 pb-3">Pelanggan</th>
             <th className="pr-4 pb-3">Status</th>
@@ -37,13 +37,13 @@ export function ReturnsTable({ rows }: { rows: ReturnRow[] }) {
             <th className="pb-3">Aksi</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#f0f0f0]">
+        <tbody className="divide-y divide-border">
           {rows.map((r) => (
             <tr key={r.id}>
               <td className="py-3 pr-4 font-mono text-[13px]">{r.orders?.order_number ?? "—"}</td>
               <td className="py-3 pr-4">{r.profiles?.full_name ?? "—"}</td>
               <td className="py-3 pr-4">
-                <span className="rounded-full bg-[#f0f0f0] px-2.5 py-1 text-[11px] font-semibold">
+                <span className="rounded-full bg-steel-200 px-2.5 py-1 text-[11px] font-semibold">
                   {STATUS_LABELS[r.status] ?? r.status}
                 </span>
               </td>

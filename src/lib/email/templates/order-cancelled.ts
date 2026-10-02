@@ -35,7 +35,7 @@ export function orderCancelledHtml(params: {
       <p style="margin:0;font-size:17px;font-weight:700;color:#1d1d1f;">${params.orderNumber}</p>
     </div>
 
-    <div style="background:#fff0f0;border-radius:10px;padding:16px 20px;margin:0 0 24px;border-left:3px solid #EA5329;">
+    <div style="background:#fff0f0;border-radius:10px;padding:16px 20px;margin:0 0 24px;border-left:3px solid #000000;">
       <p style="margin:0 0 4px;font-size:14px;font-weight:600;color:#1d1d1f;">${info.title}</p>
       <p style="margin:0;font-size:13px;color:#3d3d3d;line-height:1.6;">${info.desc}</p>
     </div>
@@ -47,7 +47,7 @@ export function orderCancelledHtml(params: {
     ${ctaButton(`${params.appUrl}/products`, "Belanja Lagi")}
 
     <p style="margin:8px 0 0;font-size:13px;color:#6e6e73;line-height:1.6;">
-      Perlu bantuan? <a href="${params.appUrl}/about#kontak" style="color:#EA5329;text-decoration:none;">Hubungi CS kami</a>.
+      Perlu bantuan? <a href="${params.appUrl}/about#kontak" style="color:#000000;text-decoration:none;">Hubungi CS kami</a>.
     </p>`;
 
   return emailShell({

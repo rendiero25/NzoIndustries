@@ -31,7 +31,7 @@ export function OrderReviewForms({
 
   if (reviewable.length === 0) {
     return (
-      <p className="text-sm text-[#5c5c5c]">
+      <p className="text-sm text-steel-700">
         Semua produk pada pesanan ini sudah memiliki ulasan dari Anda, atau tidak terhubung ke
         katalog untuk ulasan.
       </p>
@@ -92,7 +92,7 @@ function ReviewItemForm({ orderId, item }: { orderId: string; item: DashboardOrd
 
   return (
     <form
-      className="rounded-xl border border-[#e0e0e0] bg-white p-5"
+      className="rounded-xl border border-border bg-white p-5"
       onSubmit={(e) => {
         e.preventDefault();
         if (uploading) {
@@ -119,12 +119,12 @@ function ReviewItemForm({ orderId, item }: { orderId: string; item: DashboardOrd
         });
       }}
     >
-      <p className="font-semibold text-[#1d1d1f]">{item.product_name}</p>
-      <p className="text-xs text-[#7a7a7a]">{item.variant_name}</p>
+      <p className="font-semibold text-foreground">{item.product_name}</p>
+      <p className="text-xs text-muted-foreground">{item.variant_name}</p>
       <div className="mt-4">
         <Label
           htmlFor={`rating-${item.id}`}
-          className="text-xs font-semibold text-[#7a7a7a] uppercase"
+          className="text-xs font-semibold text-muted-foreground uppercase"
         >
           Rating
         </Label>
@@ -132,7 +132,7 @@ function ReviewItemForm({ orderId, item }: { orderId: string; item: DashboardOrd
           id={`rating-${item.id}`}
           name="rating"
           required
-          className="mt-1 h-10 w-full max-w-xs rounded-lg border border-[#e0e0e0] bg-white px-3 text-sm"
+          className="mt-1 h-10 w-full max-w-xs rounded-lg border border-border bg-white px-3 text-sm"
           defaultValue={5}
         >
           {[5, 4, 3, 2, 1].map((n) => (
@@ -145,7 +145,7 @@ function ReviewItemForm({ orderId, item }: { orderId: string; item: DashboardOrd
       <div className="mt-4">
         <Label
           htmlFor={`comment-${item.id}`}
-          className="text-xs font-semibold text-[#7a7a7a] uppercase"
+          className="text-xs font-semibold text-muted-foreground uppercase"
         >
           Komentar (opsional)
         </Label>
@@ -153,19 +153,19 @@ function ReviewItemForm({ orderId, item }: { orderId: string; item: DashboardOrd
           id={`comment-${item.id}`}
           name="comment"
           rows={4}
-          className="mt-1 border-[#e0e0e0]"
+          className="mt-1 border-border"
           placeholder="Ceritakan pengalamanmu dengan produk ini."
         />
       </div>
       <div className="mt-4">
-        <Label className="text-xs font-semibold text-[#7a7a7a] uppercase">
+        <Label className="text-xs font-semibold text-muted-foreground uppercase">
           Foto produk (opsional, maks {REVIEW_IMAGES_MAX})
         </Label>
         <div className="mt-2 flex flex-wrap gap-2">
           {images.map((url) => (
             <div
               key={url}
-              className="relative h-20 w-20 overflow-hidden rounded-lg border border-[#e0e0e0]"
+              className="relative h-20 w-20 overflow-hidden rounded-lg border border-border"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={url} alt="Foto ulasan" className="h-full w-full object-cover" />
@@ -184,7 +184,7 @@ function ReviewItemForm({ orderId, item }: { orderId: string; item: DashboardOrd
               type="button"
               onClick={() => fileRef.current?.click()}
               disabled={uploading}
-              className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-[#c0c0c0] bg-[#fafafa] text-[#a0a0a0] hover:border-[#EA5329] hover:text-[#EA5329] disabled:opacity-50"
+              className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-border bg-muted text-muted-foreground hover:border-foreground hover:text-foreground disabled:opacity-50"
             >
               {uploading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -195,7 +195,7 @@ function ReviewItemForm({ orderId, item }: { orderId: string; item: DashboardOrd
             </button>
           )}
         </div>
-        <p className="mt-1.5 text-[11px] text-[#7a7a7a]">
+        <p className="mt-1.5 text-[11px] text-muted-foreground">
           JPG, PNG, atau WEBP. Maks {REVIEW_IMAGE_MAX_SIZE_MB} MB per foto.
         </p>
         <input

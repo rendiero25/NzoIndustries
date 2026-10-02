@@ -16,7 +16,7 @@ export function WhatsAppButton({ className }: { className?: string }) {
         "fixed right-[max(1rem,env(safe-area-inset-right,0px))] bottom-[calc(5rem+env(safe-area-inset-bottom,0px))] z-50 md:right-6 md:bottom-6",
         "flex size-14 items-center justify-center overflow-hidden rounded-full",
         "bg-[#25D366] shadow-[0_12px_28px_rgba(37,211,102,0.28)]",
-        "transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#20B358] hover:shadow-[0_16px_32px_rgba(37,211,102,0.34)]",
+        "transition-all duration-200 hover:-translate-y-0.5 hover:bg-success hover:shadow-[0_16px_32px_rgba(37,211,102,0.34)]",
         "focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 focus-visible:outline-none",
         className,
       )}

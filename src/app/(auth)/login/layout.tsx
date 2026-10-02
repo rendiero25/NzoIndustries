@@ -12,7 +12,7 @@ export default function LoginLayout({ children }: { children: React.ReactNode })
             <br />
             Level up.
             <br />
-            <span className="text-[#EA5329] normal-case">NZO Industries.</span>
+            <span className="text-foreground normal-case">NZO Industries.</span>
           </p>
           <p className="mt-6 max-w-md text-[16px] leading-relaxed font-normal text-white lg:max-w-xs">
             Smartwatch, earphone, aksesoris gadget. Produk original bergaransi resmi. Pengiriman ke

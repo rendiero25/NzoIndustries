@@ -49,14 +49,14 @@ const STEP_CFG: Record<string, StepCfg> = {
   picked: {
     label: "Paket Diambil",
     Icon: PackageCheck,
-    color: "text-[#EA5329]",
-    bg: "bg-[#FFF0E8]",
+    color: "text-foreground",
+    bg: "bg-muted",
   },
   dropping_off: {
     label: "Dalam Pengiriman",
     Icon: Truck,
-    color: "text-[#EA5329]",
-    bg: "bg-[#FFF0E8]",
+    color: "text-foreground",
+    bg: "bg-muted",
   },
   delivered: { label: "Paket Terkirim", Icon: Home, color: "text-green-600", bg: "bg-green-50" },
   rejected: { label: "Ditolak", Icon: XCircle, color: "text-red-500", bg: "bg-red-50" },
@@ -67,8 +67,8 @@ const STEP_CFG: Record<string, StepCfg> = {
 const FALLBACK_CFG: StepCfg = {
   label: "Update",
   Icon: Circle,
-  color: "text-[#a0a0a0]",
-  bg: "bg-[#f5f5f7]",
+  color: "text-muted-foreground",
+  bg: "bg-muted",
 };
 
 // ─── Grouping ──────────────────────────────────────────────────────────────
@@ -120,7 +120,7 @@ function TrackingTimeline({ result }: { result: TrackingResult }) {
 
   return (
     <div>
-      <p className="mb-5 text-[11px] font-bold tracking-widest text-[#a0a0a0] uppercase">
+      <p className="mb-5 text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
         Riwayat Pengiriman
       </p>
       <div>
@@ -137,9 +137,7 @@ function TrackingTimeline({ result }: { result: TrackingResult }) {
                 <div
                   className={[
                     "mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
-                    isCurrent
-                      ? "bg-[#EA5329] ring-4 ring-[#EA5329]/15"
-                      : `${cfg.bg} border border-[#e0e0e0]`,
+                    isCurrent ? "bg-primary ring-4 ring-ring/15" : `${cfg.bg} border border-border`,
                   ].join(" ")}
                 >
                   <Icon
@@ -149,7 +147,7 @@ function TrackingTimeline({ result }: { result: TrackingResult }) {
                 </div>
                 {gi < lastGroupIdx && (
                   <div
-                    className="my-1 w-px flex-1 bg-[#e0e0e0]"
+                    className="my-1 w-px flex-1 bg-steel-200"
                     style={{ minHeight: isMulti ? 8 : 24 }}
                   />
                 )}
@@ -162,13 +160,13 @@ function TrackingTimeline({ result }: { result: TrackingResult }) {
                   <p
                     className={[
                       "text-[14px] leading-snug font-semibold tracking-tight",
-                      isCurrent ? "text-[#EA5329]" : "text-[#1d1d1f]",
+                      isCurrent ? "text-foreground" : "text-foreground",
                     ].join(" ")}
                   >
                     {cfg.label}
                   </p>
                   {isCurrent && (
-                    <span className="rounded-full bg-[#EA5329]/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-[#EA5329] uppercase">
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-foreground uppercase">
                       Saat ini
                     </span>
                   )}
@@ -182,13 +180,15 @@ function TrackingTimeline({ result }: { result: TrackingResult }) {
                     return (
                       <div className="mt-1">
                         {s.description && (
-                          <p className="text-[13px] leading-relaxed text-[#5c5c5c]">
+                          <p className="text-[13px] leading-relaxed text-steel-700">
                             {s.description}
                           </p>
                         )}
-                        {showNote && <p className="mt-0.5 text-[12px] text-[#a0a0a0]">{s.note}</p>}
+                        {showNote && (
+                          <p className="mt-0.5 text-[12px] text-muted-foreground">{s.note}</p>
+                        )}
                         {s.at && (
-                          <p className="mt-1 text-[11px] font-medium text-[#b0b0b0] tabular-nums">
+                          <p className="mt-1 text-[11px] font-medium text-muted-foreground tabular-nums">
                             {fmt(s.at)}
                           </p>
                         )}
@@ -198,7 +198,7 @@ function TrackingTimeline({ result }: { result: TrackingResult }) {
 
                 {/* ── Multi-step: recursive sub-steps ── */}
                 {isMulti && (
-                  <div className="mt-2.5 space-y-0 border-l-2 border-[#ececec] pl-3.5">
+                  <div className="mt-2.5 space-y-0 border-l-2 border-border pl-3.5">
                     {group.steps.map((s, si) => {
                       const isLastSub = si === group.steps.length - 1;
                       const showNote = s.note && s.note !== s.description && s.description;
@@ -214,8 +214,8 @@ function TrackingTimeline({ result }: { result: TrackingResult }) {
                             className={[
                               "absolute top-[5px] -left-[19px] h-2 w-2 rounded-full border",
                               isLastSub && isCurrent
-                                ? "border-[#EA5329] bg-[#EA5329]"
-                                : "border-[#d0d0d0] bg-white",
+                                ? "border-foreground bg-primary"
+                                : "border-border bg-white",
                             ].join(" ")}
                           />
                           {/* Content */}
@@ -224,18 +224,18 @@ function TrackingTimeline({ result }: { result: TrackingResult }) {
                               className={[
                                 "text-[13px] leading-relaxed",
                                 isLastSub && isCurrent
-                                  ? "font-medium text-[#1d1d1f]"
-                                  : "text-[#5c5c5c]",
+                                  ? "font-medium text-foreground"
+                                  : "text-steel-700",
                               ].join(" ")}
                             >
                               {s.description}
                             </p>
                           )}
                           {showNote && (
-                            <p className="mt-0.5 text-[12px] text-[#a0a0a0]">{s.note}</p>
+                            <p className="mt-0.5 text-[12px] text-muted-foreground">{s.note}</p>
                           )}
                           {s.at && (
-                            <p className="mt-0.5 text-[11px] font-medium text-[#b0b0b0] tabular-nums">
+                            <p className="mt-0.5 text-[11px] font-medium text-muted-foreground tabular-nums">
                               {fmt(s.at)}
                             </p>
                           )}
@@ -330,41 +330,43 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
         </div>
       )}
       {order.status === "completed" && (
-        <div className="mb-4 flex items-start gap-3 rounded-xl border border-[#e0e0e0] bg-[#f5f5f7] px-4 py-3">
-          <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#a0a0a0]" />
-          <p className="text-[13px] text-[#7a7a7a]">
+        <div className="mb-4 flex items-start gap-3 rounded-xl border border-border bg-muted px-4 py-3">
+          <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+          <p className="text-[13px] text-muted-foreground">
             Batas waktu komplain untuk pesanan ini telah berakhir.
           </p>
         </div>
       )}
       <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
         {/* ── Status Pesanan ── */}
-        <div className="rounded-[18px] border border-[#e0e0e0] bg-white p-5 sm:p-6">
-          <p className="mb-5 text-[11px] font-bold tracking-widest text-[#a0a0a0] uppercase">
+        <div className="rounded-[18px] border border-border bg-white p-5 sm:p-6">
+          <p className="mb-5 text-[11px] font-bold tracking-widest text-muted-foreground uppercase">
             Status Pesanan
           </p>
           <OrderStatusStepper currentStatus={order.status} statusHistory={statusHistory} />
         </div>
 
         {/* ── Lacak Kiriman ── */}
-        <div className="rounded-[18px] border border-[#e0e0e0] bg-white p-5 sm:p-6">
+        <div className="rounded-[18px] border border-border bg-white p-5 sm:p-6">
           {/* Header */}
           <div className="flex items-start gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#FFF0E8]">
-              <Package className="h-5 w-5 text-[#EA5329]" />
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted">
+              <Package className="h-5 w-5 text-foreground" />
             </div>
             <div>
-              <h2 className="text-[17px] leading-snug font-semibold tracking-tight text-[#1d1d1f]">
+              <h2 className="text-base leading-snug font-semibold tracking-tight text-foreground">
                 Lacak Kiriman
               </h2>
-              <p className="mt-0.5 text-[13px] text-[#7a7a7a]">Pesanan {order.order_number}</p>
+              <p className="mt-0.5 text-[13px] text-muted-foreground">
+                Pesanan {order.order_number}
+              </p>
             </div>
           </div>
 
           {shipmentsWithAwb.length === 0 ? (
-            <div className="mt-6 flex items-start gap-2.5 rounded-xl bg-[#f5f5f7] px-4 py-3.5">
-              <Info className="mt-0.5 h-4 w-4 shrink-0 text-[#a0a0a0]" />
-              <p className="text-[13px] leading-relaxed text-[#7a7a7a]">
+            <div className="mt-6 flex items-start gap-2.5 rounded-xl bg-muted px-4 py-3.5">
+              <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+              <p className="text-[13px] leading-relaxed text-muted-foreground">
                 Nomor resi belum tersedia — tim kami akan memperbarui setelah paket dikirim.
               </p>
             </div>
@@ -381,15 +383,15 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
                     {/* Courier + AWB header */}
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div className="flex items-center gap-2.5">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#FFF0E8]">
-                          <Truck className="h-4 w-4 text-[#EA5329]" />
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted">
+                          <Truck className="h-4 w-4 text-foreground" />
                         </div>
                         <div>
-                          <p className="text-[14px] leading-snug font-semibold text-[#1d1d1f]">
+                          <p className="text-[14px] leading-snug font-semibold text-foreground">
                             {s.courier_name ?? s.courier_company?.toUpperCase()}
                             {s.courier_service ? ` · ${s.courier_service}` : ""}
                           </p>
-                          <p className="mt-0.5 font-mono text-[12px] text-[#7a7a7a] select-all">
+                          <p className="mt-0.5 font-mono text-[12px] text-muted-foreground select-all">
                             {s.awb}
                           </p>
                         </div>
@@ -403,7 +405,7 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
                           "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[12px] font-semibold",
                           STEP_CFG[dbStatus]
                             ? `${STEP_CFG[dbStatus].bg} ${STEP_CFG[dbStatus].color}`
-                            : "bg-[#f5f5f7] text-[#5c5c5c]",
+                            : "bg-muted text-steel-700",
                         ].join(" ")}
                       >
                         {(() => {
@@ -417,19 +419,21 @@ export default async function OrderTrackingPage({ params }: { params: Promise<{ 
                         {SHIPMENT_STATUS_LABEL[dbStatus] ?? dbStatus}
                       </span>
                       {s.updated_at && (
-                        <span className="text-[12px] text-[#a0a0a0]">· {fmt(s.updated_at)}</span>
+                        <span className="text-[12px] text-muted-foreground">
+                          · {fmt(s.updated_at)}
+                        </span>
                       )}
                     </div>
 
                     {/* Timeline */}
                     {hasSteps ? (
-                      <div className="mt-4 rounded-xl border border-[#e8e8e8] bg-[#fafafa] p-4 sm:p-5">
+                      <div className="mt-4 rounded-xl border border-border bg-muted p-4 sm:p-5">
                         <TrackingTimeline result={tracking} />
                       </div>
                     ) : (
-                      <div className="mt-3 flex items-start gap-2 rounded-xl bg-[#f5f5f7] px-4 py-3">
-                        <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#b0b0b0]" />
-                        <p className="text-[12px] leading-relaxed text-[#a0a0a0]">
+                      <div className="mt-3 flex items-start gap-2 rounded-xl bg-muted px-4 py-3">
+                        <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        <p className="text-[12px] leading-relaxed text-muted-foreground">
                           Riwayat dari kurir belum tersedia. Coba cek langsung di website kurir.
                         </p>
                       </div>

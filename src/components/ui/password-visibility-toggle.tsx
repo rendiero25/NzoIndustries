@@ -38,7 +38,7 @@ export function PasswordVisibilityToggle({
         type="button"
         variant="icon-chip"
         size="icon-sm"
-        className="pointer-events-auto shrink-0 text-[#1d1d1f]"
+        className="pointer-events-auto shrink-0 text-foreground"
         onClick={onToggle}
         aria-label={visible ? labelHidden : labelVisible}
       >

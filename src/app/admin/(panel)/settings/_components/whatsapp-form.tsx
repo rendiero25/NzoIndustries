@@ -37,7 +37,7 @@ export function WhatsappForm({ initialValue }: WhatsappFormProps) {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           placeholder="6281234567890"
-          className="h-10 rounded-lg border-[#e0e0e0] text-sm"
+          className="h-10 rounded-lg border-border text-sm"
         />
       </div>
       <Button

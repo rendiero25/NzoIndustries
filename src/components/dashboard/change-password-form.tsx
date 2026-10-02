@@ -13,7 +13,7 @@ export function ChangePasswordForm() {
 
   return (
     <form
-      className="w-full space-y-5 rounded-xl border border-[#e0e0e0] bg-white p-6"
+      className="w-full space-y-5 rounded-xl border border-border bg-white p-6"
       onSubmit={(e) => {
         e.preventDefault();
         const fd = new FormData(e.currentTarget);
@@ -43,7 +43,7 @@ export function ChangePasswordForm() {
           autoComplete="new-password"
           required
           minLength={8}
-          className="mt-1 border-[#e0e0e0]"
+          className="mt-1 border-border"
         />
       </div>
       <div>
@@ -55,7 +55,7 @@ export function ChangePasswordForm() {
           autoComplete="new-password"
           required
           minLength={8}
-          className="mt-1 border-[#e0e0e0]"
+          className="mt-1 border-border"
         />
       </div>
       <Button type="submit" variant="primary" loading={pending}>

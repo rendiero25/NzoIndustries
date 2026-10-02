@@ -23,8 +23,8 @@ export function CartCheckoutStepper({ current }: { current: 1 | 2 | 3 | 4 }) {
             className={cn(
               "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-bold transition",
               active && "border-black bg-black text-white",
-              done && !active && "border-[#EA5329] bg-[#EA5329] text-white",
-              !active && !done && "border-[#d4d0c8] bg-white text-[#9a9590]",
+              done && !active && "border-foreground bg-primary text-white",
+              !active && !done && "border-border bg-white text-muted-foreground",
             )}
           >
             {done && !active ? <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> : s.step}
@@ -34,9 +34,9 @@ export function CartCheckoutStepper({ current }: { current: 1 | 2 | 3 | 4 }) {
           <span
             className={cn(
               "text-xs font-semibold uppercase sm:text-sm",
-              active && "text-[#1d1d1f]",
-              done && !active && "text-[#EA5329]",
-              !active && !done && "text-[#9a9590]",
+              active && "text-foreground",
+              done && !active && "text-foreground",
+              !active && !done && "text-muted-foreground",
             )}
           >
             {s.label}
@@ -46,13 +46,13 @@ export function CartCheckoutStepper({ current }: { current: 1 | 2 | 3 | 4 }) {
         return (
           <div key={s.step} className="flex items-center gap-2 sm:gap-3">
             {i > 0 ? (
-              <span className="hidden h-px w-6 bg-[#d4d0c8] sm:block sm:w-10" aria-hidden />
+              <span className="hidden h-px w-6 bg-steel-200 sm:block sm:w-10" aria-hidden />
             ) : null}
             <div className="flex items-center gap-2">
               {s.href ? (
                 <Link
                   href={s.href}
-                  className="flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#EA5329]/40"
+                  className="flex items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-ring/40"
                 >
                   {content}
                   {label}

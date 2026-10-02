@@ -115,7 +115,7 @@ function CartLineCardInner({
                 sizes="200px"
               />
             ) : (
-              <div className="flex h-full items-center justify-center p-2 text-center text-[10px] font-semibold text-[#9a9590] uppercase">
+              <div className="flex h-full items-center justify-center p-2 text-center text-[10px] font-semibold text-muted-foreground uppercase">
                 Tanpa gambar
               </div>
             )}
@@ -127,7 +127,7 @@ function CartLineCardInner({
                   aria-label="Gambar sebelumnya"
                   disabled={pending}
                   onClick={() => setImgIndex((i) => (i - 1 + images.length) % images.length)}
-                  className="pointer-events-auto size-8 min-h-0 shrink-0 rounded-full border border-[#e0e0e0] bg-white/95 p-0 text-[#1d1d1f] shadow-sm hover:bg-white [&_svg]:size-4"
+                  className="pointer-events-auto size-8 min-h-0 shrink-0 rounded-full border border-border bg-white/95 p-0 text-foreground shadow-sm hover:bg-white [&_svg]:size-4"
                 />
                 <CarouselNavButton
                   direction="next"
@@ -135,7 +135,7 @@ function CartLineCardInner({
                   aria-label="Gambar berikutnya"
                   disabled={pending}
                   onClick={() => setImgIndex((i) => (i + 1) % images.length)}
-                  className="pointer-events-auto size-8 min-h-0 shrink-0 rounded-full border border-[#e0e0e0] bg-white/95 p-0 text-[#1d1d1f] shadow-sm hover:bg-white [&_svg]:size-4"
+                  className="pointer-events-auto size-8 min-h-0 shrink-0 rounded-full border border-border bg-white/95 p-0 text-foreground shadow-sm hover:bg-white [&_svg]:size-4"
                 />
               </div>
             ) : null}
@@ -145,29 +145,29 @@ function CartLineCardInner({
         <div className="min-w-0 flex-1">
           <Link
             href={`/products/${line.slug}`}
-            className="text-lg leading-snug font-bold text-[#1d1d1f] hover:text-[#EA5329]"
+            className="text-lg leading-snug font-bold text-foreground hover:text-foreground"
           >
             {line.productName}
           </Link>
-          <p className="mt-0.5 text-xs font-semibold text-[#9a9590] uppercase">
+          <p className="mt-0.5 text-xs font-semibold text-muted-foreground uppercase">
             {line.categoryLabel}
           </p>
-          <p className="mt-1 text-sm font-medium text-[#5c5c5c]">{line.variantName}</p>
+          <p className="mt-1 text-sm font-medium text-steel-700">{line.variantName}</p>
           {line.isFlashSale && (
             <span
               aria-label="Flash Sale"
-              className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-[#EA5329]/10 px-2 py-0.5 text-[11px] font-bold tracking-wide text-[#EA5329] uppercase"
+              className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-bold tracking-wide text-foreground uppercase"
             >
               ⚡ Flash Sale
             </span>
           )}
           {line.descriptionExcerpt ? (
-            <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#5c5c5c]">
+            <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-steel-700">
               {line.descriptionExcerpt}
             </p>
           ) : null}
-          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-[#5c5c5c]">
-            <span className="inline-flex items-center gap-1 font-medium text-[#1d1d1f]">
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-steel-700">
+            <span className="inline-flex items-center gap-1 font-medium text-foreground">
               <svg
                 className="h-3.5 w-3.5 shrink-0 text-amber-400"
                 viewBox="0 0 24 24"
@@ -178,24 +178,24 @@ function CartLineCardInner({
               </svg>
               {line.rating.toFixed(1)}
             </span>
-            <span className="text-[#d4d0c8]">·</span>
+            <span className="text-steel-200">·</span>
             <span>{line.reviewCount} ulasan</span>
-            <span className="text-[#d4d0c8]">·</span>
+            <span className="text-steel-200">·</span>
             <span>{line.soldCount} terjual</span>
           </div>
 
           <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
             <div>
-              <p className="text-lg font-normal text-[#1d1d1f] tabular-nums">
+              <p className="text-lg font-normal text-foreground tabular-nums">
                 {formatRupiah(line.unitPrice)}
               </p>
               {line.listPrice > line.unitPrice ? (
                 <div className="mt-1 flex flex-wrap items-center gap-2">
-                  <span className="text-sm text-[#9a9590] line-through">
+                  <span className="text-sm text-muted-foreground line-through">
                     {formatRupiah(line.listPrice)}
                   </span>
                   {line.discountPercent != null ? (
-                    <span className="text-sm font-bold text-[#EA5329]">
+                    <span className="text-sm font-bold text-foreground">
                       {line.discountPercent}%
                     </span>
                   ) : null}
@@ -226,14 +226,14 @@ function CartLineCardInner({
                 </Button>
               </div>
             )}
-            {readonly && <p className="text-sm font-medium text-[#5c5c5c]">Qty: {line.qty}</p>}
+            {readonly && <p className="text-sm font-medium text-steel-700">Qty: {line.qty}</p>}
           </div>
 
-          <p className="mt-3 text-right text-xs font-semibold text-[#7a7a7a] sm:hidden">
+          <p className="mt-3 text-right text-xs font-semibold text-muted-foreground sm:hidden">
             Subtotal baris: {formatRupiah(lineTotal)}
           </p>
 
-          <p className="mt-5 hidden shrink-0 self-start text-left text-base font-bold text-[#1d1d1f] tabular-nums sm:block sm:pt-1 sm:text-xl">
+          <p className="mt-5 hidden shrink-0 self-start text-left text-base font-bold text-foreground tabular-nums sm:block sm:pt-1 sm:text-xl">
             {formatRupiah(lineTotal)}
           </p>
         </div>

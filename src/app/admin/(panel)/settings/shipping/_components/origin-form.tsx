@@ -30,7 +30,7 @@ export function OriginForm({ initialValue }: OriginFormProps) {
     });
   };
 
-  const inputClass = "h-10 rounded-lg border-[#e0e0e0] text-sm";
+  const inputClass = "h-10 rounded-lg border-border text-sm";
 
   return (
     <div className="space-y-6">

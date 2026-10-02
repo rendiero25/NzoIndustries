@@ -31,7 +31,7 @@ export function StoreFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-auto overflow-hidden bg-gradient-to-br from-[#121212] via-[#121212] to-[#121212]/90 pt-12 text-white">
+    <footer className="relative mt-auto overflow-hidden bg-gradient-to-br from-foreground via-foreground to-foreground/90 pt-12 text-white">
       <div className="relative z-10 mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-24 lg:py-16">
         <div className="flex flex-col gap-12 lg:flex-row lg:items-start lg:justify-between lg:gap-20">
           <div className="min-w-0 space-y-4 lg:max-w-xl">

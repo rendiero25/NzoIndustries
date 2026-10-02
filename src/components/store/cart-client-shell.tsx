@@ -65,9 +65,9 @@ export function CartClientShell({ lines }: { lines: CartLineView[] }) {
   return (
     <div className="mt-6 md:mt-8 md:grid md:grid-cols-12 md:items-start md:gap-6 lg:gap-8">
       <div className="md:col-span-7">
-        <div className="rounded-2xl border border-[#e8e4dc] bg-[#faf8f4] p-3 sm:p-4 md:p-5">
+        <div className="rounded-2xl border border-border bg-muted p-3 sm:p-4 md:p-5">
           {/* Select all */}
-          <div className="mb-5 flex items-center gap-3 border-b border-[#e8e4dc] pb-4">
+          <div className="mb-5 flex items-center gap-3 border-b border-border pb-4">
             <Checkbox
               id="select-all"
               checked={someSelected ? "indeterminate" : allSelected}
@@ -76,7 +76,7 @@ export function CartClientShell({ lines }: { lines: CartLineView[] }) {
             />
             <label
               htmlFor="select-all"
-              className="cursor-pointer text-sm font-semibold text-[#1d1d1f] select-none"
+              className="cursor-pointer text-sm font-semibold text-foreground select-none"
             >
               Pilih semua ({lines.length} produk)
             </label>
@@ -97,7 +97,7 @@ export function CartClientShell({ lines }: { lines: CartLineView[] }) {
       </div>
 
       <aside className="mt-6 md:col-span-5 md:mt-0">
-        <div className="rounded-2xl bg-[#1a1a1a] p-5 text-white shadow-lg sm:p-6 md:sticky md:top-24 md:max-h-[calc(100vh-8rem)] md:overflow-y-auto">
+        <div className="rounded-2xl bg-primary p-5 text-white shadow-lg sm:p-6 md:sticky md:top-24 md:max-h-[calc(100vh-8rem)] md:overflow-y-auto">
           <h2 className="text-lg font-bold">Ringkasan pesanan</h2>
           <dl className="mt-6 space-y-4 border-b border-white/15 pb-6 text-sm">
             <div className="flex justify-between gap-4">
@@ -107,7 +107,7 @@ export function CartClientShell({ lines }: { lines: CartLineView[] }) {
             {regularDiscount > 0 && (
               <div className="flex justify-between gap-4">
                 <dt className="text-white/75">Diskon produk</dt>
-                <dd className="shrink-0 font-semibold text-[#EA5329] tabular-nums">
+                <dd className="shrink-0 font-semibold text-foreground tabular-nums">
                   −{formatRupiah(regularDiscount)}
                 </dd>
               </div>
@@ -115,7 +115,7 @@ export function CartClientShell({ lines }: { lines: CartLineView[] }) {
             {flashSaleDiscount > 0 && (
               <div className="flex justify-between gap-4">
                 <dt className="text-white/75">Diskon flash sale</dt>
-                <dd className="shrink-0 font-semibold text-[#EA5329] tabular-nums">
+                <dd className="shrink-0 font-semibold text-foreground tabular-nums">
                   −{formatRupiah(flashSaleDiscount)}
                 </dd>
               </div>

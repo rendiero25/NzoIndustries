@@ -27,51 +27,51 @@ export default async function VouchersPage() {
 
   return (
     <div className="w-full">
-      <p className="text-[10px] font-bold text-[#7a7a7a] uppercase">Promo</p>
-      <h1 className="mt-2 text-2xl font-bold text-[#1d1d1f] sm:text-3xl">Voucher aktif</h1>
-      <p className="mt-2 text-sm text-[#5c5c5c]">
+      <p className="text-[10px] font-bold text-muted-foreground uppercase">Promo</p>
+      <h1 className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">Voucher aktif</h1>
+      <p className="mt-2 text-sm text-steel-700">
         Gunakan kode saat checkout sesai syarat minimum belanja.
       </p>
 
       {coupons.length === 0 ? (
-        <p className="mt-10 text-sm text-[#5c5c5c]">Saat ini tidak ada kode promo publik.</p>
+        <p className="mt-10 text-sm text-steel-700">Saat ini tidak ada kode promo publik.</p>
       ) : (
         <ul className="mt-10 grid gap-4 sm:grid-cols-2">
           {coupons.map((c) => (
             <li
               key={c.id}
-              className="flex overflow-hidden rounded-xl border border-[#e0e0e0] bg-white"
+              className="flex overflow-hidden rounded-xl border border-border bg-white"
             >
               <div className="flex-1 p-5">
-                <p className="font-mono text-lg font-black text-[#EA5329]">{c.code}</p>
-                <p className="mt-2 text-xs font-semibold text-[#7a7a7a] uppercase">
+                <p className="font-mono text-lg font-black text-foreground">{c.code}</p>
+                <p className="mt-2 text-xs font-semibold text-muted-foreground uppercase">
                   {couponTypeLabel(c.type)}
                 </p>
-                <p className="mt-2 text-sm text-[#1d1d1f]">
+                <p className="mt-2 text-sm text-foreground">
                   Nilai:{" "}
                   <span className="font-bold">
                     {c.type === "percentage" ? `${c.value}%` : formatRupiah(c.value)}
                   </span>
                 </p>
-                <p className="mt-1 text-xs text-[#5c5c5c]">
+                <p className="mt-1 text-xs text-steel-700">
                   Min. belanja {formatRupiah(c.min_purchase)}
                 </p>
                 {c.max_discount != null ? (
-                  <p className="text-xs text-[#5c5c5c]">
+                  <p className="text-xs text-steel-700">
                     Maks. diskon {formatRupiah(c.max_discount)}
                   </p>
                 ) : null}
-                <p className="mt-3 text-xs text-[#7a7a7a]">
+                <p className="mt-3 text-xs text-muted-foreground">
                   {c.valid_from ? `Mulai ${formatDate(c.valid_from)}` : null}
                   {c.valid_until ? ` · s/d ${formatDate(c.valid_until)}` : null}
                 </p>
-                <p className="mt-2 text-xs text-[#7a7a7a]">
+                <p className="mt-2 text-xs text-muted-foreground">
                   Pemakaian: {c.used_count}
                   {c.max_usage != null ? ` / ${c.max_usage}` : ""}
                 </p>
               </div>
               {c.image_url && (
-                <div className="shrink-0 overflow-hidden bg-[#f5f4f0]">
+                <div className="shrink-0 overflow-hidden bg-muted">
                   <Image
                     src={c.image_url}
                     alt={c.title ?? c.code}

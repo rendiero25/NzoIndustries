@@ -47,24 +47,26 @@ function VerifyEmailContent() {
 
   return (
     <div className="space-y-10">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#EA5329]/10">
-        <MailCheck className="text-[#EA5329]" size={28} />
+      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+        <MailCheck className="text-foreground" size={28} />
       </div>
 
       <div className="space-y-3">
-        <h1 className="text-[28px] leading-[1.14] font-semibold text-[#1d1d1f]">Cek Email Kamu!</h1>
-        <p className="text-[17px] leading-[1.47] font-normal text-[#1d1d1f]">
+        <h1 className="text-[28px] leading-[1.14] font-semibold text-foreground">
+          Cek Email Kamu!
+        </h1>
+        <p className="text-base leading-[1.47] font-normal text-foreground">
           Kami sudah kirim email sambutan sekaligus link aktivasi ke{" "}
           {email ? <span className="font-semibold">{email}</span> : "alamat emailmu"}.
         </p>
-        <p className="text-[15px] leading-[1.6] font-normal text-[#1d1d1f]">
+        <p className="text-[15px] leading-[1.6] font-normal text-foreground">
           Klik tombol <span className="font-semibold">&ldquo;Aktifkan Akun&rdquo;</span> di email
           tersebut untuk mulai belanja di NZO Industries.
         </p>
-        <p className="text-[14px] leading-[1.43] font-normal text-[#7a7a7a]">
+        <p className="text-[14px] leading-[1.43] font-normal text-muted-foreground">
           Tidak menerima email? Cek folder{" "}
-          <span className="font-semibold text-[#1d1d1f]">Spam</span> atau klik tombol di bawah untuk
-          kirim ulang.
+          <span className="font-semibold text-foreground">Spam</span> atau klik tombol di bawah
+          untuk kirim ulang.
         </p>
       </div>
 

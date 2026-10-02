@@ -132,13 +132,13 @@ export default async function ProductsHubPage({ searchParams }: { searchParams: 
 
   return (
     <div className="bg-white text-foreground">
-      <nav aria-label="Breadcrumb" className="border-b border-[#e0e0e0] bg-white py-3">
+      <nav aria-label="Breadcrumb" className="border-b border-border bg-white py-3">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-24">
           <ol className="scrollbar-none flex min-w-0 items-center gap-2 overflow-x-auto py-1 text-[13px]">
             {breadcrumbItems.map((item, i) => (
               <li key={i} className="flex items-center gap-2">
                 {i > 0 && (
-                  <span className="text-[#c8c8cc]" aria-hidden>
+                  <span className="text-steel-200" aria-hidden>
                     /
                   </span>
                 )}
@@ -171,7 +171,7 @@ export default async function ProductsHubPage({ searchParams }: { searchParams: 
           <Suspense
             fallback={
               <div
-                className="mb-6 h-11 w-full max-w-xl animate-pulse rounded-full bg-[#f5f5f7]"
+                className="mb-6 h-11 w-full max-w-xl animate-pulse rounded-full bg-muted"
                 aria-hidden
               />
             }

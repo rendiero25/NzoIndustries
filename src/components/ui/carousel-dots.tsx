@@ -25,8 +25,8 @@ export function CarouselDots({
   const inactive =
     tone === "light"
       ? "bg-white/40 hover:bg-white/70"
-      : "bg-[#1d1d1f]/25 hover:bg-[#1d1d1f]/40";
-  const active = tone === "light" ? "w-8 bg-white" : "w-8 bg-[#1d1d1f]";
+      : "bg-primary/25 hover:bg-primary/40";
+  const active = tone === "light" ? "w-8 bg-white" : "w-8 bg-primary";
 
   return (
     <div className={cn("flex justify-center gap-1", className)}>

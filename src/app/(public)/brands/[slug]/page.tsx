@@ -31,26 +31,26 @@ type SearchParams = Promise<{
 
 function BrandBreadcrumbs({ brand }: { brand: BrandStorePublicBrand }) {
   return (
-    <nav aria-label="Breadcrumb" className="text-[14px] text-[#7a7a7a]">
+    <nav aria-label="Breadcrumb" className="text-[14px] text-muted-foreground">
       <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <li>
-          <Link href="/" className="transition hover:text-[#EA5329]">
+          <Link href="/" className="transition hover:text-foreground">
             Home
           </Link>
         </li>
-        <li aria-hidden className="text-[#d4d4d4]">
+        <li aria-hidden className="text-steel-200">
           /
         </li>
         <li>
-          <Link href="/brands" className="transition hover:text-[#EA5329]">
+          <Link href="/brands" className="transition hover:text-foreground">
             Brand
           </Link>
         </li>
-        <li aria-hidden className="text-[#d4d4d4]">
+        <li aria-hidden className="text-steel-200">
           /
         </li>
         <li
-          className="max-w-[min(100%,28rem)] truncate font-medium text-[#1d1d1f]"
+          className="max-w-[min(100%,28rem)] truncate font-medium text-foreground"
           aria-current="page"
         >
           {brand.name}
@@ -110,8 +110,8 @@ export default async function BrandProductListPage({
   const basePath = `/brands/${encodeURIComponent(brand.slug)}`;
 
   return (
-    <div className="bg-white text-[#1d1d1f]">
-      <div className="border-b border-[#e0e0e0] py-4">
+    <div className="bg-white text-foreground">
+      <div className="border-b border-border py-4">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-24">
           <BrandBreadcrumbs brand={brand} />
         </div>
@@ -122,7 +122,7 @@ export default async function BrandProductListPage({
           <Suspense
             fallback={
               <div
-                className="mb-8 h-11 w-full max-w-xl animate-pulse rounded-full bg-[#f5f5f7]"
+                className="mb-8 h-11 w-full max-w-xl animate-pulse rounded-full bg-muted"
                 aria-hidden
               />
             }
@@ -150,7 +150,7 @@ export default async function BrandProductListPage({
       </section>
 
       {preFooterBanners.length > 0 ? (
-        <section className="bg-[#f5f5f7] py-10">
+        <section className="bg-muted py-10">
           <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-24">
             <HomePromoBannerStrip banners={preFooterBanners} />
           </div>

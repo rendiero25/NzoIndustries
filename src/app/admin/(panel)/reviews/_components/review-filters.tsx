@@ -62,7 +62,7 @@ export function ReviewFilters() {
             if (debounceRef.current) clearTimeout(debounceRef.current);
             debounceRef.current = setTimeout(() => updateParam("q", val), 400);
           }}
-          className="h-11 rounded-md border-[#e0e0e0] pr-10 pl-10 text-[17px] leading-[1.47]"
+          className="h-11 rounded-md border-border pr-10 pl-10 text-base leading-[1.47]"
         />
         {q && (
           <button

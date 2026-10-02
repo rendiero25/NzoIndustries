@@ -69,7 +69,7 @@ function resolveNotifAction(notif: NotifItem): NotifAction {
 }
 
 const NOTIF_ITEM_CLASS =
-  "block w-full border-b border-[#e0e0e0] px-4 py-3.5 text-left transition-colors last:border-b-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand/40";
+  "block w-full border-b border-border px-4 py-3.5 text-left transition-colors last:border-b-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-brand/40";
 
 function NotificationListItemContent({ notif }: { notif: NotifItem }) {
   const body = formatNotificationBody(notif);
@@ -89,16 +89,16 @@ function NotificationListItemContent({ notif }: { notif: NotifItem }) {
           </span>
           <time
             dateTime={notif.created_at}
-            className="shrink-0 text-[11px] leading-none text-[#7a7a7a] tabular-nums"
+            className="shrink-0 text-[11px] leading-none text-muted-foreground tabular-nums"
           >
             {formatRelativeDate(notif.created_at)}
           </time>
         </div>
-        <p className="mt-1 truncate text-[14px] leading-[1.29] font-semibold text-[#1d1d1f]">
+        <p className="mt-1 truncate text-[14px] leading-[1.29] font-semibold text-foreground">
           {notif.title}
         </p>
         {body ? (
-          <p className="mt-1 line-clamp-2 text-[13px] leading-[1.43] font-normal text-[#5c5c5c]">
+          <p className="mt-1 line-clamp-2 text-[13px] leading-[1.43] font-normal text-steel-700">
             {body}
           </p>
         ) : null}
@@ -231,16 +231,16 @@ export function NotificationBell() {
             {loading ? (
               <div>
                 {[1, 2, 3].map((i) => (
-                  <div key={i} className="border-b border-[#e0e0e0] px-4 py-3.5 last:border-b-0">
+                  <div key={i} className="border-b border-border px-4 py-3.5 last:border-b-0">
                     <div className="flex gap-3">
-                      <div className="h-5 w-2 shrink-0 animate-pulse rounded bg-[#f5f5f7]" />
+                      <div className="h-5 w-2 shrink-0 animate-pulse rounded bg-muted" />
                       <div className="min-w-0 flex-1 space-y-2">
                         <div className="flex justify-between gap-2">
-                          <div className="h-2.5 w-14 animate-pulse rounded bg-[#f5f5f7]" />
-                          <div className="h-2.5 w-12 animate-pulse rounded bg-[#f5f5f7]" />
+                          <div className="h-2.5 w-14 animate-pulse rounded bg-muted" />
+                          <div className="h-2.5 w-12 animate-pulse rounded bg-muted" />
                         </div>
-                        <div className="h-3.5 w-44 animate-pulse rounded bg-[#f5f5f7]" />
-                        <div className="h-2.5 w-full animate-pulse rounded bg-[#f5f5f7]" />
+                        <div className="h-3.5 w-44 animate-pulse rounded bg-muted" />
+                        <div className="h-2.5 w-full animate-pulse rounded bg-muted" />
                       </div>
                     </div>
                   </div>
@@ -248,17 +248,17 @@ export function NotificationBell() {
               </div>
             ) : items.length === 0 ? (
               <div className="px-4 py-10 text-center">
-                <Bell size={24} className="mx-auto mb-2 text-[#7a7a7a]/50" aria-hidden />
-                <p className="text-[14px] leading-[1.43] text-[#7a7a7a]">Belum ada notifikasi</p>
+                <Bell size={24} className="mx-auto mb-2 text-muted-foreground/50" aria-hidden />
+                <p className="text-[14px] leading-[1.43] text-muted-foreground">
+                  Belum ada notifikasi
+                </p>
               </div>
             ) : (
               items.map((notif) => {
                 const action = resolveNotifAction(notif);
                 const itemClass = cn(
                   NOTIF_ITEM_CLASS,
-                  !notif.is_read
-                    ? "bg-[#fff8f5] hover:bg-[#f5f5f7]"
-                    : "bg-white hover:bg-[#f5f5f7]",
+                  !notif.is_read ? "bg-muted hover:bg-muted" : "bg-white hover:bg-muted",
                 );
 
                 return (
@@ -276,7 +276,7 @@ export function NotificationBell() {
             )}
           </div>
 
-          <div className="flex items-center justify-between gap-2 border-t border-[#e0e0e0] bg-[#f5f5f7] px-3 py-2.5">
+          <div className="flex items-center justify-between gap-2 border-t border-border bg-muted px-3 py-2.5">
             <Button
               type="button"
               variant="ghost"
@@ -284,7 +284,7 @@ export function NotificationBell() {
               loading={pending}
               disabled={unread === 0}
               onClick={handleMarkAllRead}
-              className="h-auto gap-1.5 px-2 py-1.5 text-[13px] text-[#333333] hover:text-brand"
+              className="h-auto gap-1.5 px-2 py-1.5 text-[13px] text-foreground hover:text-brand"
             >
               <CheckCheck size={14} aria-hidden />
               Tandai semua dibaca

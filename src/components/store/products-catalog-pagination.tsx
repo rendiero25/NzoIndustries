@@ -62,7 +62,7 @@ export function ProductsCatalogPagination({
         href={buildHref(prev, filters)}
         aria-disabled={currentPage <= 1}
         className={cn(
-          "flex h-10 w-10 items-center justify-center rounded-full border border-[#e0e0e0] bg-white text-foreground transition hover:border-brand/40",
+          "flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground transition hover:border-brand/40",
           currentPage <= 1 && "pointer-events-none opacity-40",
         )}
         aria-label="Halaman sebelumnya"
@@ -78,7 +78,7 @@ export function ProductsCatalogPagination({
             "flex h-10 min-w-10 items-center justify-center rounded-md border px-2 text-sm font-medium transition",
             n === currentPage
               ? "border-foreground bg-foreground text-background"
-              : "border-[#e0e0e0] bg-white text-foreground hover:border-brand/40",
+              : "border-border bg-white text-foreground hover:border-brand/40",
           )}
           aria-current={n === currentPage ? "page" : undefined}
         >
@@ -90,7 +90,7 @@ export function ProductsCatalogPagination({
         href={buildHref(next, filters)}
         aria-disabled={currentPage >= totalPages}
         className={cn(
-          "flex h-10 w-10 items-center justify-center rounded-full border border-[#e0e0e0] bg-white text-foreground transition hover:border-brand/40",
+          "flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground transition hover:border-brand/40",
           currentPage >= totalPages && "pointer-events-none opacity-40",
         )}
         aria-label="Halaman berikutnya"

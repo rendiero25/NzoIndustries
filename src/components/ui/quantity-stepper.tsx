@@ -33,7 +33,7 @@ export function QuantityStepper({
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-full border border-[#e0e0e0] bg-white p-0.5",
+        "inline-flex items-center rounded-full border border-border bg-white p-0.5",
         className,
       )}
     >
@@ -41,7 +41,7 @@ export function QuantityStepper({
         type="button"
         variant="ghost"
         size={btnSize}
-        className={cn(btnDim, "min-h-0 rounded-full text-[#1d1d1f] hover:bg-[#f5f5f7]")}
+        className={cn(btnDim, "min-h-0 rounded-full text-foreground hover:bg-muted")}
         aria-label="Kurangi jumlah"
         disabled={disabled || value <= min || max < min}
         onClick={onDecrease}
@@ -50,7 +50,7 @@ export function QuantityStepper({
       </Button>
       <span
         className={cn(
-          "min-w-[2.5rem] text-center font-semibold tabular-nums text-[#1d1d1f]",
+          "min-w-[2.5rem] text-center font-semibold tabular-nums text-foreground",
           size === "default" ? "text-sm" : "text-xs",
         )}
       >
@@ -60,7 +60,7 @@ export function QuantityStepper({
         type="button"
         variant="ghost"
         size={btnSize}
-        className={cn(btnDim, "min-h-0 rounded-full text-[#1d1d1f] hover:bg-[#f5f5f7]")}
+        className={cn(btnDim, "min-h-0 rounded-full text-foreground hover:bg-muted")}
         aria-label="Tambah jumlah"
         disabled={disabled || value >= max || max < min}
         onClick={onIncrease}

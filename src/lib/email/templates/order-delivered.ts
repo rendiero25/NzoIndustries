@@ -30,7 +30,7 @@ export function orderDeliveredHtml(params: {
     ${ctaButton(reviewUrl, "Tulis Ulasan")}
 
     <p style="margin:12px 0 0;font-size:14px;color:#3d3d3d;line-height:1.6;">
-      Ada kendala dengan produk? <a href="${orderUrl}" style="color:#EA5329;text-decoration:none;">Buka pesanan</a> dan ajukan komplain dalam 7 hari sejak diterima.
+      Ada kendala dengan produk? <a href="${orderUrl}" style="color:#000000;text-decoration:none;">Buka pesanan</a> dan ajukan komplain dalam 7 hari sejak diterima.
     </p>`;
 
   return emailShell({

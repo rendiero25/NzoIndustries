@@ -111,12 +111,12 @@ export function AdminNewOrdersSection() {
   if (loading || orders.length === 0) return null;
 
   return (
-    <Card className="border-[#EA5329]/20 bg-[#EA5329]/[0.03]">
+    <Card className="border-foreground/20 bg-primary/[0.03]">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#EA5329]/10">
-              <ShoppingBag className="h-4 w-4 text-[#EA5329]" />
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10">
+              <ShoppingBag className="h-4 w-4 text-foreground" />
             </span>
             <div>
               <CardTitle className="text-[15px]">
@@ -129,7 +129,7 @@ export function AdminNewOrdersSection() {
             asChild
             variant="ghost"
             size="sm"
-            className="h-7 gap-1 text-[12px] text-[#EA5329] hover:bg-[#EA5329]/10 hover:text-[#EA5329]"
+            className="h-7 gap-1 text-[12px] text-foreground hover:bg-primary/10 hover:text-foreground"
           >
             <Link href="/admin/orders">
               Lihat semua <ArrowRight className="h-3 w-3" />
@@ -143,7 +143,7 @@ export function AdminNewOrdersSection() {
             <Link
               key={o.id}
               href={`/admin/orders/${o.id}`}
-              className="flex items-center justify-between gap-3 py-2.5 text-sm transition-colors hover:text-[#EA5329]"
+              className="flex items-center justify-between gap-3 py-2.5 text-sm transition-colors hover:text-foreground"
             >
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">

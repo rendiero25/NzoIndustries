@@ -107,9 +107,9 @@ export function DashboardShell({
       >
         <DashboardSidebar unreadNotifications={unreadNotifications} />
         <SidebarInset className="min-w-0 overflow-hidden rounded-md border border-black/5 bg-white">
-          <header className="flex h-14 shrink-0 items-center gap-2.5 border-b border-[#ececea] bg-white px-5 sm:px-6">
-            <SidebarTrigger className="-ml-1 text-[#5c5c5c] hover:bg-[#f3f3f1] hover:text-[#1d1d1f]" />
-            <span className="text-sm text-[#d4d4d4] select-none">|</span>
+          <header className="flex h-14 shrink-0 items-center gap-2.5 border-b border-border bg-white px-5 sm:px-6">
+            <SidebarTrigger className="-ml-1 text-steel-700 hover:bg-muted hover:text-foreground" />
+            <span className="text-sm text-steel-200 select-none">|</span>
             <DashboardBreadcrumb />
           </header>
           <div className="w-full flex-1 p-5 sm:p-7 lg:p-8">{children}</div>

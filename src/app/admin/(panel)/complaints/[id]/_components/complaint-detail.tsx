@@ -140,7 +140,7 @@ export function ComplaintDetailView({ complaint }: ComplaintDetailProps) {
           <p className="mt-1 font-mono text-[15px] font-semibold text-foreground">
             {complaint.complaint_number}
           </p>
-          <p className="mt-1 text-[17px] leading-[1.47] text-muted-foreground">
+          <p className="mt-1 text-base leading-[1.47] text-muted-foreground">
             Dibuat {formatDate(complaint.created_at)}
           </p>
         </div>
@@ -161,7 +161,7 @@ export function ComplaintDetailView({ complaint }: ComplaintDetailProps) {
               <h2 className="admin-section-title">Informasi Komplain</h2>
             </div>
             <div className="space-y-4 p-6">
-              <div className="grid grid-cols-2 gap-4 text-[17px] leading-[1.47]">
+              <div className="grid grid-cols-2 gap-4 text-base leading-[1.47]">
                 <div>
                   <p className={cn(labelClass, "mb-1")}>Permintaan Pembeli</p>
                   <p className="capitalize">
@@ -186,13 +186,13 @@ export function ComplaintDetailView({ complaint }: ComplaintDetailProps) {
 
               <div>
                 <p className={cn(labelClass, "mb-1")}>Alasan</p>
-                <p className="text-[17px] leading-[1.47]">{complaint.reason}</p>
+                <p className="text-base leading-[1.47]">{complaint.reason}</p>
               </div>
 
               {complaint.description && (
                 <div>
                   <p className={cn(labelClass, "mb-1")}>Deskripsi</p>
-                  <p className="text-[17px] leading-[1.47] whitespace-pre-wrap text-muted-foreground">
+                  <p className="text-base leading-[1.47] whitespace-pre-wrap text-muted-foreground">
                     {complaint.description}
                   </p>
                 </div>
@@ -208,7 +208,7 @@ export function ComplaintDetailView({ complaint }: ComplaintDetailProps) {
                         href={url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="relative aspect-square overflow-hidden rounded-lg border border-[#e0e0e0] bg-muted/30 transition-opacity hover:opacity-80"
+                        className="relative aspect-square overflow-hidden rounded-lg border border-border bg-muted/30 transition-opacity hover:opacity-80"
                       >
                         <Image
                           src={url}
@@ -235,7 +235,7 @@ export function ComplaintDetailView({ complaint }: ComplaintDetailProps) {
                 onChange={(e) => setAdminNote(e.target.value)}
                 placeholder="Tambahkan catatan internal untuk komplain ini..."
                 rows={4}
-                className="w-full resize-none rounded-lg border border-[#e0e0e0] bg-background px-3 py-2 text-[17px] leading-[1.47] text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+                className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-base leading-[1.47] text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
               />
               <Button
                 type="button"
@@ -267,7 +267,7 @@ export function ComplaintDetailView({ complaint }: ComplaintDetailProps) {
             <div className="admin-utility-card-header">
               <h2 className="admin-section-title">Pelanggan</h2>
             </div>
-            <div className="space-y-3 p-6 text-[17px] leading-[1.47]">
+            <div className="space-y-3 p-6 text-base leading-[1.47]">
               <div>
                 <p className={cn(labelClass, "mb-0.5")}>Nama</p>
                 <p className="font-medium">{complaint.profiles?.full_name ?? "—"}</p>

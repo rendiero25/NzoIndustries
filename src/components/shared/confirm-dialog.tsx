@@ -1,14 +1,15 @@
 "use client";
 
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -22,6 +23,10 @@ interface ConfirmDialogProps {
   isLoading?: boolean;
 }
 
+/**
+ * Konfirmasi aksi destruktif / tidak bisa dibatalkan (design-system.md §9).
+ * Memakai AlertDialog: fokus terkunci, Escape = batal, tidak tertutup klik luar.
+ */
 export function ConfirmDialog({
   open,
   onOpenChange,
@@ -34,37 +39,29 @@ export function ConfirmDialog({
   isLoading = false,
 }: ConfirmDialogProps) {
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-lg border-[#e0e0e0] sm:max-w-md" showCloseButton={false}>
-        <DialogHeader>
-          <DialogTitle className="text-[17px] leading-[1.24] font-semibold tracking-[-0.374px] text-[#1d1d1f]">
-            {title}
-          </DialogTitle>
-          {description && (
-            <DialogDescription className="text-[17px] leading-[1.47] font-normal tracking-[-0.374px]">
-              {description}
-            </DialogDescription>
-          )}
-        </DialogHeader>
-        <DialogFooter className="gap-2 sm:gap-2">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => onOpenChange(false)}
-            disabled={isLoading}
-          >
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          {description ? <AlertDialogDescription>{description}</AlertDialogDescription> : null}
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel variant="secondary" disabled={isLoading}>
             {cancelLabel}
-          </Button>
-          <Button
-            type="button"
+          </AlertDialogCancel>
+          <AlertDialogAction
             variant={variant === "destructive" ? "destructive" : "primary"}
-            onClick={onConfirm}
-            loading={isLoading}
+            disabled={isLoading}
+            onClick={(event) => {
+              // Biarkan pemanggil yang menutup dialog setelah aksi.
+              event.preventDefault();
+              onConfirm();
+            }}
           >
             {confirmLabel}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

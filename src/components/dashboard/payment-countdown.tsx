@@ -33,7 +33,7 @@ export function PaymentCountdown({ expiryTime }: { expiryTime: string }) {
   return (
     <span
       className={`font-mono text-[11px] font-semibold tabular-nums ${
-        isUrgent ? "text-red-600" : "text-[#EA5329]"
+        isUrgent ? "text-red-600" : "text-foreground"
       }`}
     >
       {formatCountdown(secs)}

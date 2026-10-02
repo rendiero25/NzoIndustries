@@ -192,7 +192,7 @@ export function ReviewTable({ reviews, page, totalPages }: ReviewTableProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#e0e0e0] bg-muted/30">
+              <tr className="border-b border-border bg-muted/30">
                 <th className="px-4 py-3 text-left text-[10px] font-semibold text-foreground uppercase">
                   Pelanggan
                 </th>
@@ -213,7 +213,7 @@ export function ReviewTable({ reviews, page, totalPages }: ReviewTableProps) {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#e0e0e0]">
+            <tbody className="divide-y divide-border">
               {reviews.map((review) => (
                 <tr key={review.id} className="transition-colors hover:bg-muted/30">
                   <td className="px-4 py-3">

@@ -101,10 +101,10 @@ function DashboardNavGroup({ items, unreadNotifications, isActive }: DashboardNa
               asChild
               tooltip={item.label}
               isActive={active}
-              className="h-auto min-h-16 items-start gap-3 rounded-xl px-3 py-3 text-[#1d1d1f] transition-colors group-data-[collapsible=icon]:min-h-0 group-data-[collapsible=icon]:!items-center group-data-[collapsible=icon]:!justify-center group-data-[collapsible=icon]:!p-0 hover:bg-[#f5f5f3] data-active:bg-[#f1f1ef] data-active:text-[#1d1d1f]"
+              className="h-auto min-h-16 items-start gap-3 rounded-xl px-3 py-3 text-foreground transition-colors group-data-[collapsible=icon]:min-h-0 group-data-[collapsible=icon]:!items-center group-data-[collapsible=icon]:!justify-center group-data-[collapsible=icon]:!p-0 hover:bg-muted data-active:bg-muted data-active:text-foreground"
             >
               <Link href={item.href} aria-current={active ? "page" : undefined}>
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-transparent text-[#303030] group-data-[collapsible=icon]:size-[22px]">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-transparent text-foreground group-data-[collapsible=icon]:size-[22px]">
                   <Icon className="size-[22px]" />
                 </span>
                 <span className="min-w-0 flex-1 group-data-[collapsible=icon]:hidden">
@@ -114,7 +114,7 @@ function DashboardNavGroup({ items, unreadNotifications, isActive }: DashboardNa
                     </span>
                     {badge !== null && <SidebarNotificationBadge count={badge} />}
                   </span>
-                  <span className="mt-0.5 block text-[11px] leading-4 text-[#777773]">
+                  <span className="mt-0.5 block text-[11px] leading-4 text-muted-foreground">
                     {item.description}
                   </span>
                 </span>

@@ -21,7 +21,7 @@ type SegmentedControlProps<T extends string> = {
 };
 
 const segmentBase =
-  "border-r border-[#e0e0e0] px-4 text-sm font-normal leading-[1.29] tracking-[-0.224px] transition-colors last:border-r-0 focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#FF7A52] active:scale-95 disabled:pointer-events-none disabled:opacity-50";
+  "border-r border-border px-4 text-sm font-normal leading-[1.29] transition-colors last:border-r-0 focus-visible:z-10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring active:scale-95 disabled:pointer-events-none disabled:opacity-50";
 
 /** Segmented control — grup pilihan terlampir (hairline + brand tint saat aktif). */
 export function SegmentedControl<T extends string>({
@@ -38,7 +38,7 @@ export function SegmentedControl<T extends string>({
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex overflow-hidden rounded-md border border-[#e0e0e0] bg-card",
+        "inline-flex overflow-hidden rounded-md border border-border bg-card",
         fullWidth && "w-full",
         className,
       )}

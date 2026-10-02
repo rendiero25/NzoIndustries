@@ -52,7 +52,7 @@ const PAYMENT_STATUS_STYLES: Record<PaymentStatus, { label: string; cls: string 
   },
   paid: { label: "Lunas", cls: "bg-green-50 text-green-700 ring-1 ring-green-100" },
   failed: { label: "Gagal", cls: "bg-red-50 text-red-600 ring-1 ring-red-100" },
-  expired: { label: "Kedaluwarsa", cls: "bg-[#f5f5f7] text-[#5c5c5c] ring-1 ring-[#e0e0e0]" },
+  expired: { label: "Kedaluwarsa", cls: "bg-muted text-steel-700 ring-1 ring-border" },
   cancelled: { label: "Dibatalkan", cls: "bg-red-50 text-red-600 ring-1 ring-red-100" },
   refunded: { label: "Dikembalikan", cls: "bg-blue-50 text-blue-700 ring-1 ring-blue-100" },
   challenge: { label: "Perlu verifikasi", cls: "bg-amber-50 text-amber-700 ring-1 ring-amber-100" },
@@ -66,7 +66,7 @@ const ORDER_STATUS_STYLES: Record<OrderStatus, string> = {
   delivered: "bg-green-50 text-green-700 ring-1 ring-green-100",
   completed: "bg-green-50 text-green-700 ring-1 ring-green-100",
   cancelled: "bg-red-50 text-red-600 ring-1 ring-red-100",
-  refunded: "bg-[#f5f5f7] text-[#5c5c5c] ring-1 ring-[#e0e0e0]",
+  refunded: "bg-muted text-steel-700 ring-1 ring-border",
 };
 
 export default async function DashboardOrderDetailPage({
@@ -167,40 +167,40 @@ export default async function DashboardOrderDetailPage({
     <div className="space-y-6">
       {/* ── Pending payment details — shown only while window is still open ── */}
       {order.status === "pending_payment" && !paymentExpired && (
-        <div className="overflow-hidden rounded-2xl border border-[#EA5329]/20 bg-[#FFF8F5]">
+        <div className="overflow-hidden rounded-2xl border border-foreground/20 bg-muted">
           {/* Header: title + countdown pill */}
           <div className="flex items-center justify-between gap-3 px-5 py-4">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#EA5329]/10">
-                <Clock className="h-4 w-4 text-[#EA5329]" />
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                <Clock className="h-4 w-4 text-foreground" />
               </span>
-              <span className="text-[15px] font-semibold text-[#1d1d1f]">Menunggu pembayaran</span>
+              <span className="text-[15px] font-semibold text-foreground">Menunggu pembayaran</span>
             </div>
-            <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 ring-1 ring-[#EA5329]/20">
-              <Clock className="h-3 w-3 shrink-0 text-[#EA5329]" />
+            <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 ring-1 ring-ring/20">
+              <Clock className="h-3 w-3 shrink-0 text-foreground" />
               <PaymentCountdown expiryTime={paymentExpiry} />
             </div>
           </div>
 
           {/* Amount */}
-          <div className="border-t border-[#EA5329]/10 px-5 py-4">
-            <p className="text-[11px] font-bold tracking-wide text-[#EA5329]/70 uppercase">
+          <div className="border-t border-foreground/10 px-5 py-4">
+            <p className="text-[11px] font-bold tracking-wide text-foreground/70 uppercase">
               Total yang harus dibayar
             </p>
-            <p className="mt-1 text-[28px] leading-none font-black text-[#1d1d1f] tabular-nums">
+            <p className="mt-1 text-[28px] leading-none font-black text-foreground tabular-nums">
               {formatRupiah(pendingPayment?.gross_amount ?? order.total)}
             </p>
           </div>
 
           {/* Info grid */}
-          <div className="border-t border-[#EA5329]/10 px-5 pt-4 pb-5">
+          <div className="border-t border-foreground/10 px-5 pt-4 pb-5">
             <dl className="grid gap-4 sm:grid-cols-2">
               {pendingPayment?.payment_type ? (
                 <div>
-                  <dt className="text-[11px] font-bold tracking-wide text-[#7a7a7a] uppercase">
+                  <dt className="text-[11px] font-bold tracking-wide text-muted-foreground uppercase">
                     Metode pembayaran
                   </dt>
-                  <dd className="mt-1.5 flex items-center gap-2 text-[14px] font-semibold text-[#1d1d1f]">
+                  <dd className="mt-1.5 flex items-center gap-2 text-[14px] font-semibold text-foreground">
                     {pendingPaymentLogo && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -217,10 +217,10 @@ export default async function DashboardOrderDetailPage({
                 </div>
               ) : null}
               <div>
-                <dt className="text-[11px] font-bold tracking-wide text-[#7a7a7a] uppercase">
+                <dt className="text-[11px] font-bold tracking-wide text-muted-foreground uppercase">
                   Batas waktu bayar
                 </dt>
-                <dd className="mt-1.5 text-[14px] font-medium text-[#1d1d1f]">
+                <dd className="mt-1.5 text-[14px] font-medium text-foreground">
                   {formatDate(paymentExpiry, {
                     day: "numeric",
                     month: "long",
@@ -237,11 +237,11 @@ export default async function DashboardOrderDetailPage({
               <div className="mt-4">
                 {pendingPayment.va_number ? (
                   <>
-                    <p className="text-[11px] font-bold tracking-wide text-[#7a7a7a] uppercase">
+                    <p className="text-[11px] font-bold tracking-wide text-muted-foreground uppercase">
                       Nomor Virtual Account
                     </p>
-                    <div className="mt-1.5 flex items-center gap-3 rounded-xl bg-white px-4 py-3 ring-1 ring-[#EA5329]/15">
-                      <span className="min-w-0 flex-1 font-mono text-[22px] font-black tracking-widest text-[#1d1d1f] select-all">
+                    <div className="mt-1.5 flex items-center gap-3 rounded-xl bg-white px-4 py-3 ring-1 ring-ring/15">
+                      <span className="min-w-0 flex-1 font-mono text-[22px] font-black tracking-widest text-foreground select-all">
                         {pendingPayment.va_number}
                       </span>
                       <span className="shrink-0 text-[11px] text-[#aaa]">tap untuk salin</span>
@@ -249,11 +249,11 @@ export default async function DashboardOrderDetailPage({
                   </>
                 ) : pendingPayment.payment_code ? (
                   <>
-                    <p className="text-[11px] font-bold tracking-wide text-[#7a7a7a] uppercase">
+                    <p className="text-[11px] font-bold tracking-wide text-muted-foreground uppercase">
                       Kode pembayaran
                     </p>
-                    <div className="mt-1.5 flex items-center gap-3 rounded-xl bg-white px-4 py-3 ring-1 ring-[#EA5329]/15">
-                      <span className="min-w-0 flex-1 font-mono text-[22px] font-black tracking-widest text-[#1d1d1f] select-all">
+                    <div className="mt-1.5 flex items-center gap-3 rounded-xl bg-white px-4 py-3 ring-1 ring-ring/15">
+                      <span className="min-w-0 flex-1 font-mono text-[22px] font-black tracking-widest text-foreground select-all">
                         {pendingPayment.payment_code}
                       </span>
                       <span className="shrink-0 text-[11px] text-[#aaa]">tap untuk salin</span>
@@ -299,14 +299,14 @@ export default async function DashboardOrderDetailPage({
       )}
 
       {/* ── Header card ── */}
-      <div className="rounded-xl border border-[#e0e0e0] bg-white p-5 sm:p-6">
+      <div className="rounded-xl border border-border bg-white p-5 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <p className="text-[11px] font-bold text-[#7a7a7a] uppercase">ID Transaksi</p>
-            <p className="mt-1 font-mono text-base font-bold text-[#1d1d1f]">
+            <p className="text-[11px] font-bold text-muted-foreground uppercase">ID Transaksi</p>
+            <p className="mt-1 font-mono text-base font-bold text-foreground">
               {order.order_number}
             </p>
-            <p className="mt-1 text-xs text-[#7a7a7a]">
+            <p className="mt-1 text-xs text-muted-foreground">
               {formatDate(order.created_at, {
                 day: "numeric",
                 month: "long",
@@ -327,43 +327,45 @@ export default async function DashboardOrderDetailPage({
                 {cancelNote}
               </p>
             )}
-            <p className="text-2xl font-black text-[#1d1d1f] tabular-nums">
+            <p className="text-2xl font-black text-foreground tabular-nums">
               {formatRupiah(order.total)}
             </p>
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 border-t border-[#f0f0f0] pt-6 sm:grid-cols-2">
+        <div className="mt-6 grid gap-4 border-t border-border pt-6 sm:grid-cols-2">
           <div className="flex gap-2.5">
-            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#EA5329]" />
+            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-foreground" />
             <div>
-              <p className="text-[11px] font-bold text-[#7a7a7a] uppercase">Penerima</p>
-              <p className="mt-1 text-sm font-semibold text-[#1d1d1f]">{order.recipient_name}</p>
-              <p className="text-sm text-[#5c5c5c]">{order.recipient_phone}</p>
-              <p className="mt-1 text-sm leading-relaxed text-[#5c5c5c]">
+              <p className="text-[11px] font-bold text-muted-foreground uppercase">Penerima</p>
+              <p className="mt-1 text-sm font-semibold text-foreground">{order.recipient_name}</p>
+              <p className="text-sm text-steel-700">{order.recipient_phone}</p>
+              <p className="mt-1 text-sm leading-relaxed text-steel-700">
                 {order.shipping_address}, {order.shipping_district}, {order.shipping_city}{" "}
                 {order.shipping_province} {order.shipping_postal}
               </p>
             </div>
           </div>
           <div className="flex gap-2.5">
-            <Truck className="mt-0.5 h-4 w-4 shrink-0 text-[#EA5329]" />
+            <Truck className="mt-0.5 h-4 w-4 shrink-0 text-foreground" />
             <div>
-              <p className="text-[11px] font-bold text-[#7a7a7a] uppercase">Kurir</p>
-              <p className="mt-1 text-sm font-semibold text-[#1d1d1f]">
+              <p className="text-[11px] font-bold text-muted-foreground uppercase">Kurir</p>
+              <p className="mt-1 text-sm font-semibold text-foreground">
                 {courierLabel(order.courier_company)} · {order.courier_service ?? "—"}
               </p>
               {order.courier_etd ? (
-                <p className="text-sm text-[#5c5c5c]">Estimasi: {order.courier_etd}</p>
+                <p className="text-sm text-steel-700">Estimasi: {order.courier_etd}</p>
               ) : null}
               {shipments[0]?.awb ? (
-                <p className="mt-1 font-mono text-xs text-[#7a7a7a]">AWB: {shipments[0].awb}</p>
+                <p className="mt-1 font-mono text-xs text-muted-foreground">
+                  AWB: {shipments[0].awb}
+                </p>
               ) : null}
             </div>
           </div>
         </div>
 
-        <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-[#f0f0f0] pt-5">
+        <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border pt-5">
           {hasShipment && (
             <Button asChild variant="secondary" size="sm" className="gap-1.5">
               <Link href={`/dashboard/orders/${id}/tracking`}>
@@ -385,69 +387,69 @@ export default async function DashboardOrderDetailPage({
 
       {/* ── Items ── */}
       <section>
-        <h2 className="mb-3 text-base font-bold text-[#1d1d1f]">Item pesanan</h2>
-        <ul className="divide-y divide-[#f0f0f0] rounded-xl border border-[#e0e0e0] bg-white">
+        <h2 className="mb-3 text-base font-bold text-foreground">Item pesanan</h2>
+        <ul className="divide-y divide-border rounded-xl border border-border bg-white">
           {items.map((line) => (
             <li key={line.id} className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:gap-4">
-              <div className="relative mx-auto h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-[#e0e0e0] bg-[#fafafa] sm:mx-0 sm:h-16 sm:w-16">
+              <div className="relative mx-auto h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-border bg-muted sm:mx-0 sm:h-16 sm:w-16">
                 {line.image_url ? (
                   <img src={line.image_url} alt="" className="h-full w-full object-contain p-1" />
                 ) : null}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="font-semibold text-[#1d1d1f]">{line.product_name}</p>
-                <p className="text-xs text-[#7a7a7a]">
+                <p className="font-semibold text-foreground">{line.product_name}</p>
+                <p className="text-xs text-muted-foreground">
                   {line.variant_name} · SKU {line.sku}
                 </p>
-                <p className="mt-1 text-sm text-[#5c5c5c]">
+                <p className="mt-1 text-sm text-steel-700">
                   {line.quantity} × {formatRupiah(line.price)}
                 </p>
                 {line.product_slug ? (
                   <Link
                     href={`/products/${line.product_slug}`}
-                    className="mt-1.5 inline-block text-xs font-semibold text-[#EA5329] underline-offset-2 hover:underline"
+                    className="mt-1.5 inline-block text-xs font-semibold text-foreground underline-offset-2 hover:underline"
                   >
                     Lihat produk
                   </Link>
                 ) : null}
               </div>
-              <p className="w-full text-right text-base font-bold text-[#1d1d1f] tabular-nums sm:w-auto sm:shrink-0 sm:self-start sm:text-sm">
+              <p className="w-full text-right text-base font-bold text-foreground tabular-nums sm:w-auto sm:shrink-0 sm:self-start sm:text-sm">
                 {formatRupiah(line.subtotal)}
               </p>
             </li>
           ))}
           {/* Total row */}
           <li className="flex justify-between gap-4 px-4 py-3">
-            <span className="text-sm text-[#7a7a7a]">Subtotal produk</span>
+            <span className="text-sm text-muted-foreground">Subtotal produk</span>
             <span className="text-sm font-semibold tabular-nums">
               {formatRupiah(order.subtotal)}
             </span>
           </li>
           {order.discount_amount > 0 && (
             <li className="flex justify-between gap-4 px-4 py-3">
-              <span className="text-sm text-[#7a7a7a]">Diskon</span>
-              <span className="text-sm font-semibold text-[#EA5329] tabular-nums">
+              <span className="text-sm text-muted-foreground">Diskon</span>
+              <span className="text-sm font-semibold text-foreground tabular-nums">
                 −{formatRupiah(order.discount_amount)}
               </span>
             </li>
           )}
           <li className="flex justify-between gap-4 px-4 py-3">
-            <span className="text-sm text-[#7a7a7a]">Ongkir</span>
+            <span className="text-sm text-muted-foreground">Ongkir</span>
             <span className="text-sm font-semibold tabular-nums">
               {formatRupiah(order.shipping_cost)}
             </span>
           </li>
           {order.app_fee > 0 && (
             <li className="flex justify-between gap-4 px-4 py-3">
-              <span className="text-sm text-[#7a7a7a]">Biaya jasa aplikasi</span>
+              <span className="text-sm text-muted-foreground">Biaya jasa aplikasi</span>
               <span className="text-sm font-semibold tabular-nums">
                 {formatRupiah(order.app_fee)}
               </span>
             </li>
           )}
-          <li className="flex justify-between gap-4 bg-[#fafafa] px-4 py-3">
-            <span className="text-sm font-bold text-[#1d1d1f]">Total</span>
-            <span className="text-sm font-black text-[#1d1d1f] tabular-nums">
+          <li className="flex justify-between gap-4 bg-muted px-4 py-3">
+            <span className="text-sm font-bold text-foreground">Total</span>
+            <span className="text-sm font-black text-foreground tabular-nums">
               {formatRupiah(order.total)}
             </span>
           </li>
@@ -456,11 +458,11 @@ export default async function DashboardOrderDetailPage({
 
       {/* ── Payment ── */}
       <section>
-        <h2 className="mb-3 text-base font-bold text-[#1d1d1f]">Pembayaran</h2>
+        <h2 className="mb-3 text-base font-bold text-foreground">Pembayaran</h2>
         {payments.length === 0 ? (
-          <p className="text-sm text-[#5c5c5c]">Belum ada catatan pembayaran.</p>
+          <p className="text-sm text-steel-700">Belum ada catatan pembayaran.</p>
         ) : (
-          <div className="rounded-xl border border-[#e0e0e0] bg-white">
+          <div className="rounded-xl border border-border bg-white">
             {/* Paid payment — primary */}
             {paidPayment ? (
               <div className="px-5 py-4">
@@ -470,15 +472,17 @@ export default async function DashboardOrderDetailPage({
                   >
                     {PAYMENT_STATUS_STYLES.paid.label}
                   </span>
-                  <span className="text-lg font-black text-[#1d1d1f] tabular-nums">
+                  <span className="text-lg font-black text-foreground tabular-nums">
                     {formatRupiah(paidPayment.gross_amount)}
                   </span>
                 </div>
                 <dl className="mt-4 grid gap-x-4 gap-y-2.5 text-sm sm:grid-cols-2">
                   {paidPayment.payment_type ? (
                     <div>
-                      <dt className="text-[11px] font-bold text-[#7a7a7a] uppercase">Metode</dt>
-                      <dd className="mt-0.5 font-medium text-[#1d1d1f]">
+                      <dt className="text-[11px] font-bold text-muted-foreground uppercase">
+                        Metode
+                      </dt>
+                      <dd className="mt-0.5 font-medium text-foreground">
                         {PAYMENT_METHOD_LABELS[paidPayment.payment_type] ??
                           paidPayment.payment_type}
                       </dd>
@@ -486,10 +490,10 @@ export default async function DashboardOrderDetailPage({
                   ) : null}
                   {paidPayment.paid_at ? (
                     <div>
-                      <dt className="text-[11px] font-bold text-[#7a7a7a] uppercase">
+                      <dt className="text-[11px] font-bold text-muted-foreground uppercase">
                         Waktu bayar
                       </dt>
-                      <dd className="mt-0.5 text-[#1d1d1f]">
+                      <dd className="mt-0.5 text-foreground">
                         {formatDate(paidPayment.paid_at, {
                           day: "numeric",
                           month: "short",
@@ -502,16 +506,18 @@ export default async function DashboardOrderDetailPage({
                   ) : null}
                   {paidPayment.va_number ? (
                     <div>
-                      <dt className="text-[11px] font-bold text-[#7a7a7a] uppercase">Nomor VA</dt>
-                      <dd className="mt-0.5 font-mono text-[#1d1d1f]">{paidPayment.va_number}</dd>
+                      <dt className="text-[11px] font-bold text-muted-foreground uppercase">
+                        Nomor VA
+                      </dt>
+                      <dd className="mt-0.5 font-mono text-foreground">{paidPayment.va_number}</dd>
                     </div>
                   ) : null}
                   {(paidPayment.mayar_transaction_id ?? paidPayment.midtrans_transaction_id) ? (
                     <div>
-                      <dt className="text-[11px] font-bold text-[#7a7a7a] uppercase">
+                      <dt className="text-[11px] font-bold text-muted-foreground uppercase">
                         ID Transaksi
                       </dt>
-                      <dd className="mt-0.5 font-mono text-xs text-[#5c5c5c]">
+                      <dd className="mt-0.5 font-mono text-xs text-steel-700">
                         {paidPayment.mayar_transaction_id ?? paidPayment.midtrans_transaction_id}
                       </dd>
                     </div>
@@ -522,7 +528,7 @@ export default async function DashboardOrderDetailPage({
                     href={paidPayment.pdf_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-4 inline-block text-xs font-semibold text-[#EA5329] hover:underline"
+                    className="mt-4 inline-block text-xs font-semibold text-foreground hover:underline"
                   >
                     Unduh bukti pembayaran (PDF) ↗
                   </a>
@@ -540,25 +546,27 @@ export default async function DashboardOrderDetailPage({
                       >
                         {PAYMENT_STATUS_STYLES.pending.label}
                       </span>
-                      <span className="text-lg font-black text-[#1d1d1f] tabular-nums">
+                      <span className="text-lg font-black text-foreground tabular-nums">
                         {formatRupiah(p.gross_amount)}
                       </span>
                     </div>
                     <dl className="mt-4 grid gap-x-4 gap-y-3 text-sm sm:grid-cols-2">
                       {p.payment_type ? (
                         <div>
-                          <dt className="text-[11px] font-bold text-[#7a7a7a] uppercase">Metode</dt>
-                          <dd className="mt-1 font-medium text-[#1d1d1f]">
+                          <dt className="text-[11px] font-bold text-muted-foreground uppercase">
+                            Metode
+                          </dt>
+                          <dd className="mt-1 font-medium text-foreground">
                             {PAYMENT_METHOD_LABELS[p.payment_type] ?? p.payment_type}
                           </dd>
                         </div>
                       ) : null}
                       {p.expiry_time ? (
                         <div>
-                          <dt className="text-[11px] font-bold text-[#7a7a7a] uppercase">
+                          <dt className="text-[11px] font-bold text-muted-foreground uppercase">
                             Batas bayar
                           </dt>
-                          <dd className="mt-1 text-[#1d1d1f]">
+                          <dd className="mt-1 text-foreground">
                             {formatDate(p.expiry_time, {
                               day: "numeric",
                               month: "short",
@@ -572,11 +580,11 @@ export default async function DashboardOrderDetailPage({
                     </dl>
                     {(p.va_number || p.payment_code) && (
                       <div className="mt-3">
-                        <p className="text-[11px] font-bold text-[#7a7a7a] uppercase">
+                        <p className="text-[11px] font-bold text-muted-foreground uppercase">
                           {p.va_number ? "Nomor VA" : "Kode bayar"}
                         </p>
-                        <div className="mt-1.5 flex items-center gap-3 rounded-xl bg-[#f5f5f7] px-4 py-2.5">
-                          <span className="min-w-0 flex-1 font-mono text-base font-bold tracking-widest text-[#1d1d1f] select-all">
+                        <div className="mt-1.5 flex items-center gap-3 rounded-xl bg-muted px-4 py-2.5">
+                          <span className="min-w-0 flex-1 font-mono text-base font-bold tracking-widest text-foreground select-all">
                             {p.va_number ?? p.payment_code}
                           </span>
                           <span className="shrink-0 text-[11px] text-[#aaa]">tap untuk salin</span>
@@ -588,7 +596,7 @@ export default async function DashboardOrderDetailPage({
                         href={p.pdf_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-[#EA5329] underline-offset-2 hover:underline"
+                        className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-foreground underline-offset-2 hover:underline"
                       >
                         Instruksi pembayaran (PDF) ↗
                       </a>
@@ -599,13 +607,15 @@ export default async function DashboardOrderDetailPage({
 
             {/* Problem payments */}
             {problemPayments.length > 0 ? (
-              <div className="border-t border-[#f0f0f0] px-5 py-4">
-                <p className="text-xs font-bold text-[#7a7a7a] uppercase">Riwayat percobaan</p>
+              <div className="border-t border-border px-5 py-4">
+                <p className="text-xs font-bold text-muted-foreground uppercase">
+                  Riwayat percobaan
+                </p>
                 <ul className="mt-2 space-y-1">
                   {problemPayments.map((p) => (
                     <li
                       key={p.id}
-                      className="flex items-center justify-between gap-4 text-xs text-[#5c5c5c]"
+                      className="flex items-center justify-between gap-4 text-xs text-steel-700"
                     >
                       <span>
                         {formatDate(p.created_at, {
@@ -633,13 +643,13 @@ export default async function DashboardOrderDetailPage({
       {/* ── Ulasan saya ── */}
       {existingReviews.length > 0 && (
         <section>
-          <h2 className="mb-3 text-base font-bold text-[#1d1d1f]">Ulasan saya</h2>
-          <ul className="divide-y divide-[#f0f0f0] rounded-xl border border-[#e0e0e0] bg-white">
+          <h2 className="mb-3 text-base font-bold text-foreground">Ulasan saya</h2>
+          <ul className="divide-y divide-border rounded-xl border border-border bg-white">
             {existingReviews.map((review) => {
               const item = itemByProductId[review.product_id];
               return (
                 <li key={review.id} className="flex gap-4 px-4 py-4 sm:gap-5">
-                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-[#e0e0e0] bg-[#fafafa]">
+                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
                     {item?.image_url ? (
                       <img
                         src={item.image_url}
@@ -649,15 +659,15 @@ export default async function DashboardOrderDetailPage({
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-[#1d1d1f]">
+                    <p className="truncate text-sm font-semibold text-foreground">
                       {item?.product_name ?? "Produk"}
                     </p>
                     {item?.variant_name ? (
-                      <p className="text-xs text-[#7a7a7a]">{item.variant_name}</p>
+                      <p className="text-xs text-muted-foreground">{item.variant_name}</p>
                     ) : null}
                     <div className="mt-1.5 flex items-center gap-2">
                       <StarRatingDisplay rating={review.rating} />
-                      <span className="text-xs text-[#7a7a7a]">
+                      <span className="text-xs text-muted-foreground">
                         {formatDate(review.created_at, {
                           day: "numeric",
                           month: "short",
@@ -666,7 +676,7 @@ export default async function DashboardOrderDetailPage({
                       </span>
                     </div>
                     {review.comment ? (
-                      <p className="mt-1.5 text-sm leading-relaxed text-[#5c5c5c]">
+                      <p className="mt-1.5 text-sm leading-relaxed text-steel-700">
                         {review.comment}
                       </p>
                     ) : null}

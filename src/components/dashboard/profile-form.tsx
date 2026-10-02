@@ -102,7 +102,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
 
   return (
     <form
-      className="w-full space-y-5 rounded-xl border border-[#e0e0e0] bg-white p-6"
+      className="w-full space-y-5 rounded-xl border border-border bg-white p-6"
       onSubmit={(e) => {
         e.preventDefault();
         const fd = new FormData(e.currentTarget);
@@ -131,13 +131,13 @@ export function ProfileForm({ profile }: { profile: Profile }) {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          className="group relative h-24 w-24 overflow-hidden rounded-full border-2 border-[#e0e0e0] bg-[#f5f5f7] transition hover:border-[#EA5329] disabled:cursor-not-allowed"
+          className="group relative h-24 w-24 overflow-hidden rounded-full border-2 border-border bg-muted transition hover:border-foreground disabled:cursor-not-allowed"
           aria-label="Ganti foto profil"
         >
           {avatarUrl ? (
             <Image src={avatarUrl} alt="Foto profil" fill className="object-cover" sizes="96px" />
           ) : (
-            <span className="flex h-full w-full items-center justify-center text-2xl font-bold text-[#1d1d1f]">
+            <span className="flex h-full w-full items-center justify-center text-2xl font-bold text-foreground">
               {initials}
             </span>
           )}
@@ -163,7 +163,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
         >
           {uploading ? "Mengunggah..." : "Ganti Foto"}
         </Button>
-        <p className="text-[11px] text-[#7a7a7a]">JPG, PNG, WebP, atau GIF · Maks. 2MB</p>
+        <p className="text-[11px] text-muted-foreground">JPG, PNG, WebP, atau GIF · Maks. 2MB</p>
         <input
           ref={fileInputRef}
           type="file"
@@ -179,7 +179,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
           id="full_name"
           name="full_name"
           defaultValue={profile.full_name ?? ""}
-          className="mt-1 border-[#e0e0e0]"
+          className="mt-1 border-border"
         />
       </div>
       <div>
@@ -188,22 +188,22 @@ export function ProfileForm({ profile }: { profile: Profile }) {
           id="phone"
           name="phone"
           defaultValue={profile.phone ?? ""}
-          className="mt-1 border-[#e0e0e0]"
+          className="mt-1 border-border"
         />
       </div>
 
       {/* Bank account section */}
-      <div className="space-y-4 border-t border-[#f0f0f0] pt-5">
+      <div className="space-y-4 border-t border-border pt-5">
         <div>
-          <p className="text-sm font-semibold text-[#1d1d1f]">Rekening bank</p>
-          <p className="mt-0.5 text-[12px] text-[#7a7a7a]">
+          <p className="text-sm font-semibold text-foreground">Rekening bank</p>
+          <p className="mt-0.5 text-[12px] text-muted-foreground">
             Digunakan untuk pengembalian dana jika pesanan dibatalkan setelah pembayaran.
           </p>
         </div>
         <div>
           <Label htmlFor="profile-bank-name">Nama bank</Label>
           <Select value={bankName} onValueChange={setBankName}>
-            <SelectTrigger id="profile-bank-name" className="mt-1 border-[#e0e0e0]">
+            <SelectTrigger id="profile-bank-name" className="mt-1 border-border">
               <SelectValue placeholder="Pilih bank..." />
             </SelectTrigger>
             <SelectContent>
@@ -222,7 +222,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
             name="bank_account_name"
             defaultValue={profile.bank_account_name ?? ""}
             placeholder="Sesuai buku tabungan / ATM"
-            className="mt-1 border-[#e0e0e0]"
+            className="mt-1 border-border"
           />
         </div>
         <div>
@@ -233,7 +233,7 @@ export function ProfileForm({ profile }: { profile: Profile }) {
             defaultValue={profile.bank_account_number ?? ""}
             placeholder="Contoh: 1234567890"
             inputMode="numeric"
-            className="mt-1 border-[#e0e0e0] font-mono"
+            className="mt-1 border-border font-mono"
           />
         </div>
       </div>

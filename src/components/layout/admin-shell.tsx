@@ -106,10 +106,10 @@ export function AdminShell({ children, sidebarDefaultOpen = true }: AdminShellPr
   return (
     <SidebarProvider defaultOpen={sidebarDefaultOpen}>
       <AdminSidebar />
-      <SidebarInset className="bg-[#fafafa]">
-        <header className="flex h-11 shrink-0 items-center gap-2.5 bg-[#fafafa] px-4">
-          <SidebarTrigger className="-ml-1 text-[#5c5c5c] hover:text-[#1d1d1f]" />
-          <span className="text-sm text-[#d4d4d4] select-none">|</span>
+      <SidebarInset className="bg-muted">
+        <header className="flex h-11 shrink-0 items-center gap-2.5 bg-muted px-4">
+          <SidebarTrigger className="-ml-1 text-steel-700 hover:text-foreground" />
+          <span className="text-sm text-steel-200 select-none">|</span>
           <AdminBreadcrumb />
           <div className="ml-auto flex items-center gap-1">
             <Link

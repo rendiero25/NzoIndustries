@@ -57,7 +57,7 @@ export default async function SecondProductsPage() {
           <h1 className="text-[34px] font-semibold text-foreground uppercase">
             Produk Second Terbaik
           </h1>
-          <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+          <p className="mt-1 text-base leading-[1.47] text-foreground">
             {rows.length} promosi · Tampilkan produk second pilihan di halaman publik
           </p>
         </div>

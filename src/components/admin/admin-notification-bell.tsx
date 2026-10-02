@@ -209,7 +209,7 @@ export function AdminNotificationBell() {
           >
             <Bell size={18} />
             {unread > 0 ? (
-              <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#EA5329] text-[9px] leading-none font-black text-white">
+              <span className="absolute top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] leading-none font-black text-white">
                 {unread > 9 ? "9+" : unread}
               </span>
             ) : null}
@@ -226,7 +226,7 @@ export function AdminNotificationBell() {
               Notifikasi
             </span>
             {unread > 0 ? (
-              <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-[#EA5329] px-1.5 text-[10px] font-semibold text-white tabular-nums">
+              <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-semibold text-white tabular-nums">
                 {unread}
               </span>
             ) : null}
@@ -258,14 +258,14 @@ export function AdminNotificationBell() {
                     onClick={() => handleItemClick(notif)}
                     className={cn(
                       "border-b border-border px-4 py-3 transition-colors last:border-b-0",
-                      !notif.is_read ? "bg-[#EA5329]/5 hover:bg-[#EA5329]/10" : "hover:bg-muted/40",
+                      !notif.is_read ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-muted/40",
                       url && "cursor-pointer",
                     )}
                   >
                     <div className="flex items-start gap-3">
                       {!notif.is_read ? (
                         <span
-                          className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#EA5329]"
+                          className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
                           aria-hidden
                         />
                       ) : null}
@@ -300,7 +300,7 @@ export function AdminNotificationBell() {
               loading={pending}
               disabled={unread === 0}
               onClick={handleMarkAllRead}
-              className="h-auto gap-1.5 px-2 py-1.5 text-[13px] text-muted-foreground hover:text-[#EA5329]"
+              className="h-auto gap-1.5 px-2 py-1.5 text-[13px] text-muted-foreground hover:text-foreground"
             >
               <CheckCheck size={14} className="shrink-0" aria-hidden />
               Tandai semua dibaca

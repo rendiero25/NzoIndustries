@@ -32,7 +32,7 @@ export default async function AdminSettingsFaqPage() {
           </Link>
           <p className="text-swiss-eyebrow">Toko</p>
           <h1 className="text-[34px] font-semibold text-foreground uppercase">Kelola FAQ</h1>
-          <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+          <p className="mt-1 text-base leading-[1.47] text-foreground">
             Pertanyaan yang sering diajukan pelanggan.
           </p>
         </div>

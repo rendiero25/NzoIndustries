@@ -190,7 +190,7 @@ export function MainBannerForm() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Contoh: Flash Sale Akhir Tahun"
-              className="h-10 rounded-lg text-[17px] leading-[1.47]"
+              className="h-10 rounded-lg text-base leading-[1.47]"
             />
             <p className="text-[11px] text-muted-foreground">
               Digunakan sebagai label pengenal di daftar banner admin.
@@ -207,7 +207,7 @@ export function MainBannerForm() {
               min={0}
               value={sortOrder}
               onChange={(e) => setSortOrder(Number(e.target.value))}
-              className="h-10 w-32 rounded-lg text-[17px] leading-[1.47]"
+              className="h-10 w-32 rounded-lg text-base leading-[1.47]"
             />
             <p className="text-[11px] text-muted-foreground">
               Angka lebih kecil tampil lebih dulu. Default 0.
@@ -220,7 +220,7 @@ export function MainBannerForm() {
       <FormSection title="Gambar Banner *">
         <div className="space-y-3 p-5">
           {imageUrl ? (
-            <div className="relative aspect-[3/1] max-h-52 w-full overflow-hidden rounded-lg border border-[#e0e0e0] bg-muted/30">
+            <div className="relative aspect-[3/1] max-h-52 w-full overflow-hidden rounded-lg border border-border bg-muted/30">
               <Image src={imageUrl} alt="Preview main banner" fill className="object-cover" />
               <Button
                 type="button"
@@ -239,7 +239,7 @@ export function MainBannerForm() {
               onClick={() => inputRef.current?.click()}
               disabled={uploading}
               className={cn(
-                "flex w-full flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-[#e0e0e0] py-14 text-muted-foreground transition-colors",
+                "flex w-full flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-border py-14 text-muted-foreground transition-colors",
                 "hover:border-brand/50 hover:text-brand",
                 uploading && "cursor-not-allowed opacity-50",
               )}
@@ -275,7 +275,7 @@ export function MainBannerForm() {
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
               placeholder="/products/samsung-galaxy-s24 atau /category/laptop"
-              className="h-10 rounded-lg text-[17px] leading-[1.47]"
+              className="h-10 rounded-lg text-base leading-[1.47]"
             />
             <p className="text-[11px] text-muted-foreground">
               Gunakan path relatif untuk halaman internal, atau URL lengkap untuk link eksternal.
@@ -283,7 +283,7 @@ export function MainBannerForm() {
           </div>
 
           {/* Collapsible link guide */}
-          <div className="rounded-lg border border-[#e0e0e0]">
+          <div className="rounded-lg border border-border">
             <button
               type="button"
               onClick={() => setShowGuide((v) => !v)}
@@ -307,7 +307,7 @@ export function MainBannerForm() {
                 showGuide ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0",
               )}
             >
-              <div className="border-t border-[#e0e0e0] px-4 pt-3 pb-4">
+              <div className="border-t border-border px-4 pt-3 pb-4">
                 <p className="mb-3 text-[12px] text-muted-foreground">
                   Klik baris mana saja untuk langsung mengisi kolom URL di atas.
                 </p>
@@ -317,7 +317,7 @@ export function MainBannerForm() {
                       <p className="mb-1.5 text-[10px] font-semibold text-muted-foreground uppercase">
                         {group.group}
                       </p>
-                      <div className="overflow-hidden rounded-lg border border-[#e0e0e0]">
+                      <div className="overflow-hidden rounded-lg border border-border">
                         {group.items.map((item, i) => (
                           <button
                             key={item.example}
@@ -328,7 +328,7 @@ export function MainBannerForm() {
                             }}
                             className={cn(
                               "flex w-full items-start gap-3 px-3 py-2.5 text-left transition-colors hover:bg-muted/70 active:bg-muted",
-                              i !== 0 && "border-t border-[#e0e0e0]",
+                              i !== 0 && "border-t border-border",
                             )}
                           >
                             <ClipboardCopy

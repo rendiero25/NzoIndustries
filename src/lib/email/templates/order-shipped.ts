@@ -38,7 +38,7 @@ export function orderShippedHtml(params: {
   const externalTrackBlock = params.trackingUrl
     ? `<p style="margin:0 0 24px;font-size:14px;color:#3d3d3d;line-height:1.6;">
           Lacak juga melalui situs kurir:
-          <a href="${params.trackingUrl}" style="color:#EA5329;text-decoration:none;">Klik di sini</a>
+          <a href="${params.trackingUrl}" style="color:#000000;text-decoration:none;">Klik di sini</a>
         </p>`
     : "";
 
@@ -64,7 +64,7 @@ export function orderShippedHtml(params: {
     ${ctaButton(trackUrl, "Lacak Pesanan")}
 
     <p style="margin:8px 0 0;font-size:13px;color:#6e6e73;line-height:1.6;">
-      Ada masalah dengan pengiriman? <a href="${params.appUrl}/about#kontak" style="color:#EA5329;text-decoration:none;">Hubungi kami</a>.
+      Ada masalah dengan pengiriman? <a href="${params.appUrl}/about#kontak" style="color:#000000;text-decoration:none;">Hubungi kami</a>.
     </p>`;
 
   return emailShell({

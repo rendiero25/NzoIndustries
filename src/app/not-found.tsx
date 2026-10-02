@@ -23,11 +23,11 @@ function StoreHeaderFallback() {
     <header className="w-full border-b border-neutral-200 bg-white">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-24">
         <div className="flex items-center gap-3 py-3 md:py-4">
-          <div className="h-8 w-[9.5rem] shrink-0 rounded bg-[#f5f5f7] sm:h-9 sm:w-[11.5rem]" />
-          <div className="mx-auto hidden h-11 max-w-2xl flex-1 rounded-md bg-[#f5f5f7] sm:block" />
+          <div className="h-8 w-[9.5rem] shrink-0 rounded bg-muted sm:h-9 sm:w-[11.5rem]" />
+          <div className="mx-auto hidden h-11 max-w-2xl flex-1 rounded-md bg-muted sm:block" />
           <div className="ml-auto flex shrink-0 items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-[#f5f5f7]" />
-            <div className="h-8 w-8 rounded-full bg-[#f5f5f7]" />
+            <div className="h-8 w-8 rounded-full bg-muted" />
+            <div className="h-8 w-8 rounded-full bg-muted" />
           </div>
         </div>
       </div>
@@ -74,25 +74,25 @@ export default async function NotFound() {
           <div className="flex max-w-[560px] flex-col items-center text-center">
             {/* Signature: ghost product card — an empty shelf in the store's own language */}
             <div
-              className="mb-10 w-[190px] overflow-hidden rounded-[18px] border border-[#e0e0e0] bg-white p-4"
+              className="mb-10 w-[190px] overflow-hidden rounded-[18px] border border-border bg-white p-4"
               style={{ boxShadow: "rgba(0,0,0,0.22) 3px 5px 30px 0" }}
               aria-hidden="true"
             >
-              <div className="mb-3 aspect-[4/3] w-full rounded-[8px] bg-[#f5f5f7]" />
-              <div className="mb-2 h-3.5 w-4/5 rounded-full bg-[#f5f5f7]" />
-              <div className="mb-3 h-3.5 w-3/5 rounded-full bg-[#f5f5f7]" />
-              <div className="h-8 w-full rounded-full bg-[#f5f5f7]" />
+              <div className="mb-3 aspect-[4/3] w-full rounded-[8px] bg-muted" />
+              <div className="mb-2 h-3.5 w-4/5 rounded-full bg-muted" />
+              <div className="mb-3 h-3.5 w-3/5 rounded-full bg-muted" />
+              <div className="h-8 w-full rounded-full bg-muted" />
             </div>
 
-            <p className="mb-3 text-[14px] leading-[1.29] font-semibold tracking-[-0.224px] text-[#EA5329]">
+            <p className="mb-3 text-[14px] leading-[1.29] font-semibold text-foreground">
               Halaman Tidak Ditemukan
             </p>
 
-            <h1 className="mb-4 text-[28px] leading-[1.07] font-semibold tracking-[-0.28px] text-[#1d1d1f] sm:text-[40px]">
+            <h1 className="mb-4 text-[28px] leading-[1.07] font-semibold text-foreground sm:text-[40px]">
               Sepertinya halaman ini belum ada.
             </h1>
 
-            <p className="mb-8 max-w-[440px] text-[17px] leading-[1.47] font-normal tracking-[-0.374px] text-[#7a7a7a]">
+            <p className="mb-8 max-w-[440px] text-base leading-[1.47] font-normal text-muted-foreground">
               URL yang kamu masukkan tidak ditemukan, atau halaman ini sedang dalam persiapan.
               Jelajahi produk kami atau kembali ke beranda.
             </p>

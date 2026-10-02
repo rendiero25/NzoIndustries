@@ -125,7 +125,7 @@ export function BrandForm({ brandId, defaultValues }: BrandFormProps) {
             </Label>
             <Input
               id="name"
-              className="h-10 rounded-lg border-[#e0e0e0] text-[17px] leading-[1.47]"
+              className="h-10 rounded-lg border-border text-base leading-[1.47]"
               placeholder="Contoh: Samsung"
               {...register("name", {
                 onChange: (e) => {
@@ -144,7 +144,7 @@ export function BrandForm({ brandId, defaultValues }: BrandFormProps) {
             </Label>
             <Input
               id="slug"
-              className="h-10 rounded-lg border-[#e0e0e0] font-mono text-[17px] leading-[1.47]"
+              className="h-10 rounded-lg border-border font-mono text-base leading-[1.47]"
               placeholder="samsung"
               {...register("slug")}
             />
@@ -157,7 +157,7 @@ export function BrandForm({ brandId, defaultValues }: BrandFormProps) {
           <input type="hidden" {...register("logo_url")} />
 
           {logoUrl ? (
-            <div className="group relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border border-[#e0e0e0] bg-white">
+            <div className="group relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border border-border bg-white">
               <Image
                 src={logoUrl}
                 alt="Logo merek"
@@ -182,7 +182,7 @@ export function BrandForm({ brandId, defaultValues }: BrandFormProps) {
               type="button"
               onClick={() => inputRef.current?.click()}
               disabled={uploading}
-              className="flex w-full flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-[#e0e0e0] py-8 text-muted-foreground transition-colors hover:border-brand/40 hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-border py-8 text-muted-foreground transition-colors hover:border-brand/40 hover:text-brand disabled:cursor-not-allowed disabled:opacity-50"
             >
               {uploading ? <Spinner className="size-5" /> : <ImagePlus size={20} />}
               <span className="text-xs font-semibold uppercase">

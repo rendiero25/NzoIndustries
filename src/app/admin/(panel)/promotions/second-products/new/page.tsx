@@ -28,7 +28,7 @@ export default async function SecondProductsNewPage() {
         <h1 className="text-[34px] font-semibold text-foreground uppercase">
           Buat Promosi Produk Second
         </h1>
-        <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+        <p className="mt-1 text-base leading-[1.47] text-foreground">
           Template: Produk Second Terbaik · hanya produk kondisi second yang dapat dipilih
         </p>
       </div>

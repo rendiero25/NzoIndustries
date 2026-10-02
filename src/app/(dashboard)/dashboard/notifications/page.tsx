@@ -20,11 +20,11 @@ export default async function NotificationsPage() {
 
   return (
     <div className="w-full">
-      <p className="text-[10px] font-bold text-[#7a7a7a] uppercase">Kotak masuk</p>
-      <h1 className="mt-2 text-2xl font-bold text-[#1d1d1f] sm:text-3xl">Notifikasi</h1>
+      <p className="text-[10px] font-bold text-muted-foreground uppercase">Kotak masuk</p>
+      <h1 className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">Notifikasi</h1>
 
       {items.length === 0 ? (
-        <p className="mt-10 text-sm text-[#5c5c5c]">Belum ada notifikasi.</p>
+        <p className="mt-10 text-sm text-steel-700">Belum ada notifikasi.</p>
       ) : (
         <div className="mt-10">
           <NotificationsPanel items={items} />

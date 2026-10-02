@@ -49,7 +49,7 @@ export default async function AdminEditCouponPage({ params }: { params: Promise<
       <div>
         <p className="text-swiss-eyebrow">Pemasaran</p>
         <h1 className="text-[34px] font-semibold text-foreground uppercase">Edit Kupon</h1>
-        <p className="mt-1 font-mono text-[17px] leading-[1.47] text-foreground">{coupon.code}</p>
+        <p className="mt-1 font-mono text-base leading-[1.47] text-foreground">{coupon.code}</p>
       </div>
 
       <CouponForm

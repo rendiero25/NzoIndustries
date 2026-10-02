@@ -40,7 +40,7 @@ export function AnnouncementForm({ initialText, initialActive }: AnnouncementFor
           onChange={(e) => setText(e.target.value)}
           placeholder="Gratis ongkir untuk pembelian di atas Rp 200.000!"
           rows={3}
-          className="w-full resize-none rounded-lg border border-[#e0e0e0] bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-brand/30 focus:outline-none"
+          className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-brand/30 focus:outline-none"
         />
       </div>
       <div className="space-y-3 space-x-3">

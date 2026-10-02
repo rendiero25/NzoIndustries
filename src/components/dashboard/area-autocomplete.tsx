@@ -58,35 +58,35 @@ export function AreaAutocomplete({
   return (
     <div ref={containerRef} className="relative">
       <div className="relative">
-        <MapPin className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#9a9a9a]" />
+        <MapPin className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={placeholder}
           autoComplete="off"
-          className="h-11 w-full rounded-lg border border-[#e0e0e0] bg-white pr-9 pl-9 text-sm text-[#1d1d1f] outline-none focus:border-[#EA5329] focus:ring-2 focus:ring-[#EA5329]/20"
+          className="h-11 w-full rounded-lg border border-border bg-white pr-9 pl-9 text-sm text-foreground outline-none focus:border-foreground focus:ring-2 focus:ring-ring/20"
         />
         {loading && (
-          <Loader2 className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 animate-spin text-[#9a9a9a]" />
+          <Loader2 className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
         )}
       </div>
 
       {open && areas.length > 0 && (
-        <ul className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-[#e0e0e0] bg-white py-1 shadow-lg">
+        <ul className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-lg border border-border bg-white py-1 shadow-lg">
           {areas.map((area) => (
             <li key={area.id}>
               <button
                 type="button"
-                className="w-full px-4 py-2.5 text-left text-sm hover:bg-[#f5f5f7] active:bg-[#ece8e0]"
+                className="w-full px-4 py-2.5 text-left text-sm hover:bg-muted active:bg-steel-200"
                 onClick={() => {
                   onSelect(area);
                   setQuery(`${area.name}, ${area.administrative_division_level_2_name}`);
                   setOpen(false);
                 }}
               >
-                <span className="font-medium text-[#1d1d1f]">{area.name}</span>
-                <span className="mt-0.5 block text-xs text-[#7a7a7a]">
+                <span className="font-medium text-foreground">{area.name}</span>
+                <span className="mt-0.5 block text-xs text-muted-foreground">
                   {[
                     area.administrative_division_level_3_name,
                     area.administrative_division_level_2_name,
@@ -103,7 +103,7 @@ export function AreaAutocomplete({
       )}
 
       {open && !loading && areas.length === 0 && query.length >= 2 && (
-        <div className="absolute z-50 mt-1 w-full rounded-lg border border-[#e0e0e0] bg-white px-4 py-3 text-sm text-[#7a7a7a] shadow-lg">
+        <div className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-white px-4 py-3 text-sm text-muted-foreground shadow-lg">
           Area tidak ditemukan.
         </div>
       )}

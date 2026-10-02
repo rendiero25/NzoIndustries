@@ -140,7 +140,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           <h1 className="font-mono text-[34px] font-semibold text-foreground uppercase">
             {order.order_number}
           </h1>
-          <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+          <p className="mt-1 text-base leading-[1.47] text-foreground">
             {formatDate(order.created_at, {
               day: "numeric",
               month: "long",
@@ -176,11 +176,11 @@ export default async function AdminOrderDetailPage({ params }: Props) {
             <div className="admin-utility-card-header">
               <h2 className="admin-section-title">Item Pesanan ({items.length})</h2>
             </div>
-            <div className="divide-y divide-[#e0e0e0]">
+            <div className="divide-y divide-border">
               {items.map((item) => (
                 <div key={item.id} className="flex gap-3 px-4 py-3">
                   {/* Image */}
-                  <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-[#e0e0e0] bg-muted">
+                  <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-border bg-muted">
                     {item.image_url ? (
                       <Image
                         src={item.image_url}
@@ -217,7 +217,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
             </div>
 
             {/* Totals */}
-            <div className="space-y-1.5 border-t border-[#e0e0e0] bg-muted/30 px-4 py-3">
+            <div className="space-y-1.5 border-t border-border bg-muted/30 px-4 py-3">
               <Row label="Subtotal" value={formatRupiah(order.subtotal)} />
               <Row
                 label={`Ongkir (${order.courier_company ?? "—"} ${order.courier_service ?? ""})`}
@@ -233,7 +233,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
                   className="text-emerald-600"
                 />
               )}
-              <div className="border-t border-[#e0e0e0] pt-1.5">
+              <div className="border-t border-border pt-1.5">
                 <Row label="Total" value={formatRupiah(order.total)} bold />
               </div>
             </div>

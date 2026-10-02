@@ -24,7 +24,7 @@ export default async function AdminSettingsCouriersPage() {
       <div>
         <p className="text-swiss-eyebrow">Toko</p>
         <h1 className="text-[34px] font-semibold text-foreground uppercase">Kurir</h1>
-        <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+        <p className="mt-1 text-base leading-[1.47] text-foreground">
           Pilih kurir yang tersedia untuk pelanggan saat checkout.
         </p>
       </div>
@@ -32,9 +32,9 @@ export default async function AdminSettingsCouriersPage() {
       <SettingsNav />
 
       <div className="admin-utility-card overflow-hidden p-0">
-        <div className="border-b border-[#e0e0e0] px-5 py-4">
+        <div className="border-b border-border px-5 py-4">
           <h2 className="admin-section-title">Kurir Aktif</h2>
-          <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+          <p className="mt-1 text-base leading-[1.47] text-foreground">
             Centang kurir yang ingin ditampilkan di halaman checkout. Hanya layanan yang tersedia
             untuk rute pelanggan yang akan muncul.
           </p>

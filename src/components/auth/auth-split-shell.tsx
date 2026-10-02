@@ -27,10 +27,10 @@ export function AuthSplitShell({
   children,
 }: AuthSplitShellProps) {
   return (
-    <div className="relative min-h-screen min-h-svh bg-[#111111] p-3 pt-[max(2.75rem,env(safe-area-inset-top,0px)+0.75rem)] sm:p-4 lg:p-6 lg:pt-6">
+    <div className="relative min-h-screen min-h-svh bg-primary p-3 pt-[max(2.75rem,env(safe-area-inset-top,0px)+0.75rem)] sm:p-4 lg:p-6 lg:pt-6">
       <Link
         href={STORE_HREF}
-        className="absolute top-[max(1.25rem,env(safe-area-inset-top,0px)+0.25rem)] right-[max(1.25rem,env(safe-area-inset-right,0px))] z-30 text-[14px] leading-[1.29] font-normal text-[#EA5329] transition-colors hover:text-[#d44820] active:scale-95 lg:top-15 lg:right-15"
+        className="absolute top-[max(1.25rem,env(safe-area-inset-top,0px)+0.25rem)] right-[max(1.25rem,env(safe-area-inset-right,0px))] z-30 text-[14px] leading-[1.29] font-normal text-foreground transition-colors hover:text-steel-700 active:scale-95 lg:top-15 lg:right-15"
       >
         Kunjungi NZO Industries
       </Link>
@@ -47,7 +47,7 @@ export function AuthSplitShell({
               priority={imagePriority}
             />
           ) : (
-            <div className="absolute inset-0 bg-[#1a1a1a]" aria-hidden="true" />
+            <div className="absolute inset-0 bg-primary" aria-hidden="true" />
           )}
           <div className="absolute inset-0" />
           <div className="pointer-events-none relative z-10 p-12 lg:p-16 xl:p-20">{leftPanel}</div>

@@ -29,7 +29,7 @@ type FilterDropdownProps = {
 };
 
 const triggerBaseClass =
-  "h-8 min-h-8 w-full shrink-0 justify-between gap-1.5 rounded-md border-[#e0e0e0] px-2.5 py-2 text-sm font-normal text-[#1d1d1f] focus-visible:outline-[#1d1d1f]/40 sm:w-[13rem]";
+  "h-8 min-h-8 w-full shrink-0 justify-between gap-1.5 rounded-md border-border px-2.5 py-2 text-sm font-normal text-foreground focus-visible:outline-foreground/40 sm:w-[13rem]";
 
 /** Filter URL/query — shadcn DropdownMenu (radio), trigger netral hitam. */
 export function FilterDropdown({

@@ -31,11 +31,11 @@ async function CrossSellSection({
   });
   if (!crossSell.length) return null;
   return (
-    <section className="mt-16 border-t border-[#e8e4dc] pt-12">
-      <h2 className="text-lg font-bold text-[#1d1d1f] sm:text-xl">
+    <section className="mt-16 border-t border-border pt-12">
+      <h2 className="text-lg font-bold text-foreground sm:text-xl">
         Produk acak dari kategori lainnya
       </h2>
-      <p className="mt-1 text-sm text-[#7a7a7a]">
+      <p className="mt-1 text-sm text-muted-foreground">
         Kurasi otomatis di luar kategori barang di keranjang Anda.
       </p>
       <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5">
@@ -61,14 +61,14 @@ export default async function CartPage() {
   const cart = await fetchUserCartWithLines(user.id);
   if (!cart) {
     return (
-      <div className="min-h-[50vh] bg-[#f4f1ea] px-4 py-20 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] text-center text-[#1d1d1f] md:pb-20">
+      <div className="min-h-[50vh] bg-muted px-4 py-20 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] text-center text-foreground md:pb-20">
         <h1 className="mx-auto mt-12 max-w-lg text-2xl font-bold">Keranjang</h1>
-        <p className="mx-auto mt-3 max-w-lg text-[17px] text-[#7a7a7a]">
+        <p className="mx-auto mt-3 max-w-lg text-base text-muted-foreground">
           Keranjang Anda masih kosong.
         </p>
         <Link
           href="/"
-          className="mt-8 inline-block text-[15px] font-semibold text-[#EA5329] hover:underline"
+          className="mt-8 inline-block text-[15px] font-semibold text-foreground hover:underline"
         >
           Lanjut belanja
         </Link>
@@ -79,14 +79,14 @@ export default async function CartPage() {
   const lines = cart.lines;
   if (lines.length === 0) {
     return (
-      <div className="min-h-[50vh] bg-[#f4f1ea] px-4 py-20 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] text-center text-[#1d1d1f] md:pb-20">
+      <div className="min-h-[50vh] bg-muted px-4 py-20 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] text-center text-foreground md:pb-20">
         <h1 className="mx-auto mt-12 max-w-lg text-2xl font-bold">Keranjang</h1>
-        <p className="mx-auto mt-3 max-w-lg text-[17px] text-[#7a7a7a]">
+        <p className="mx-auto mt-3 max-w-lg text-base text-muted-foreground">
           Belum ada barang di keranjang.
         </p>
         <Link
           href="/"
-          className="mt-8 inline-block text-[15px] font-semibold text-[#EA5329] hover:underline"
+          className="mt-8 inline-block text-[15px] font-semibold text-foreground hover:underline"
         >
           Lanjut belanja
         </Link>
@@ -98,7 +98,7 @@ export default async function CartPage() {
   const excludedProductIds = [...new Set(cart.excludedProductIds)];
 
   return (
-    <div className="bg-gradient-to-b from-[#f4f1ea]/70 to-transparent pt-6 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] text-[#1d1d1f] sm:pt-8 md:pb-20 lg:pb-20">
+    <div className="bg-gradient-to-b from-muted/70 to-transparent pt-6 pb-[calc(5rem+env(safe-area-inset-bottom,0px))] text-foreground sm:pt-8 md:pb-20 lg:pb-20">
       <div className="mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8">
         <div className="py-2 sm:py-3">
           <CartCheckoutStepper current={1} />

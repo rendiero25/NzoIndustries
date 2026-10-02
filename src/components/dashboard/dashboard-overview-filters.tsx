@@ -44,7 +44,9 @@ export function DashboardOverviewFilters({ categories, className }: DashboardOve
       )}
     >
       <div className="flex w-full min-w-0 flex-col gap-1.5 sm:w-auto">
-        <span className="text-xs font-semibold text-[#7a7a7a] uppercase">Status pesanan</span>
+        <span className="text-xs font-semibold text-muted-foreground uppercase">
+          Status pesanan
+        </span>
         <OrdersFilterDropdown
           aria-label="Status pesanan"
           value={ALL_STATUS_VALUE}
@@ -63,7 +65,9 @@ export function DashboardOverviewFilters({ categories, className }: DashboardOve
 
       {categories.length > 0 ? (
         <div className="flex w-full min-w-0 flex-col gap-1.5 sm:w-auto">
-          <span className="text-xs font-semibold text-[#7a7a7a] uppercase">Kategori produk</span>
+          <span className="text-xs font-semibold text-muted-foreground uppercase">
+            Kategori produk
+          </span>
           <OrdersFilterDropdown
             aria-label="Kategori produk"
             value={ALL_CATEGORY_VALUE}

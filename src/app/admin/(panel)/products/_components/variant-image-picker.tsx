@@ -45,7 +45,7 @@ export function VariantImagePicker({ value, hasError, onChange }: VariantImagePi
       <div
         className={cn(
           "relative size-12 shrink-0 overflow-hidden rounded-lg border bg-muted/30",
-          hasError ? "border-destructive" : "border-[#e0e0e0]",
+          hasError ? "border-destructive" : "border-border",
         )}
       >
         {value ? <Image src={value} alt="" fill sizes="48px" className="object-cover" /> : null}
@@ -56,7 +56,7 @@ export function VariantImagePicker({ value, hasError, onChange }: VariantImagePi
         onClick={() => inputRef.current?.click()}
         disabled={uploading}
         className={cn(
-          "flex items-center gap-1.5 rounded-md border border-dashed border-[#e0e0e0] px-2.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-brand/40 hover:text-brand",
+          "flex items-center gap-1.5 rounded-md border border-dashed border-border px-2.5 py-1.5 text-xs font-semibold text-foreground transition-colors hover:border-brand/40 hover:text-brand",
           uploading && "cursor-not-allowed opacity-50",
         )}
       >

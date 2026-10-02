@@ -71,7 +71,7 @@ export function paymentInstructionsHtml(params: {
           </td>
           <td style="text-align:right;">
             <p style="margin:0 0 2px;font-size:11px;font-weight:500;color:#6e6e73;letter-spacing:0.5px;text-transform:uppercase;">Total Bayar</p>
-            <p style="margin:0;font-size:18px;font-weight:700;color:#EA5329;">${rp(params.total)}</p>
+            <p style="margin:0;font-size:18px;font-weight:700;color:#000000;">${rp(params.total)}</p>
           </td>
         </tr>
       </table>
@@ -92,7 +92,7 @@ export function paymentInstructionsHtml(params: {
     ${params.paymentUrl ? ctaButton(params.paymentUrl, "Bayar Sekarang") : ctaButton(orderUrl, "Lihat Detail Pesanan")}
 
     <p style="margin:8px 0 0;font-size:13px;color:#6e6e73;line-height:1.6;">
-      Jika mengalami kendala, hubungi CS kami melalui <a href="${params.appUrl}/about#kontak" style="color:#EA5329;text-decoration:none;">halaman kontak</a>.
+      Jika mengalami kendala, hubungi CS kami melalui <a href="${params.appUrl}/about#kontak" style="color:#000000;text-decoration:none;">halaman kontak</a>.
     </p>`;
 
   return emailShell({

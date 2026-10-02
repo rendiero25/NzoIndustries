@@ -121,8 +121,8 @@ export function ProductShippingDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent showCloseButton={false} className="w-[min(28rem,calc(100vw-2rem))] max-w-none">
         <DialogHeader className="flex-row items-center justify-between gap-2 space-y-0">
-          <DialogTitle className="flex items-center gap-2 text-[17px] font-semibold text-[#1d1d1f]">
-            <Truck className="h-4 w-4 text-[#EA5329]" aria-hidden />
+          <DialogTitle className="flex items-center gap-2 text-base font-semibold text-foreground">
+            <Truck className="h-4 w-4 text-foreground" aria-hidden />
             Pilihan Pengiriman
           </DialogTitle>
           <DialogClose asChild>
@@ -134,7 +134,7 @@ export function ProductShippingDialog({
 
         {!isAuthenticated ? (
           <div className="flex flex-col items-center gap-3 py-4 text-center">
-            <p className="text-sm text-[#7a7a7a]">
+            <p className="text-sm text-muted-foreground">
               Masuk ke akun Anda untuk melihat kurir dan estimasi ongkir sesuai alamat Anda.
             </p>
             <Button asChild variant="primary" size="sm">
@@ -142,13 +142,13 @@ export function ProductShippingDialog({
             </Button>
           </div>
         ) : addressesLoading ? (
-          <div className="flex items-center justify-center gap-2 py-8 text-sm text-[#7a7a7a]">
+          <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
             <Spinner className="size-4" />
             Memuat alamat…
           </div>
         ) : !addresses || addresses.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-4 text-center">
-            <p className="text-sm text-[#7a7a7a]">Belum ada alamat tersimpan.</p>
+            <p className="text-sm text-muted-foreground">Belum ada alamat tersimpan.</p>
             <Button asChild variant="primary" size="sm">
               <Link href="/dashboard/addresses/new">Tambah alamat baru</Link>
             </Button>
@@ -169,7 +169,7 @@ export function ProductShippingDialog({
                 </SelectContent>
               </Select>
               {selectedAddress ? (
-                <p className="mt-2 text-xs text-[#7a7a7a]">
+                <p className="mt-2 text-xs text-muted-foreground">
                   {selectedAddress.recipient} · {selectedAddress.city}, {selectedAddress.province}{" "}
                   {selectedAddress.postal_code}
                 </p>
@@ -178,14 +178,14 @@ export function ProductShippingDialog({
 
             <div className="max-h-80 space-y-2 overflow-y-auto">
               {ratesLoading ? (
-                <div className="flex items-center justify-center gap-2 py-8 text-sm text-[#7a7a7a]">
+                <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
                   <Spinner className="size-4" />
                   Menghitung ongkir…
                 </div>
               ) : ratesError ? (
-                <p className="py-4 text-center text-sm text-[#7a7a7a]">{ratesError}</p>
+                <p className="py-4 text-center text-sm text-muted-foreground">{ratesError}</p>
               ) : options.length === 0 ? (
-                <p className="py-4 text-center text-sm text-[#7a7a7a]">
+                <p className="py-4 text-center text-sm text-muted-foreground">
                   Tidak ada kurir tersedia untuk alamat ini.
                 </p>
               ) : (
@@ -194,17 +194,17 @@ export function ProductShippingDialog({
                     key={`${opt.courierCode}-${opt.serviceCode}`}
                     className={cn(
                       "flex items-center gap-3 rounded-xl border px-3 py-2.5 text-sm",
-                      "border-[#e0e0e0] bg-[#fafafa]",
+                      "border-border bg-muted",
                     )}
                   >
                     <CourierLogo code={opt.courierCode} name={opt.courierName} />
                     <span className="flex-1">
-                      <span className="font-semibold text-[#1d1d1f]">
+                      <span className="font-semibold text-foreground">
                         {opt.courierName} — {opt.serviceName}
                       </span>
-                      <span className="mt-0.5 block text-xs text-[#7a7a7a]">{opt.etd}</span>
+                      <span className="mt-0.5 block text-xs text-muted-foreground">{opt.etd}</span>
                     </span>
-                    <span className="text-sm font-bold text-[#1d1d1f] tabular-nums">
+                    <span className="text-sm font-bold text-foreground tabular-nums">
                       {formatRupiah(opt.price)}
                     </span>
                   </div>

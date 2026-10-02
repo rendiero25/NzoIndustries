@@ -75,13 +75,13 @@ export function DashboardOrdersFilters({ categories = [], sort: sortProp = "newe
           navigate(status, inputRef.current?.value ?? "", category, sort);
         }}
       >
-        <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#7a7a7a]" />
+        <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           ref={inputRef}
           type="text"
           defaultValue={q}
           placeholder="Cari nomor pesanan atau nama produk…"
-          className="h-8 w-full rounded-md border border-[#e0e0e0] bg-white pr-8 pl-9 text-sm text-[#1d1d1f] outline-none placeholder:text-[#aaa] focus:border-[#1d1d1f] focus:ring-2 focus:ring-[#1d1d1f]/15"
+          className="h-8 w-full rounded-md border border-border bg-white pr-8 pl-9 text-sm text-foreground outline-none placeholder:text-[#aaa] focus:border-foreground focus:ring-2 focus:ring-foreground/15"
         />
         {q ? (
           <Button
@@ -89,7 +89,7 @@ export function DashboardOrdersFilters({ categories = [], sort: sortProp = "newe
             variant="ghost"
             size="icon-sm"
             aria-label="Hapus pencarian"
-            className="absolute top-1/2 right-1 -translate-y-1/2 text-[#7a7a7a] hover:text-[#1d1d1f]"
+            className="absolute top-1/2 right-1 -translate-y-1/2 text-muted-foreground hover:text-foreground"
             onClick={() => {
               if (inputRef.current) inputRef.current.value = "";
               navigate(status, "", category, sort);

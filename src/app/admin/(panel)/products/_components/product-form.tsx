@@ -26,10 +26,10 @@ import { VariantImagePicker } from "./variant-image-picker";
 import { createProduct, updateProduct } from "../_actions";
 import { cn } from "@/lib/utils";
 
-const inputClass = "h-10 rounded-lg border-[#e0e0e0]";
-const textareaClass = "resize-none rounded-lg border-[#e0e0e0]";
-const selectTriggerClass = "h-10 rounded-lg border-[#e0e0e0]";
-const variantInputClass = "h-9 rounded-lg border-[#e0e0e0] text-sm";
+const inputClass = "h-10 rounded-lg border-border";
+const textareaClass = "resize-none rounded-lg border-border";
+const selectTriggerClass = "h-10 rounded-lg border-border";
+const variantInputClass = "h-9 rounded-lg border-border text-sm";
 
 // ─── Schemas ────────────────────────────────────────────────────────────────
 
@@ -572,7 +572,7 @@ export function ProductForm({
                   return (
                     <div
                       key={field._key}
-                      className="overflow-hidden rounded-lg border border-[#e0e0e0]"
+                      className="overflow-hidden rounded-lg border border-border"
                     >
                       <input type="hidden" {...register(`variants.${i}.id`)} />
 
@@ -615,7 +615,7 @@ export function ProductForm({
 
                       {/* Variant body */}
                       {isExpanded && (
-                        <div className="grid grid-cols-1 gap-3 border-t border-[#e0e0e0] px-4 pt-2 pb-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-3 border-t border-border px-4 pt-2 pb-4 sm:grid-cols-2 lg:grid-cols-3">
                           <Field
                             label="Foto Varian"
                             error={variantErrors?.image_url?.message}
@@ -734,7 +734,7 @@ export function ProductForm({
             {/* Tags */}
             <Section title="Tags">
               <div className="space-y-2">
-                <div className="flex min-h-9 flex-wrap gap-1.5 rounded-lg border border-[#e0e0e0] bg-transparent p-2">
+                <div className="flex min-h-9 flex-wrap gap-1.5 rounded-lg border border-border bg-transparent p-2">
                   {tags.map((tag) => (
                     <span
                       key={tag}

@@ -72,7 +72,7 @@ export function HorizontalScrollRow({
   );
 
   const chevronBaseClass =
-    "flex size-10 items-center justify-center text-[#1d1d1f] opacity-0 transition-opacity duration-200 " +
+    "flex size-10 items-center justify-center text-foreground opacity-0 transition-opacity duration-200 " +
     "pointer-events-none group-hover:pointer-events-auto hover:text-brand " +
     "disabled:pointer-events-none disabled:text-muted-foreground disabled:hover:text-muted-foreground";
 

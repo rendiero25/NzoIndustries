@@ -35,39 +35,39 @@ export default async function OrderReturnPage({ params }: { params: Promise<{ id
     <div className="space-y-6">
       <Link
         href={`/dashboard/orders/${id}/complaint`}
-        className="inline-flex items-center gap-1.5 text-xs font-medium text-[#EA5329] underline-offset-2 hover:underline"
+        className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground underline-offset-2 hover:underline"
       >
         <ArrowLeft size={13} /> Kembali ke komplain
       </Link>
 
-      <div className="space-y-4 rounded-xl border border-[#e0e0e0] bg-white p-5 sm:p-6">
+      <div className="space-y-4 rounded-xl border border-border bg-white p-5 sm:p-6">
         <h1 className="text-[22px] font-semibold">Status Retur</h1>
-        <p className="text-[15px] text-[#5c5c5c]">
+        <p className="text-[15px] text-steel-700">
           {RETURN_STATUS_LABELS[ret.status] ?? ret.status}
         </p>
 
         {ret.return_awb && (
-          <div className="space-y-1 rounded-lg bg-[#f5f5f7] p-4 text-[13px]">
-            <p className="text-[11px] font-semibold text-[#7a7a7a] uppercase">
+          <div className="space-y-1 rounded-lg bg-muted p-4 text-[13px]">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase">
               Resi pengiriman balik Anda
             </p>
             <p className="font-medium">{ret.return_courier}</p>
-            <p className="font-mono text-[#1d1d1f]">{ret.return_awb}</p>
+            <p className="font-mono text-foreground">{ret.return_awb}</p>
           </div>
         )}
 
         {shipment && (
-          <div className="space-y-1 rounded-lg border border-[#e0e0e0] p-4 text-[13px]">
-            <p className="text-[11px] font-semibold text-[#7a7a7a] uppercase">
+          <div className="space-y-1 rounded-lg border border-border p-4 text-[13px]">
+            <p className="text-[11px] font-semibold text-muted-foreground uppercase">
               Pengiriman penggantian
             </p>
             <p className="font-medium">{shipment.courier}</p>
             {shipment.awb_number && (
-              <p className="font-mono text-[15px] font-semibold text-[#EA5329]">
+              <p className="font-mono text-[15px] font-semibold text-foreground">
                 {shipment.awb_number}
               </p>
             )}
-            {shipment.status && <p className="text-[#7a7a7a]">Status: {shipment.status}</p>}
+            {shipment.status && <p className="text-muted-foreground">Status: {shipment.status}</p>}
           </div>
         )}
       </div>

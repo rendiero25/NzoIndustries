@@ -71,7 +71,7 @@ export function FaqForm({ initialData }: FaqFormProps) {
   };
 
   const areaClass =
-    "w-full resize-none rounded-lg border border-[#e0e0e0] bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30";
+    "w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/30";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -109,7 +109,7 @@ export function FaqForm({ initialData }: FaqFormProps) {
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 placeholder="pengiriman, pembayaran, retur, dll"
-                className="h-10 rounded-lg border-[#e0e0e0] text-sm"
+                className="h-10 rounded-lg border-border text-sm"
               />
             </div>
             <div className="space-y-1.5">
@@ -119,7 +119,7 @@ export function FaqForm({ initialData }: FaqFormProps) {
                 min={0}
                 value={sortOrder}
                 onChange={(e) => setSortOrder(e.target.value)}
-                className="h-10 rounded-lg border-[#e0e0e0] text-sm"
+                className="h-10 rounded-lg border-border text-sm"
               />
             </div>
           </div>

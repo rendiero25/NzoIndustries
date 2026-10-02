@@ -100,7 +100,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
         <div>
           <p className="text-swiss-eyebrow">Katalog</p>
           <h1 className="text-[34px] font-semibold text-foreground uppercase">Produk</h1>
-          <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+          <p className="mt-1 text-base leading-[1.47] text-foreground">
             {count ?? 0} produk{q ? ` untuk "${q}"` : ""}
           </p>
         </div>

@@ -1,7 +1,6 @@
 "use client"
 
 import type { CSSProperties } from "react"
-import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 import {
   CircleCheckIcon,
@@ -11,6 +10,8 @@ import {
   TriangleAlertIcon,
 } from "lucide-react"
 
+import { useMediaQuery } from "@/hooks/use-media-query"
+
 const toasterStyle = {
   "--normal-bg": "var(--popover)",
   "--normal-text": "var(--popover-foreground)",
@@ -18,30 +19,33 @@ const toasterStyle = {
   "--border-radius": "var(--radius-lg)",
 } as CSSProperties
 
-const Toaster = ({
-  richColors = true,
-  position = "top-center",
-  ...props
-}: ToasterProps) => {
-  const { theme = "system" } = useTheme()
+const iconProps = { className: "size-4", strokeWidth: 1.75 }
+
+/**
+ * design-system.md §9: bawah-tengah di mobile, kanan-bawah di desktop,
+ * 4 detik (error 6 detik), varian success/error/info/loading.
+ */
+const Toaster = ({ ...props }: ToasterProps) => {
+  const isDesktop = useMediaQuery("(min-width: 768px)", true)
 
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme="light"
       className="toaster group"
-      richColors={richColors}
-      position={position}
+      position={isDesktop ? "bottom-right" : "bottom-center"}
+      duration={4000}
       icons={{
-        success: <CircleCheckIcon className="size-4" />,
-        info: <InfoIcon className="size-4" />,
-        warning: <TriangleAlertIcon className="size-4" />,
-        error: <OctagonXIcon className="size-4" />,
-        loading: <Loader2Icon className="size-4 animate-spin" />,
+        success: <CircleCheckIcon {...iconProps} className="size-4 text-success" />,
+        info: <InfoIcon {...iconProps} />,
+        warning: <TriangleAlertIcon {...iconProps} className="size-4 text-warning" />,
+        error: <OctagonXIcon {...iconProps} className="size-4 text-danger" />,
+        loading: <Loader2Icon {...iconProps} className="size-4 animate-spin" />,
       }}
       style={toasterStyle}
       toastOptions={{
         classNames: {
           toast: "cn-toast",
+          error: "cn-toast-error",
           description: "cn-toast-description",
           actionButton: "cn-toast-action",
           cancelButton: "cn-toast-cancel",

@@ -67,34 +67,34 @@ export function ReturnAwbForm({ returnId, orderId }: { returnId: string; orderId
   return (
     <form onSubmit={submit} className="space-y-3">
       <div>
-        <Label className="text-xs font-semibold text-[#7a7a7a] uppercase">Nama kurir</Label>
+        <Label className="text-xs font-semibold text-muted-foreground uppercase">Nama kurir</Label>
         <Input
           value={courier}
           onChange={(e) => setCourier(e.target.value)}
           required
           placeholder="Contoh: JNE, J&T, SiCepat"
-          className="mt-1 border-[#e0e0e0]"
+          className="mt-1 border-border"
         />
       </div>
       <div>
-        <Label className="text-xs font-semibold text-[#7a7a7a] uppercase">Nomor resi</Label>
+        <Label className="text-xs font-semibold text-muted-foreground uppercase">Nomor resi</Label>
         <Input
           value={awb}
           onChange={(e) => setAwb(e.target.value)}
           required
           placeholder="Masukkan nomor resi pengiriman"
-          className="mt-1 border-[#e0e0e0]"
+          className="mt-1 border-border"
         />
       </div>
       <div>
-        <Label className="text-xs font-semibold text-[#7a7a7a] uppercase">
+        <Label className="text-xs font-semibold text-muted-foreground uppercase">
           Foto bukti pengiriman (maks {MAX_FILES})
         </Label>
         <div className="mt-2 flex flex-wrap gap-2">
           {mediaUrls.map((url) => (
             <div
               key={url}
-              className="relative h-20 w-20 overflow-hidden rounded-lg border border-[#e0e0e0]"
+              className="relative h-20 w-20 overflow-hidden rounded-lg border border-border"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={url} alt="bukti" className="h-full w-full object-cover" />
@@ -112,7 +112,7 @@ export function ReturnAwbForm({ returnId, orderId }: { returnId: string; orderId
               type="button"
               onClick={() => fileRef.current?.click()}
               disabled={uploading}
-              className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-[#c0c0c0] bg-[#fafafa] text-[#a0a0a0] hover:border-[#EA5329] hover:text-[#EA5329] disabled:opacity-50"
+              className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border bg-muted text-muted-foreground hover:border-foreground hover:text-foreground disabled:opacity-50"
             >
               {uploading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />

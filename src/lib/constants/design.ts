@@ -10,8 +10,8 @@
 // Brand Colors
 // ============================================================
 export const BRAND_COLOR = {
-  ORANGE: "#EA5329",
-  ORANGE_HOVER: "#D44820",
+  ORANGE: "#000000",
+  ORANGE_HOVER: "#3A3D42",
   BLACK: "#000000",
   WHITE: "#FFFFFF",
 } as const;

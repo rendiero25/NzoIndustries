@@ -30,7 +30,7 @@ export function ShopByBrandSection({
           {showSeeAllLink ? (
             <Link
               href="/brands"
-              className="shrink-0 text-sm font-semibold text-brand transition hover:text-[#d44820]"
+              className="shrink-0 text-sm font-semibold text-brand transition hover:text-steel-700"
             >
               Lihat Semua
             </Link>

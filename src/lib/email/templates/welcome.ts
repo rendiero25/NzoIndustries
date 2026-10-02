@@ -17,7 +17,7 @@ export function welcomeEmailHtml({
       </p>
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 32px;">
         <tr>
-          <td style="background:#EA5329;border-radius:10px;">
+          <td style="background:#000000;border-radius:10px;">
             <a href="${activationUrl}"
                style="display:inline-block;padding:14px 36px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;letter-spacing:-0.1px;">
               Aktifkan Akun
@@ -31,7 +31,7 @@ export function welcomeEmailHtml({
     : `
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 32px;">
         <tr>
-          <td style="background:#EA5329;border-radius:10px;">
+          <td style="background:#000000;border-radius:10px;">
             <a href="${appUrl}/products"
                style="display:inline-block;padding:14px 36px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;letter-spacing:-0.1px;">
               Mulai Belanja
@@ -90,7 +90,7 @@ export function welcomeEmailHtml({
 
               <p style="margin:0;font-size:14px;color:#6e6e73;line-height:1.6;">
                 Ada pertanyaan? Hubungi kami di
-                <a href="${appUrl}/about#kontak" style="color:#EA5329;text-decoration:none;">halaman kontak</a>
+                <a href="${appUrl}/about#kontak" style="color:#000000;text-decoration:none;">halaman kontak</a>
                 atau WhatsApp CS kami.
               </p>
             </td>

@@ -32,7 +32,7 @@ export function AnnouncementBar({ text, link }: AnnouncementBarProps) {
   return (
     <div
       role="banner"
-      className="gap-3[#EA5329] relative flex items-center justify-center bg-black px-4 py-2 text-white"
+      className="gap-3[#000000] relative flex items-center justify-center bg-black px-4 py-2 text-white"
     >
       <div className="flex items-center gap-2 text-center">
         {link ? (

@@ -62,7 +62,7 @@ export function BrandStorePagination({
         href={buildHref(basePath, prev, filters)}
         aria-disabled={currentPage <= 1}
         className={cn(
-          "flex h-10 w-10 items-center justify-center rounded-full border border-[#e0e0e0] bg-white text-[#1d1d1f] transition hover:border-[#EA5329]/40",
+          "flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground transition hover:border-foreground/40",
           currentPage <= 1 && "pointer-events-none opacity-40",
         )}
         aria-label="Halaman sebelumnya"
@@ -77,8 +77,8 @@ export function BrandStorePagination({
           className={cn(
             "flex h-10 min-w-10 items-center justify-center rounded-md border px-2 text-sm font-medium transition",
             n === currentPage
-              ? "border-[#1d1d1f] bg-[#1d1d1f] text-white"
-              : "border-[#e0e0e0] bg-white text-[#1d1d1f] hover:border-[#EA5329]/40",
+              ? "border-foreground bg-primary text-white"
+              : "border-border bg-white text-foreground hover:border-foreground/40",
           )}
           aria-current={n === currentPage ? "page" : undefined}
         >
@@ -90,7 +90,7 @@ export function BrandStorePagination({
         href={buildHref(basePath, next, filters)}
         aria-disabled={currentPage >= totalPages}
         className={cn(
-          "flex h-10 w-10 items-center justify-center rounded-full border border-[#e0e0e0] bg-white text-[#1d1d1f] transition hover:border-[#EA5329]/40",
+          "flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-foreground transition hover:border-foreground/40",
           currentPage >= totalPages && "pointer-events-none opacity-40",
         )}
         aria-label="Halaman berikutnya"

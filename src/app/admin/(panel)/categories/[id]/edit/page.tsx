@@ -41,7 +41,7 @@ export default async function EditCategoryPage({ params }: Props) {
       <div>
         <p className="text-swiss-eyebrow">Katalog</p>
         <h1 className="text-[34px] font-semibold text-foreground uppercase">Edit Kategori</h1>
-        <p className="mt-1 text-[17px] leading-[1.47] text-foreground">Perbarui data kategori.</p>
+        <p className="mt-1 text-base leading-[1.47] text-foreground">Perbarui data kategori.</p>
       </div>
 
       <CategoryForm

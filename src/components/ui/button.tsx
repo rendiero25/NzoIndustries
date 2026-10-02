@@ -6,83 +6,61 @@ import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/utils"
 
 /**
- * NZO Industries buttons — aligned with .cursor/rules/design.mdc
- * - primary / secondary: pill CTAs (#EA5329)
- * - dark: compact utility (nav Sign In / Bag)
- * - pearl: secondary neutral capsule
- * - hero: store landing CTA (18px / 300)
- * - destructive*: delete flows (outside Apple spec; kept for ecommerce)
+ * Tombol NZO (design-system.md §2, §4, §8).
+ * - primary: hitam solid, aksi utama
+ * - secondary: outline hitam
+ * - signal: fill amber + teks hitam, hanya untuk satu CTA promo per viewport
+ * - ghost / link / destructive*: aksi sekunder & destruktif
+ * Nama varian lama (dark, pearl, hero, icon-chip, table-action*, default,
+ * outline) dipertahankan agar halaman starter tetap jalan.
  */
 const buttonVariants = cva(
   [
-    "group/button inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 border bg-clip-padding whitespace-nowrap outline-none select-none",
-    "transition-[transform,background-color,color,border-color,opacity] duration-[160ms] ease-spring motion-reduce:transition-[background-color,color,border-color,opacity]",
-    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#FF7A52]",
-    "motion-safe:active:scale-95 motion-safe:active:duration-[50ms]",
-    "disabled:pointer-events-none disabled:opacity-50 disabled:active:scale-100",
+    "group/button inline-flex shrink-0 items-center justify-center gap-2 rounded-md border font-semibold whitespace-nowrap outline-none select-none",
+    "transition-[transform,background-color,color,border-color,opacity] duration-200 ease-out-nzo",
+    "active:not-disabled:scale-[0.97] active:duration-100 motion-reduce:active:scale-100",
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+    "disabled:pointer-events-none disabled:opacity-50",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   ],
   {
     variants: {
       variant: {
-        primary:
-          "rounded-md border-transparent bg-brand text-brand-foreground shadow-none hover:bg-brand-hover",
-        secondary:
-          "rounded-md border-brand bg-transparent text-brand shadow-none hover:bg-brand/5",
-        dark:
-          "rounded-md border-transparent bg-[#1d1d1f] text-white shadow-none hover:bg-[#333333]",
-        pearl:
-          "rounded-md border-[3px] border-[#f0f0f0] bg-[#fafafc] text-[#333333] shadow-none hover:bg-[#f5f5f7]",
-        hero:
-          "rounded-md border-transparent bg-brand font-light text-brand-foreground shadow-none hover:bg-brand-hover",
-        ghost:
-          "rounded-md border-transparent bg-transparent text-foreground shadow-none hover:bg-muted",
-        destructive:
-          "rounded-md border-transparent bg-destructive text-destructive-foreground shadow-none hover:bg-destructive/90",
+        primary: "border-transparent bg-primary text-primary-foreground hover:bg-steel-700 dark:hover:bg-steel-200",
+        secondary: "border-foreground bg-transparent text-foreground hover:bg-muted",
+        signal: "border-transparent bg-signal text-brand-black hover:bg-signal-hover",
+        ghost: "border-transparent bg-transparent text-foreground hover:bg-muted",
+        destructive: "border-transparent bg-destructive text-white hover:bg-destructive/90",
         "destructive-ghost":
-          "rounded-md border-destructive/40 bg-transparent text-destructive shadow-none hover:bg-destructive/10",
-        link:
-          "h-auto min-h-0 rounded-none border-transparent bg-transparent p-0 text-brand shadow-none hover:underline active:scale-100",
-        /** Floating control over photography — design: button-icon-circular */
-        "icon-chip":
-          "rounded-full border-transparent bg-[rgba(210,210,215,0.64)] text-[#1d1d1f] shadow-none hover:bg-[rgba(210,210,215,0.8)]",
-        /** Compact row actions (admin tables) — 14px utility, radius 8px */
-        "table-action":
-          "rounded-md border-[#e0e0e0] bg-transparent text-foreground shadow-none hover:bg-muted",
-        "table-action-brand":
-          "rounded-md border-brand/40 bg-transparent text-brand shadow-none hover:bg-brand/5",
+          "border-destructive/40 bg-transparent text-destructive hover:bg-destructive/10",
+        link: "h-auto min-h-0 rounded-none border-transparent bg-transparent p-0 font-medium text-foreground underline-offset-4 hover:underline active:scale-100",
+        "icon-chip": "rounded-full border-border bg-background/90 text-foreground hover:bg-background",
+        "table-action": "border-border bg-transparent font-medium text-foreground hover:bg-muted",
+        "table-action-brand": "border-foreground bg-transparent font-medium text-foreground hover:bg-muted",
         "table-action-destructive":
-          "rounded-md border-destructive/40 bg-transparent text-destructive shadow-none hover:bg-destructive/10",
-        /** @deprecated Use `primary` */
-        default:
-          "rounded-md border-transparent bg-brand text-brand-foreground shadow-none hover:bg-brand-hover",
-        /** @deprecated Use `secondary` */
-        outline:
-          "rounded-md border-brand bg-transparent text-brand shadow-none hover:bg-brand/5",
+          "border-destructive/40 bg-transparent font-medium text-destructive hover:bg-destructive/10",
+        /** @deprecated pakai `primary` */
+        dark: "border-transparent bg-primary text-primary-foreground hover:bg-steel-700",
+        /** @deprecated pakai `ghost` */
+        pearl: "border-border bg-muted text-foreground hover:bg-steel-200",
+        /** @deprecated pakai `primary` size lg */
+        hero: "border-transparent bg-primary text-primary-foreground hover:bg-steel-700",
+        /** @deprecated pakai `primary` */
+        default: "border-transparent bg-primary text-primary-foreground hover:bg-steel-700",
+        /** @deprecated pakai `secondary` */
+        outline: "border-foreground bg-transparent text-foreground hover:bg-muted",
       },
       size: {
-        default:
-          "min-h-11 px-[22px] py-[11px] text-[17px] font-normal leading-[1.47] tracking-[-0.374px]",
-        sm: "min-h-9 px-4 py-2 text-sm font-normal leading-[1.29] tracking-[-0.224px]",
-        xs: "min-h-8 gap-1 px-3 py-1.5 text-xs font-normal leading-[1.29] tracking-[-0.224px]",
-        lg: "min-h-12 px-7 py-3.5 text-lg font-light leading-none tracking-normal",
+        default: "min-h-11 px-5 py-2.5 text-[0.9375rem] leading-5",
+        sm: "min-h-9 px-3.5 py-2 text-sm leading-5",
+        xs: "min-h-8 gap-1 px-2.5 py-1 text-xs leading-4",
+        lg: "min-h-12 px-6 py-3 text-base leading-6",
         icon: "size-11 min-h-0 rounded-full p-0",
         "icon-sm": "size-9 min-h-0 rounded-full p-0",
       },
     },
     compoundVariants: [
-      { variant: "link", size: "default", class: "text-[17px] leading-[1.47] tracking-[-0.374px]" },
-      { variant: "link", size: "sm", class: "text-sm leading-[1.29] tracking-[-0.224px]" },
-      { variant: ["primary", "secondary", "destructive", "default", "outline"], size: "icon", class: "min-h-0 px-0" },
-      { variant: ["primary", "secondary", "destructive", "default", "outline"], size: "icon-sm", class: "min-h-0 px-0" },
-      { variant: "dark", size: "default", class: "px-[15px] py-2 text-sm leading-[1.29] tracking-[-0.224px]" },
-      { variant: "dark", size: "sm", class: "min-h-8 px-[15px] py-2" },
-      { variant: "pearl", size: "default", class: "px-[14px] py-2 text-sm leading-[1.43] tracking-[-0.224px]" },
-      { variant: "pearl", size: "sm", class: "min-h-8 px-3 py-1.5" },
-      { variant: "destructive-ghost", size: "default", class: "min-h-8 px-3 py-2" },
-      { variant: "destructive-ghost", size: "sm", class: "min-h-8 px-3 py-1.5" },
-      { variant: "icon-chip", size: "icon", class: "min-h-0 px-0" },
-      { variant: "icon-chip", size: "icon-sm", class: "min-h-0 px-0" },
+      { variant: "link", size: ["default", "sm", "xs", "lg"], class: "min-h-0 px-0 py-0" },
     ],
     defaultVariants: {
       variant: "primary",
@@ -91,10 +69,10 @@ const buttonVariants = cva(
   }
 )
 
-function resolveVariant(
-  variant: VariantProps<typeof buttonVariants>["variant"]
-): NonNullable<VariantProps<typeof buttonVariants>["variant"]> {
-  if (!variant || variant === "default") return "primary"
+type ButtonVariant = NonNullable<VariantProps<typeof buttonVariants>["variant"]>
+
+function resolveVariant(variant: VariantProps<typeof buttonVariants>["variant"]): ButtonVariant {
+  if (!variant || variant === "default" || variant === "dark" || variant === "hero") return "primary"
   if (variant === "outline") return "secondary"
   return variant
 }
@@ -102,7 +80,7 @@ function resolveVariant(
 type ButtonProps = React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
-    /** Tampilkan Spinner shadcn + nonaktifkan tombol (design: Button Spinner). */
+    /** Spinner kecil + nonaktif saat proses (design-system.md §9). */
     loading?: boolean
   }
 
@@ -118,17 +96,7 @@ function Button({
 }: ButtonProps) {
   const Comp = asChild ? Slot.Root : "button"
   const resolved = resolveVariant(variant)
-  const withRipple = !asChild && resolved !== "link"
   const isDisabled = disabled || loading
-
-  const inner = loading ? (
-    <>
-      <Spinner data-icon="inline-start" />
-      {children}
-    </>
-  ) : (
-    children
-  )
 
   return (
     <Comp
@@ -137,23 +105,17 @@ function Button({
       data-size={size}
       data-loading={loading ? "" : undefined}
       aria-busy={loading || undefined}
-      disabled={isDisabled}
-      className={cn(
-        buttonVariants({ variant: resolved, size, className }),
-        withRipple && "relative overflow-hidden",
-      )}
+      disabled={asChild ? undefined : isDisabled}
+      className={cn(buttonVariants({ variant: resolved, size, className }))}
       {...props}
     >
-      {withRipple ? (
-        <>
-          <span
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 scale-0 rounded-[inherit] bg-current opacity-0 transition-[transform,opacity] duration-300 ease-spring group-active/button:scale-150 group-active/button:opacity-[0.12] group-active/button:[transition-duration:50ms] motion-reduce:hidden"
-          />
-          {inner}
-        </>
+      {asChild ? (
+        children
       ) : (
-        inner
+        <>
+          {loading ? <Spinner data-icon="inline-start" /> : null}
+          {children}
+        </>
       )}
     </Comp>
   )

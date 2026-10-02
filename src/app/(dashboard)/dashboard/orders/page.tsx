@@ -42,7 +42,7 @@ function statusBadgeClass(status: OrderStatus): string {
     case "refunded":
       return "bg-red-50 text-red-600 ring-1 ring-red-100";
     default:
-      return "bg-[#f5f5f7] text-[#5c5c5c] ring-1 ring-[#e0e0e0]";
+      return "bg-muted text-steel-700 ring-1 ring-border";
   }
 }
 
@@ -86,19 +86,19 @@ export default async function DashboardOrdersPage({
 
   return (
     <div className="w-full">
-      <p className="text-[10px] font-bold text-[#7a7a7a] uppercase">Transaksi</p>
-      <h1 className="mt-2 text-2xl font-bold text-[#1d1d1f] sm:text-3xl">Pesanan</h1>
+      <p className="text-[10px] font-bold text-muted-foreground uppercase">Transaksi</p>
+      <h1 className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">Pesanan</h1>
 
       <Suspense
         fallback={
-          <div className="mt-6 h-10 w-full max-w-[14rem] animate-pulse rounded-lg bg-[#e8e8ed]" />
+          <div className="mt-6 h-10 w-full max-w-[14rem] animate-pulse rounded-lg bg-steel-200" />
         }
       >
         <DashboardOrdersFilters categories={categories} sort={sort} />
       </Suspense>
 
       {orders.length === 0 ? (
-        <p className="mt-10 text-sm text-[#5c5c5c]">
+        <p className="mt-10 text-sm text-steel-700">
           {search
             ? `Tidak ada pesanan yang cocok dengan "${search}".`
             : "Belum ada pesanan untuk filter ini."}
@@ -111,17 +111,14 @@ export default async function DashboardOrdersPage({
             const totalQty = o.items.reduce((s, i) => s + i.quantity, 0);
 
             return (
-              <li
-                key={o.id}
-                className="overflow-hidden rounded-xl border border-[#e0e0e0] bg-white"
-              >
+              <li key={o.id} className="overflow-hidden rounded-xl border border-border bg-white">
                 {/* Header */}
-                <div className="flex items-center justify-between gap-3 border-b border-[#f0f0f0] px-4 py-2.5">
+                <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-2.5">
                   <div className="flex min-w-0 items-center gap-2">
-                    <span className="shrink-0 text-[11px] font-bold text-[#7a7a7a] uppercase">
+                    <span className="shrink-0 text-[11px] font-bold text-muted-foreground uppercase">
                       ID Transaksi
                     </span>
-                    <span className="truncate font-mono text-[12px] font-semibold text-[#1d1d1f]">
+                    <span className="truncate font-mono text-[12px] font-semibold text-foreground">
                       {o.order_number}
                     </span>
                   </div>
@@ -135,7 +132,7 @@ export default async function DashboardOrdersPage({
                 {/* Body */}
                 <div className="flex items-start gap-3 px-4 py-3 sm:gap-4">
                   {/* Product image */}
-                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-[#f5f5f7] sm:h-20 sm:w-20">
+                  <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-muted sm:h-20 sm:w-20">
                     {firstItem?.image_url ? (
                       <Image
                         src={firstItem.image_url}
@@ -156,24 +153,26 @@ export default async function DashboardOrdersPage({
 
                   {/* Info */}
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-[#1d1d1f]">
+                    <p className="truncate text-sm font-semibold text-foreground">
                       {firstItem?.product_name ?? "—"}
                       {extraCount > 0 && (
-                        <span className="ml-1 text-xs font-normal text-[#7a7a7a]">
+                        <span className="ml-1 text-xs font-normal text-muted-foreground">
                           +{extraCount} produk lainnya
                         </span>
                       )}
                     </p>
-                    <p className="mt-0.5 text-xs text-[#7a7a7a]">{formatDate(o.created_at)}</p>
-                    <p className="mt-1 text-xs text-[#5c5c5c]">
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      {formatDate(o.created_at)}
+                    </p>
+                    <p className="mt-1 text-xs text-steel-700">
                       {totalQty} item ·{" "}
-                      <span className="font-semibold text-[#1d1d1f]">{formatRupiah(o.total)}</span>
+                      <span className="font-semibold text-foreground">{formatRupiah(o.total)}</span>
                     </p>
                   </div>
                 </div>
 
                 {/* Footer */}
-                <div className="flex justify-end border-t border-[#f0f0f0] px-4 py-2.5">
+                <div className="flex justify-end border-t border-border px-4 py-2.5">
                   <Button asChild variant="dark" size="sm">
                     <Link href={`/dashboard/orders/${o.id}`}>Lihat Detail</Link>
                   </Button>

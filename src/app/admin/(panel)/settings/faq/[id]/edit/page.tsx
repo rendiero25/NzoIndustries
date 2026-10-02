@@ -36,7 +36,7 @@ export default async function AdminFaqEditPage({ params }: PageProps) {
         </Link>
         <p className="text-swiss-eyebrow">Toko</p>
         <h1 className="text-[34px] font-semibold text-foreground uppercase">Edit FAQ</h1>
-        <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+        <p className="mt-1 text-base leading-[1.47] text-foreground">
           Perbarui pertanyaan atau jawaban.
         </p>
       </div>

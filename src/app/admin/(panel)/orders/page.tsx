@@ -61,7 +61,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
       <div>
         <p className="text-swiss-eyebrow">Transaksi</p>
         <h1 className="text-[34px] font-semibold text-foreground uppercase">Pesanan</h1>
-        <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+        <p className="mt-1 text-base leading-[1.47] text-foreground">
           {count ?? 0} pesanan{q ? ` untuk "${q}"` : ""}
           {status ? ` · filter: ${status.replace("_", " ")}` : ""}
         </p>

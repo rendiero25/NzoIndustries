@@ -25,7 +25,7 @@ export function ReviewPhotos({ images, authorName }: { images: string[]; authorN
             type="button"
             onClick={() => setOpenIndex(i)}
             aria-label={`Lihat foto ${i + 1} dari ${authorName}`}
-            className="relative h-20 w-20 overflow-hidden rounded-xl border border-[#e0e0e0] bg-white transition-opacity hover:opacity-85"
+            className="relative h-20 w-20 overflow-hidden rounded-xl border border-border bg-white transition-opacity hover:opacity-85"
           >
             <Image
               src={url}
@@ -42,7 +42,7 @@ export function ReviewPhotos({ images, authorName }: { images: string[]; authorN
         <DialogContent className="max-w-[calc(100%-2rem)] bg-white p-3 sm:max-w-2xl">
           <DialogTitle className="sr-only">Foto ulasan dari {authorName}</DialogTitle>
           {current && (
-            <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-[#f5f5f7]">
+            <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-muted">
               <Image
                 src={current}
                 alt={`Foto ulasan ${(openIndex ?? 0) + 1}`}
@@ -57,17 +57,17 @@ export function ReviewPhotos({ images, authorName }: { images: string[]; authorN
               <CarouselNavButton
                 direction="prev"
                 surface="surface"
-                className="border border-[#e0e0e0] bg-white"
+                className="border border-border bg-white"
                 aria-label="Foto sebelumnya"
                 onClick={() => step(-1)}
               />
-              <span className="text-xs text-[#7a7a7a]">
+              <span className="text-xs text-muted-foreground">
                 {(openIndex ?? 0) + 1} / {images.length}
               </span>
               <CarouselNavButton
                 direction="next"
                 surface="surface"
-                className="border border-[#e0e0e0] bg-white"
+                className="border border-border bg-white"
                 aria-label="Foto berikutnya"
                 onClick={() => step(1)}
               />

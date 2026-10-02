@@ -24,8 +24,8 @@ export default async function AddressesPage() {
     <div className="w-full">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-[10px] font-bold text-[#7a7a7a] uppercase">Pengiriman</p>
-          <h1 className="mt-2 text-2xl font-bold text-[#1d1d1f] sm:text-3xl">Alamat tersimpan</h1>
+          <p className="text-[10px] font-bold text-muted-foreground uppercase">Pengiriman</p>
+          <h1 className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">Alamat tersimpan</h1>
         </div>
         <Button asChild variant="primary" className="w-fit">
           <Link href="/dashboard/addresses/new">Tambah alamat</Link>
@@ -33,13 +33,13 @@ export default async function AddressesPage() {
       </div>
 
       {rows.length === 0 ? (
-        <p className="mt-10 text-sm text-[#5c5c5c]">
+        <p className="mt-10 text-sm text-steel-700">
           Belum ada alamat. Tambahkan untuk checkout lebih cepat.
         </p>
       ) : (
         <ul className="mt-10 space-y-4">
           {rows.map((a) => (
-            <li key={a.id} className="rounded-xl border border-[#e0e0e0] bg-white p-5">
+            <li key={a.id} className="rounded-xl border border-border bg-white p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   {a.is_default ? (
@@ -48,11 +48,13 @@ export default async function AddressesPage() {
                     </span>
                   ) : null}
                   {a.label ? (
-                    <p className="mt-2 text-xs font-bold text-[#7a7a7a] uppercase">{a.label}</p>
+                    <p className="mt-2 text-xs font-bold text-muted-foreground uppercase">
+                      {a.label}
+                    </p>
                   ) : null}
-                  <p className="mt-1 font-semibold text-[#1d1d1f]">{a.recipient}</p>
-                  <p className="text-sm text-[#5c5c5c]">{a.phone}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-[#1d1d1f]">
+                  <p className="mt-1 font-semibold text-foreground">{a.recipient}</p>
+                  <p className="text-sm text-steel-700">{a.phone}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-foreground">
                     {a.full_address}, {a.district}, {a.city}, {a.province} {a.postal_code}
                   </p>
                 </div>

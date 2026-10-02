@@ -97,13 +97,13 @@ export function LocationPicker({ value, onChange, center }: LocationPickerProps)
     <div className="space-y-2">
       <div
         ref={containerRef}
-        className="h-64 w-full overflow-hidden rounded-lg border border-[#e0e0e0]"
+        className="h-64 w-full overflow-hidden rounded-lg border border-border"
       />
       <div className="flex items-center justify-between">
         <Button type="button" variant="secondary" size="sm" onClick={useMyLocation}>
           Pakai lokasi saya
         </Button>
-        <span className="text-[11px] text-[#9a9a9a]">
+        <span className="text-[11px] text-muted-foreground">
           {value
             ? `Pin: ${value.lat.toFixed(5)}, ${value.lng.toFixed(5)}`
             : "Geser pin ke lokasi rumah (opsional)"}

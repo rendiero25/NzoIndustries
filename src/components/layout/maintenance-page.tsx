@@ -12,14 +12,14 @@ export function MaintenancePage() {
 
       {/* Icon */}
       <div className="mb-8 flex h-20 w-20 items-center justify-center border-2 border-white/20">
-        <Wrench size={32} className="text-[#EA5329]" />
+        <Wrench size={32} className="text-foreground" />
       </div>
 
       {/* Content */}
       <h1 className="text-swiss-heading mb-4 text-white">
         Sedang Dalam
         <br />
-        <span className="text-[#EA5329]">Pemeliharaan</span>
+        <span className="text-foreground">Pemeliharaan</span>
       </h1>
 
       <p className="mb-8 max-w-sm text-sm leading-relaxed text-white/60">
@@ -28,7 +28,7 @@ export function MaintenancePage() {
       </p>
 
       {/* Divider Swiss */}
-      <div className="mb-8 h-px w-16 bg-[#EA5329]" />
+      <div className="mb-8 h-px w-16 bg-primary" />
 
       {/* Contact */}
       <p className="text-xs text-white/40">

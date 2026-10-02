@@ -62,7 +62,9 @@ export function ComplaintThread({
   return (
     <div className="space-y-4">
       <div className="max-h-80 space-y-3 overflow-y-auto pr-1">
-        {messages.length === 0 && <p className="text-[13px] text-[#a0a0a0]">Belum ada pesan.</p>}
+        {messages.length === 0 && (
+          <p className="text-[13px] text-muted-foreground">Belum ada pesan.</p>
+        )}
         {messages.map((m) => {
           const isMe = m.sender_role === "user";
           return (
@@ -70,17 +72,19 @@ export function ComplaintThread({
               <div
                 className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed ${
                   isMe
-                    ? "rounded-br-sm bg-[#EA5329] text-white"
-                    : "rounded-bl-sm bg-[#f0f0f0] text-[#1d1d1f]"
+                    ? "rounded-br-sm bg-primary text-white"
+                    : "rounded-bl-sm bg-steel-200 text-foreground"
                 }`}
               >
                 {!isMe && (
-                  <p className="mb-1 text-[10px] font-semibold text-[#7a7a7a] uppercase">
+                  <p className="mb-1 text-[10px] font-semibold text-muted-foreground uppercase">
                     Tim NZO Industries
                   </p>
                 )}
                 <p>{m.message}</p>
-                <p className={`mt-1 text-[10px] ${isMe ? "text-white/60" : "text-[#a0a0a0]"}`}>
+                <p
+                  className={`mt-1 text-[10px] ${isMe ? "text-white/60" : "text-muted-foreground"}`}
+                >
                   {formatDate(m.created_at)}
                 </p>
               </div>
@@ -94,7 +98,7 @@ export function ComplaintThread({
           onChange={(e) => setText(e.target.value)}
           placeholder="Tulis pesan..."
           rows={2}
-          className="resize-none border-[#e0e0e0] text-[14px]"
+          className="resize-none border-border text-[14px]"
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();

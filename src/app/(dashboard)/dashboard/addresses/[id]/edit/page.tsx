@@ -22,8 +22,8 @@ export default async function EditAddressPage({ params }: { params: Promise<{ id
 
   return (
     <div className="w-full">
-      <p className="text-[10px] font-bold text-[#7a7a7a] uppercase">Alamat</p>
-      <h1 className="mt-2 text-2xl font-bold text-[#1d1d1f] sm:text-3xl">Edit alamat</h1>
+      <p className="text-[10px] font-bold text-muted-foreground uppercase">Alamat</p>
+      <h1 className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">Edit alamat</h1>
       <div className="mt-10">
         <AddressForm mode="edit" initial={row} />
       </div>

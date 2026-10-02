@@ -172,16 +172,14 @@ export function ProductShareDialog({ open, onOpenChange, productName, productUrl
         {/* Header — min-w-0 prevents auto grid track from overflowing container */}
         <div className="min-w-0 px-6 pt-6 pb-4">
           <DialogHeader>
-            <DialogTitle className="text-[17px] font-semibold tracking-[-0.374px] text-[#1d1d1f]">
+            <DialogTitle className="text-base font-semibold text-foreground">
               Bagikan Produk
             </DialogTitle>
-            <p className="mt-0.5 truncate text-[14px] tracking-[-0.224px] text-[#7a7a7a]">
-              {productName}
-            </p>
+            <p className="mt-0.5 truncate text-[14px] text-muted-foreground">{productName}</p>
           </DialogHeader>
         </div>
 
-        <div className="min-w-0 border-t border-[#f0f0f0]" />
+        <div className="min-w-0 border-t border-border" />
 
         {/* Body */}
         <div className="flex min-w-0 flex-col gap-5 px-6 pt-5 pb-6">
@@ -191,8 +189,8 @@ export function ProductShareDialog({ open, onOpenChange, productName, productUrl
             onClick={() => void copyLink()}
             className={cn(
               "flex w-full items-center justify-center gap-2 rounded-md px-6 py-[11px]",
-              "text-[17px] font-normal tracking-[-0.374px] transition-transform active:scale-95",
-              copied ? "bg-[#1d1d1f] text-white" : "bg-[#EA5329] text-white hover:bg-[#d44820]",
+              "text-base font-normal transition-transform active:scale-95",
+              copied ? "bg-primary text-white" : "bg-primary text-white hover:bg-steel-700",
             )}
           >
             {copied ? (
@@ -205,7 +203,7 @@ export function ProductShareDialog({ open, onOpenChange, productName, productUrl
 
           {/* Platform section */}
           <div>
-            <p className="mb-3 text-[10px] font-semibold tracking-[0.12em] text-[#7a7a7a] uppercase">
+            <p className="mb-3 text-[10px] font-semibold tracking-[0.12em] text-muted-foreground uppercase">
               Bagikan lewat
             </p>
             <div className="grid grid-cols-3 gap-1">
@@ -216,7 +214,7 @@ export function ProductShareDialog({ open, onOpenChange, productName, productUrl
                     key={platform.id}
                     type="button"
                     onClick={() => void handlePlatform(platform)}
-                    className="group flex flex-col items-center gap-1.5 rounded-md p-2.5 transition-colors hover:bg-[#f5f5f7] active:scale-[0.96]"
+                    className="group flex flex-col items-center gap-1.5 rounded-md p-2.5 transition-colors hover:bg-muted active:scale-[0.96]"
                   >
                     <div
                       className={cn(
@@ -227,7 +225,7 @@ export function ProductShareDialog({ open, onOpenChange, productName, productUrl
                     >
                       <Icon className="size-[19px]" />
                     </div>
-                    <span className="w-full truncate text-center text-[11px] leading-none tracking-[-0.12px] text-[#1d1d1f]">
+                    <span className="w-full truncate text-center text-[11px] leading-none text-foreground">
                       {platform.label}
                     </span>
                   </button>

@@ -52,7 +52,7 @@ export function InvoicePrintView({ order, items, paidPayment, watermark }: Invoi
       <div data-no-print className="mb-6 flex justify-end">
         <button
           onClick={() => window.print()}
-          className="rounded-md bg-[#1d1d1f] px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-80"
+          className="rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-80"
         >
           Cetak Invoice
         </button>
@@ -61,7 +61,7 @@ export function InvoicePrintView({ order, items, paidPayment, watermark }: Invoi
       {/* Invoice container */}
       <div
         id="invoice-print-area"
-        className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-xl border border-[#e0e0e0] bg-white p-8 text-[#1d1d1f] print:max-w-none print:rounded-none print:border-none print:p-0 print:shadow-none"
+        className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-xl border border-border bg-white p-8 text-foreground print:max-w-none print:rounded-none print:border-none print:p-0 print:shadow-none"
       >
         {/* Watermark */}
         <div
@@ -98,13 +98,13 @@ export function InvoicePrintView({ order, items, paidPayment, watermark }: Invoi
                 sizes="144px"
               />
             </div>
-            <p className="mt-2 text-xs text-[#5c5c5c]">NZO Industries</p>
-            <p className="text-xs text-[#5c5c5c]">nzo-industries.test</p>
+            <p className="mt-2 text-xs text-steel-700">NZO Industries</p>
+            <p className="text-xs text-steel-700">nzo-industries.test</p>
           </div>
           <div className="text-right">
-            <p className="text-xl font-black tracking-wide text-[#1d1d1f] uppercase">Invoice</p>
-            <p className="mt-1 font-mono text-sm font-bold text-[#1d1d1f]">{order.order_number}</p>
-            <p className="mt-0.5 text-xs text-[#7a7a7a]">
+            <p className="text-xl font-black tracking-wide text-foreground uppercase">Invoice</p>
+            <p className="mt-1 font-mono text-sm font-bold text-foreground">{order.order_number}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
               {formatDate(invoiceDate, {
                 day: "numeric",
                 month: "long",
@@ -115,11 +115,11 @@ export function InvoicePrintView({ order, items, paidPayment, watermark }: Invoi
         </div>
 
         {/* Tagihan kepada */}
-        <div className="mt-8 rounded-lg bg-[#fafafa] p-4">
-          <p className="text-[11px] font-bold text-[#7a7a7a] uppercase">Tagihan kepada</p>
-          <p className="mt-1.5 font-semibold text-[#1d1d1f]">{order.recipient_name}</p>
-          <p className="text-sm text-[#5c5c5c]">{order.recipient_phone}</p>
-          <p className="mt-1 text-sm leading-relaxed text-[#5c5c5c]">
+        <div className="mt-8 rounded-lg bg-muted p-4">
+          <p className="text-[11px] font-bold text-muted-foreground uppercase">Tagihan kepada</p>
+          <p className="mt-1.5 font-semibold text-foreground">{order.recipient_name}</p>
+          <p className="text-sm text-steel-700">{order.recipient_phone}</p>
+          <p className="mt-1 text-sm leading-relaxed text-steel-700">
             {order.shipping_address}, {order.shipping_district}, {order.shipping_city},{" "}
             {order.shipping_province} {order.shipping_postal}
           </p>
@@ -129,31 +129,31 @@ export function InvoicePrintView({ order, items, paidPayment, watermark }: Invoi
         <div className="mt-8">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#e0e0e0]">
-                <th className="pb-2 text-left text-[11px] font-bold text-[#7a7a7a] uppercase">
+              <tr className="border-b border-border">
+                <th className="pb-2 text-left text-[11px] font-bold text-muted-foreground uppercase">
                   Produk
                 </th>
-                <th className="pb-2 text-left text-[11px] font-bold text-[#7a7a7a] uppercase">
+                <th className="pb-2 text-left text-[11px] font-bold text-muted-foreground uppercase">
                   Varian
                 </th>
-                <th className="pb-2 text-right text-[11px] font-bold text-[#7a7a7a] uppercase">
+                <th className="pb-2 text-right text-[11px] font-bold text-muted-foreground uppercase">
                   Qty
                 </th>
-                <th className="pb-2 text-right text-[11px] font-bold text-[#7a7a7a] uppercase">
+                <th className="pb-2 text-right text-[11px] font-bold text-muted-foreground uppercase">
                   Harga
                 </th>
-                <th className="pb-2 text-right text-[11px] font-bold text-[#7a7a7a] uppercase">
+                <th className="pb-2 text-right text-[11px] font-bold text-muted-foreground uppercase">
                   Subtotal
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#f0f0f0]">
+            <tbody className="divide-y divide-border">
               {items.map((item) => (
                 <tr key={item.id}>
-                  <td className="max-w-[160px] truncate py-3 pr-3 font-medium text-[#1d1d1f]">
+                  <td className="max-w-[160px] truncate py-3 pr-3 font-medium text-foreground">
                     {item.product_name}
                   </td>
-                  <td className="py-3 pr-3 text-[#5c5c5c]">{item.variant_name ?? "—"}</td>
+                  <td className="py-3 pr-3 text-steel-700">{item.variant_name ?? "—"}</td>
                   <td className="py-3 pr-3 text-right tabular-nums">{item.quantity}</td>
                   <td className="py-3 pr-3 text-right tabular-nums">{formatRupiah(item.price)}</td>
                   <td className="py-3 text-right font-semibold tabular-nums">
@@ -166,48 +166,50 @@ export function InvoicePrintView({ order, items, paidPayment, watermark }: Invoi
         </div>
 
         {/* Cost breakdown */}
-        <div className="mt-4 border-t border-[#e0e0e0] pt-4">
+        <div className="mt-4 border-t border-border pt-4">
           <div className="ml-auto w-full max-w-xs space-y-1.5 text-sm">
             <div className="flex justify-between gap-4">
-              <span className="text-[#7a7a7a]">Subtotal produk</span>
+              <span className="text-muted-foreground">Subtotal produk</span>
               <span className="tabular-nums">{formatRupiah(order.subtotal)}</span>
             </div>
             {order.discount_amount > 0 && (
               <div className="flex justify-between gap-4">
-                <span className="text-[#7a7a7a]">Diskon</span>
-                <span className="text-[#EA5329] tabular-nums">
+                <span className="text-muted-foreground">Diskon</span>
+                <span className="text-foreground tabular-nums">
                   −{formatRupiah(order.discount_amount)}
                 </span>
               </div>
             )}
             <div className="flex justify-between gap-4">
-              <span className="text-[#7a7a7a]">Ongkos kirim</span>
+              <span className="text-muted-foreground">Ongkos kirim</span>
               <span className="tabular-nums">{formatRupiah(order.shipping_cost)}</span>
             </div>
             {order.app_fee > 0 && (
               <div className="flex justify-between gap-4">
-                <span className="text-[#7a7a7a]">Biaya jasa aplikasi</span>
+                <span className="text-muted-foreground">Biaya jasa aplikasi</span>
                 <span className="tabular-nums">{formatRupiah(order.app_fee)}</span>
               </div>
             )}
-            <div className="flex justify-between gap-4 border-t border-[#e0e0e0] pt-2 font-bold">
-              <span className="text-[#1d1d1f]">Total</span>
-              <span className="text-[#1d1d1f] tabular-nums">{formatRupiah(order.total)}</span>
+            <div className="flex justify-between gap-4 border-t border-border pt-2 font-bold">
+              <span className="text-foreground">Total</span>
+              <span className="text-foreground tabular-nums">{formatRupiah(order.total)}</span>
             </div>
           </div>
         </div>
 
         {/* Payment info */}
-        <div className="mt-8 rounded-lg bg-[#fafafa] p-4 text-sm">
-          <p className="text-[11px] font-bold text-[#7a7a7a] uppercase">Informasi Pembayaran</p>
+        <div className="mt-8 rounded-lg bg-muted p-4 text-sm">
+          <p className="text-[11px] font-bold text-muted-foreground uppercase">
+            Informasi Pembayaran
+          </p>
           <div className="mt-2 space-y-1">
             <div className="flex gap-2">
-              <span className="w-28 shrink-0 text-[#7a7a7a]">Metode bayar</span>
-              <span className="font-medium text-[#1d1d1f]">{paymentLabel}</span>
+              <span className="w-28 shrink-0 text-muted-foreground">Metode bayar</span>
+              <span className="font-medium text-foreground">{paymentLabel}</span>
             </div>
             <div className="flex gap-2">
-              <span className="w-28 shrink-0 text-[#7a7a7a]">Waktu bayar</span>
-              <span className="text-[#1d1d1f]">
+              <span className="w-28 shrink-0 text-muted-foreground">Waktu bayar</span>
+              <span className="text-foreground">
                 {formatDate(invoiceDate, {
                   day: "numeric",
                   month: "long",
@@ -221,11 +223,11 @@ export function InvoicePrintView({ order, items, paidPayment, watermark }: Invoi
         </div>
 
         {/* Footer */}
-        <div className="mt-8 border-t border-[#e0e0e0] pt-6 text-center">
-          <p className="text-sm font-semibold text-[#1d1d1f]">
+        <div className="mt-8 border-t border-border pt-6 text-center">
+          <p className="text-sm font-semibold text-foreground">
             Terima kasih telah berbelanja di NZO Industries!
           </p>
-          <p className="mt-1 text-xs text-[#7a7a7a]">
+          <p className="mt-1 text-xs text-muted-foreground">
             Pertanyaan? Hubungi kami di nzo-industries.test
           </p>
         </div>

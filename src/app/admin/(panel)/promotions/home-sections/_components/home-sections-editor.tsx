@@ -235,10 +235,7 @@ function SectionCard({
 
   return (
     <div
-      className={cn(
-        "rounded-xl border border-[#e0e0e0] bg-card",
-        !section.is_active && "opacity-60",
-      )}
+      className={cn("rounded-xl border border-border bg-card", !section.is_active && "opacity-60")}
     >
       <div className="flex items-start gap-4 p-4">
         {/* Order badge + move buttons */}
@@ -265,7 +262,7 @@ function SectionCard({
         </div>
 
         {/* Icon */}
-        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[#e0e0e0] bg-muted">
+        <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-muted">
           <Icon size={15} strokeWidth={1.5} className="text-foreground" />
         </div>
 

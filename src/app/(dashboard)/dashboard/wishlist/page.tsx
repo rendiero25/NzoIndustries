@@ -29,11 +29,11 @@ export default async function WishlistPage({
 
   return (
     <div className="w-full">
-      <p className="text-[10px] font-bold text-[#7a7a7a] uppercase">Favorit</p>
-      <h1 className="mt-2 text-2xl font-bold text-[#1d1d1f] sm:text-3xl">Wishlist</h1>
+      <p className="text-[10px] font-bold text-muted-foreground uppercase">Favorit</p>
+      <h1 className="mt-2 text-2xl font-bold text-foreground sm:text-3xl">Wishlist</h1>
 
       {items.length === 0 ? (
-        <p className="mt-10 text-sm text-[#5c5c5c]">
+        <p className="mt-10 text-sm text-steel-700">
           {total === 0
             ? "Wishlist kosong — jelajahi katalog dan simpan produk favoritmu."
             : "Tidak ada item di halaman ini."}

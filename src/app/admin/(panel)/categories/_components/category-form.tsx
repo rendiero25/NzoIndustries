@@ -110,7 +110,7 @@ export function CategoryForm({ parentCategories, categoryId, defaultValues }: Ca
               </Label>
               <Input
                 id="name"
-                className="h-10 rounded-lg border-[#e0e0e0] text-[17px] leading-[1.47]"
+                className="h-10 rounded-lg border-border text-base leading-[1.47]"
                 placeholder="Contoh: Laptop"
                 {...register("name", {
                   onChange: (e) => {
@@ -129,7 +129,7 @@ export function CategoryForm({ parentCategories, categoryId, defaultValues }: Ca
               </Label>
               <Input
                 id="slug"
-                className="h-10 rounded-lg border-[#e0e0e0] font-mono text-[17px] leading-[1.47]"
+                className="h-10 rounded-lg border-border font-mono text-base leading-[1.47]"
                 placeholder="laptop"
                 {...register("slug")}
               />
@@ -144,7 +144,7 @@ export function CategoryForm({ parentCategories, categoryId, defaultValues }: Ca
             <select
               id="parent_id"
               {...register("parent_id")}
-              className="h-10 w-full rounded-lg border border-[#e0e0e0] bg-background px-3 text-[17px] text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+              className="h-10 w-full rounded-lg border border-border bg-background px-3 text-base text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
             >
               <option value="">— Tidak ada (kategori utama) —</option>
               {parentCategories.map((cat) => (
@@ -166,7 +166,7 @@ export function CategoryForm({ parentCategories, categoryId, defaultValues }: Ca
               id="sort_order"
               type="number"
               min="0"
-              className="h-10 rounded-lg border-[#e0e0e0] text-[17px]"
+              className="h-10 rounded-lg border-border text-base"
               {...register("sort_order", { valueAsNumber: true })}
             />
             {errors.sort_order && (

@@ -183,7 +183,7 @@ export default async function AdminStockPage({ searchParams }: { searchParams: S
         <div>
           <p className="text-swiss-eyebrow">Inventaris</p>
           <h1 className="text-[34px] font-semibold text-foreground uppercase">Stok</h1>
-          <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+          <p className="mt-1 text-base leading-[1.47] text-foreground">
             {totalCount} varian
             {filters.alertOnly ? " stok kritis" : ""}
             {filterHint ? ` ${filterHint}` : ""}
@@ -240,7 +240,7 @@ export default async function AdminStockPage({ searchParams }: { searchParams: S
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#e0e0e0] text-left">
+              <tr className="border-b border-border text-left">
                 {STOCK_HISTORY_HEADERS.map((h) => (
                   <th
                     key={h}
@@ -251,7 +251,7 @@ export default async function AdminStockPage({ searchParams }: { searchParams: S
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#e0e0e0]">
+            <tbody className="divide-y divide-border">
               {history.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-5 py-8 text-center text-sm text-foreground">

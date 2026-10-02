@@ -20,7 +20,7 @@ const LocationPicker = dynamic(
   () => import("@/components/dashboard/location-picker").then((m) => m.LocationPicker),
   {
     ssr: false,
-    loading: () => <div className="h-64 w-full animate-pulse rounded-lg bg-[#f0f0f0]" />,
+    loading: () => <div className="h-64 w-full animate-pulse rounded-lg bg-steel-200" />,
   },
 );
 
@@ -69,7 +69,7 @@ export function AddressForm({
 
   return (
     <form
-      className="mx-auto w-full max-w-xl space-y-4 rounded-xl border border-[#e0e0e0] bg-white p-6"
+      className="mx-auto w-full max-w-xl space-y-4 rounded-xl border border-border bg-white p-6"
       onSubmit={(e) => {
         e.preventDefault();
         const fd = new FormData(e.currentTarget);
@@ -110,7 +110,7 @@ export function AddressForm({
             name="label"
             placeholder="Rumah / Kantor"
             defaultValue={initial?.label ?? ""}
-            className="mt-1 border-[#e0e0e0]"
+            className="mt-1 border-border"
           />
         </div>
         <div>
@@ -120,7 +120,7 @@ export function AddressForm({
             name="recipient"
             required
             defaultValue={initial?.recipient ?? ""}
-            className="mt-1 border-[#e0e0e0]"
+            className="mt-1 border-border"
           />
         </div>
         <div>
@@ -130,25 +130,27 @@ export function AddressForm({
             name="phone"
             required
             defaultValue={initial?.phone ?? ""}
-            className="mt-1 border-[#e0e0e0]"
+            className="mt-1 border-border"
           />
         </div>
       </div>
 
-      <div className="rounded-lg border border-[#e8e4dc] bg-[#fafaf8] p-4">
-        <p className="mb-2 text-xs font-semibold text-[#7a7a7a] uppercase">Cari area otomatis</p>
+      <div className="rounded-lg border border-border bg-muted p-4">
+        <p className="mb-2 text-xs font-semibold text-muted-foreground uppercase">
+          Cari area otomatis
+        </p>
         <AreaAutocomplete onSelect={handleAreaSelect} />
-        <p className="mt-2 text-[11px] text-[#9a9a9a]">
+        <p className="mt-2 text-[11px] text-muted-foreground">
           Ketik nama kelurahan atau kecamatan — provinsi, kota, dan kode pos akan terisi otomatis.
         </p>
       </div>
 
-      <div className="rounded-lg border border-[#e8e4dc] bg-[#fafaf8] p-4">
-        <p className="mb-2 text-xs font-semibold text-[#7a7a7a] uppercase">
+      <div className="rounded-lg border border-border bg-muted p-4">
+        <p className="mb-2 text-xs font-semibold text-muted-foreground uppercase">
           Titik lokasi (untuk kurir instan: GoSend/Grab)
         </p>
         <LocationPicker value={coords} onChange={setCoords} center={mapCenter} />
-        <p className="mt-2 text-[11px] text-[#9a9a9a]">
+        <p className="mt-2 text-[11px] text-muted-foreground">
           Opsional. Jika tidak diisi, sistem memakai titik dari kode pos otomatis.
         </p>
       </div>
@@ -162,7 +164,7 @@ export function AddressForm({
             required
             value={province}
             onChange={(e) => setProvince(e.target.value)}
-            className="mt-1 border-[#e0e0e0]"
+            className="mt-1 border-border"
           />
         </div>
         <div>
@@ -173,7 +175,7 @@ export function AddressForm({
             required
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            className="mt-1 border-[#e0e0e0]"
+            className="mt-1 border-border"
           />
         </div>
         <div>
@@ -184,7 +186,7 @@ export function AddressForm({
             required
             value={district}
             onChange={(e) => setDistrict(e.target.value)}
-            className="mt-1 border-[#e0e0e0]"
+            className="mt-1 border-border"
           />
         </div>
         <div>
@@ -194,7 +196,7 @@ export function AddressForm({
             name="kelurahan"
             value={kelurahan}
             onChange={(e) => setKelurahan(e.target.value)}
-            className="mt-1 border-[#e0e0e0]"
+            className="mt-1 border-border"
           />
         </div>
         <div>
@@ -205,7 +207,7 @@ export function AddressForm({
             required
             value={postalCode}
             onChange={(e) => setPostalCode(e.target.value)}
-            className="mt-1 border-[#e0e0e0]"
+            className="mt-1 border-border"
           />
         </div>
         <div className="sm:col-span-2">
@@ -216,7 +218,7 @@ export function AddressForm({
             required
             defaultValue={initial?.full_address ?? ""}
             placeholder="Nama jalan, nomor, RT/RW, gedung, dll."
-            className="mt-1 border-[#e0e0e0]"
+            className="mt-1 border-border"
           />
         </div>
       </div>
@@ -227,7 +229,7 @@ export function AddressForm({
           id="is_default"
           name="is_default"
           defaultChecked={initial?.is_default ?? false}
-          className="h-4 w-4 rounded border border-[#e0e0e0] accent-black"
+          className="h-4 w-4 rounded border border-border accent-black"
         />
         <Label htmlFor="is_default" className="text-sm font-normal">
           Jadikan alamat utama

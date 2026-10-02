@@ -11,7 +11,7 @@ export default function RegisterLayout({ children }: { children: React.ReactNode
             <br />
             gadget terbaikmu.
             <br />
-            <span className="text-[#EA5329] normal-case">NZO Industries.</span>
+            <span className="text-foreground normal-case">NZO Industries.</span>
           </p>
           <p className="mt-6 max-w-md text-[16px] font-normal text-white lg:max-w-xs">
             Wearable & aksesoris pilihan kurator. Daftar sekali, belanja dengan tenang — garansi

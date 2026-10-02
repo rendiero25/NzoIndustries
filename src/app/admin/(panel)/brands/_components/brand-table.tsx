@@ -90,7 +90,7 @@ export function BrandTable({ brands, page, totalPages, totalCount, perPage }: Br
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#e0e0e0] bg-muted/30">
+              <tr className="border-b border-border bg-muted/30">
                 <th className="px-4 py-3 text-left text-[10px] font-semibold text-foreground uppercase">
                   Nama
                 </th>
@@ -105,13 +105,13 @@ export function BrandTable({ brands, page, totalPages, totalCount, perPage }: Br
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#e0e0e0]">
+            <tbody className="divide-y divide-border">
               {brands.map((brand) => (
                 <tr key={brand.id} className="transition-colors hover:bg-muted/30">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {brand.logo_url ? (
-                        <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-lg border border-[#e0e0e0] bg-white">
+                        <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-lg border border-border bg-white">
                           <Image
                             src={brand.logo_url}
                             alt={brand.name}
@@ -121,11 +121,11 @@ export function BrandTable({ brands, page, totalPages, totalCount, perPage }: Br
                           />
                         </div>
                       ) : (
-                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#e0e0e0] bg-muted">
+                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border bg-muted">
                           <Building2 size={12} className="text-foreground" />
                         </div>
                       )}
-                      <p className="text-[17px] leading-tight font-semibold">{brand.name}</p>
+                      <p className="text-base leading-tight font-semibold">{brand.name}</p>
                     </div>
                   </td>
 
@@ -180,7 +180,7 @@ export function BrandTable({ brands, page, totalPages, totalCount, perPage }: Br
             >
               <ChevronLeft size={14} />
             </Button>
-            <span className="flex h-8 items-center border-y border-[#e0e0e0] px-3 text-xs font-semibold uppercase">
+            <span className="flex h-8 items-center border-y border-border px-3 text-xs font-semibold uppercase">
               {page} / {totalPages}
             </span>
             <Button

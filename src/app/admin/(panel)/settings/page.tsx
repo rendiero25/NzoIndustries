@@ -34,7 +34,7 @@ export default async function AdminSettingsPage() {
       <div>
         <p className="text-swiss-eyebrow">Toko</p>
         <h1 className="text-[34px] font-semibold text-foreground uppercase">Pengaturan</h1>
-        <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+        <p className="mt-1 text-base leading-[1.47] text-foreground">
           Konfigurasi toko NZO Industries
         </p>
       </div>
@@ -43,9 +43,9 @@ export default async function AdminSettingsPage() {
 
       <div className="space-y-6">
         <div className="admin-utility-card overflow-hidden p-0">
-          <div className="border-b border-[#e0e0e0] px-5 py-4">
+          <div className="border-b border-border px-5 py-4">
             <h2 className="admin-section-title">Maintenance Mode</h2>
-            <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+            <p className="mt-1 text-base leading-[1.47] text-foreground">
               Aktifkan untuk menonaktifkan akses publik sementara.
             </p>
           </div>
@@ -55,9 +55,9 @@ export default async function AdminSettingsPage() {
         </div>
 
         <div className="admin-utility-card overflow-hidden p-0">
-          <div className="border-b border-[#e0e0e0] px-5 py-4">
+          <div className="border-b border-border px-5 py-4">
             <h2 className="admin-section-title">Announcement Bar</h2>
-            <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+            <p className="mt-1 text-base leading-[1.47] text-foreground">
               Banner informasi di bagian atas halaman.
             </p>
           </div>
@@ -70,9 +70,9 @@ export default async function AdminSettingsPage() {
         </div>
 
         <div className="admin-utility-card overflow-hidden p-0">
-          <div className="border-b border-[#e0e0e0] px-5 py-4">
+          <div className="border-b border-border px-5 py-4">
             <h2 className="admin-section-title">WhatsApp CS</h2>
-            <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+            <p className="mt-1 text-base leading-[1.47] text-foreground">
               Nomor WhatsApp customer service yang ditampilkan di tombol floating.
             </p>
           </div>
@@ -82,9 +82,9 @@ export default async function AdminSettingsPage() {
         </div>
 
         <div className="admin-utility-card overflow-hidden p-0">
-          <div className="border-b border-[#e0e0e0] px-5 py-4">
+          <div className="border-b border-border px-5 py-4">
             <h2 className="admin-section-title">Auto Complete Order</h2>
-            <p className="mt-1 text-[17px] leading-[1.47] text-foreground">
+            <p className="mt-1 text-base leading-[1.47] text-foreground">
               Order otomatis selesai setelah X hari konfirmasi pengiriman.
             </p>
           </div>

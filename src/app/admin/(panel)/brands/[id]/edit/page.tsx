@@ -35,7 +35,7 @@ export default async function EditBrandPage({ params }: { params: Promise<{ id: 
       <div>
         <p className="text-swiss-eyebrow">Katalog</p>
         <h1 className="text-[34px] font-semibold text-foreground uppercase">Edit Merek</h1>
-        <p className="mt-1 text-[17px] leading-[1.47] text-foreground">{brand.name}</p>
+        <p className="mt-1 text-base leading-[1.47] text-foreground">{brand.name}</p>
       </div>
 
       <BrandForm

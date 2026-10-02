@@ -201,7 +201,7 @@ export function Navbar() {
               {/* Cart */}
               <Link
                 href="/cart"
-                className="relative inline-flex items-center justify-center rounded-full p-2 text-muted-foreground transition-colors outline-none hover:bg-black/[0.04] hover:text-foreground focus-visible:ring-2 focus-visible:ring-[#FF7A52] focus-visible:ring-offset-2"
+                className="relative inline-flex items-center justify-center rounded-full p-2 text-muted-foreground transition-colors outline-none hover:bg-black/[0.04] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 aria-label="Keranjang belanja"
               >
                 <ShoppingCart size={18} />
@@ -266,7 +266,7 @@ export function Navbar() {
                         onClick={() => void handleLogout()}
                         className={cn(
                           HEADER_DROPDOWN_MENU_ITEM_CLASS,
-                          "border-t border-[#e0e0e0] text-destructive focus:bg-destructive/10 focus:text-destructive",
+                          "border-t border-border text-destructive focus:bg-destructive/10 focus:text-destructive",
                         )}
                       >
                         <LogOut size={14} />

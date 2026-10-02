@@ -1,19 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Outfit } from "next/font/google";
 
 import { Providers } from "@/components/providers";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/constants/site";
 import "./globals.css";
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-geist-sans",
+// design-system.md §3: satu keluarga, Outfit 400–800.
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -36,22 +32,14 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  // TODO: ganti dengan favicon dari logo resmi NZO (logo menunggu klien).
   icons: {
-    icon: [
-      { url: "/favicon/favicon.ico" },
-      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-    ],
-    apple: "/favicon/apple-touch-icon.png",
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
   },
-  manifest: "/favicon/site.webmanifest",
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" },
-  ],
+  themeColor: "#ffffff",
   width: "device-width",
   initialScale: 1,
 };
@@ -62,11 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="id"
-      suppressHydrationWarning
-      className={`${plusJakartaSans.variable} ${jetbrainsMono.variable} h-full`}
-    >
+    <html lang="id" suppressHydrationWarning className={`${outfit.variable} h-full`}>
       <body className="flex min-h-full flex-col font-sans" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>

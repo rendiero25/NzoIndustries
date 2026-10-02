@@ -75,7 +75,7 @@ export function OrderComplaintForm({ orderId }: { orderId: string }) {
 
   return (
     <form
-      className="space-y-4 rounded-xl border border-[#e0e0e0] bg-white p-5 sm:p-6"
+      className="space-y-4 rounded-xl border border-border bg-white p-5 sm:p-6"
       onSubmit={(e) => {
         e.preventDefault();
         if (!category) {
@@ -104,9 +104,11 @@ export function OrderComplaintForm({ orderId }: { orderId: string }) {
       }}
     >
       <div>
-        <Label className="text-xs font-semibold text-[#7a7a7a] uppercase">Kategori masalah</Label>
+        <Label className="text-xs font-semibold text-muted-foreground uppercase">
+          Kategori masalah
+        </Label>
         <Select value={category} onValueChange={setCategory} required>
-          <SelectTrigger className="mt-1 border-[#e0e0e0]">
+          <SelectTrigger className="mt-1 border-border">
             <SelectValue placeholder="Pilih kategori..." />
           </SelectTrigger>
           <SelectContent>
@@ -120,11 +122,11 @@ export function OrderComplaintForm({ orderId }: { orderId: string }) {
       </div>
 
       <div>
-        <Label className="text-xs font-semibold text-[#7a7a7a] uppercase">
+        <Label className="text-xs font-semibold text-muted-foreground uppercase">
           Apa yang kamu inginkan?
         </Label>
         <div className="mt-2 space-y-2">
-          <label className="flex items-center gap-2 text-sm text-[#1d1d1f]">
+          <label className="flex items-center gap-2 text-sm text-foreground">
             <input
               type="radio"
               name="resolutionType"
@@ -134,7 +136,7 @@ export function OrderComplaintForm({ orderId }: { orderId: string }) {
             />
             Tukar / kembalikan barang
           </label>
-          <label className="flex items-center gap-2 text-sm text-[#1d1d1f]">
+          <label className="flex items-center gap-2 text-sm text-foreground">
             <input
               type="radio"
               name="resolutionType"
@@ -148,7 +150,7 @@ export function OrderComplaintForm({ orderId }: { orderId: string }) {
       </div>
 
       <div>
-        <Label htmlFor="reason" className="text-xs font-semibold text-[#7a7a7a] uppercase">
+        <Label htmlFor="reason" className="text-xs font-semibold text-muted-foreground uppercase">
           Ringkasan masalah
         </Label>
         <Input
@@ -156,37 +158,40 @@ export function OrderComplaintForm({ orderId }: { orderId: string }) {
           name="reason"
           required
           minLength={3}
-          className="mt-1 border-[#e0e0e0]"
+          className="mt-1 border-border"
           placeholder="Contoh: Barang cacat / salah kirim"
         />
       </div>
 
       <div>
-        <Label htmlFor="description" className="text-xs font-semibold text-[#7a7a7a] uppercase">
+        <Label
+          htmlFor="description"
+          className="text-xs font-semibold text-muted-foreground uppercase"
+        >
           Detail (opsional)
         </Label>
         <Textarea
           id="description"
           name="description"
           rows={4}
-          className="mt-1 border-[#e0e0e0]"
+          className="mt-1 border-border"
           placeholder="Jelaskan kejadian secara detail."
         />
       </div>
 
       <div>
-        <Label className="text-xs font-semibold text-[#7a7a7a] uppercase">
+        <Label className="text-xs font-semibold text-muted-foreground uppercase">
           Foto / Video bukti (maks {MAX_FILES} file)
         </Label>
         <div className="mt-2 flex flex-wrap gap-2">
           {mediaUrls.map((url) => (
             <div
               key={url}
-              className="relative h-20 w-20 overflow-hidden rounded-lg border border-[#e0e0e0]"
+              className="relative h-20 w-20 overflow-hidden rounded-lg border border-border"
             >
               {isVideo(url) ? (
-                <div className="flex h-full w-full items-center justify-center bg-[#f5f5f7]">
-                  <Video className="h-6 w-6 text-[#a0a0a0]" />
+                <div className="flex h-full w-full items-center justify-center bg-muted">
+                  <Video className="h-6 w-6 text-muted-foreground" />
                 </div>
               ) : (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -206,7 +211,7 @@ export function OrderComplaintForm({ orderId }: { orderId: string }) {
               type="button"
               onClick={() => fileRef.current?.click()}
               disabled={uploading}
-              className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-[#c0c0c0] bg-[#fafafa] text-[#a0a0a0] hover:border-[#EA5329] hover:text-[#EA5329] disabled:opacity-50"
+              className="flex h-20 w-20 flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border bg-muted text-muted-foreground hover:border-foreground hover:text-foreground disabled:opacity-50"
             >
               {uploading ? (
                 <Loader2 className="h-5 w-5 animate-spin" />

@@ -63,10 +63,10 @@ export function ContactForm() {
 
   if (submitted) {
     return (
-      <div className="bg-[#f5f5f7][#2a2a2c] rounded-[18px] p-8 text-center">
+      <div className="bg-muted[#2a2a2c] rounded-[18px] p-8 text-center">
         <div className="mb-4 text-4xl">✓</div>
-        <h3 className="mb-2 text-[17px] font-semibold text-[#1d1d1f]">Pesan terkirim!</h3>
-        <p className="text-[#7a7a7a][#cccccc] text-[14px]">
+        <h3 className="mb-2 text-base font-semibold text-foreground">Pesan terkirim!</h3>
+        <p className="text-muted-foreground[#cccccc] text-[14px]">
           Terima kasih telah menghubungi kami. Tim kami akan merespon dalam waktu singkat.
         </p>
       </div>
@@ -77,7 +77,7 @@ export function ContactForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       {/* Name */}
       <div>
-        <label htmlFor="name" className="mb-2 block text-[14px] font-semibold text-[#1d1d1f]">
+        <label htmlFor="name" className="mb-2 block text-[14px] font-semibold text-foreground">
           Nama Lengkap
         </label>
         <input
@@ -85,14 +85,14 @@ export function ContactForm() {
           type="text"
           placeholder="John Doe"
           {...register("name")}
-          className="border-[#e0e0e0][#3a3a3a] bg-white[#1a1a1a] w-full rounded-[11px] border px-4 py-3 text-[14px] text-[#1d1d1f] transition-colors focus:border-[#EA5329] focus:outline-none"
+          className="border-border[#3a3a3a] bg-white[#1a1a1a] w-full rounded-[11px] border px-4 py-3 text-[14px] text-foreground transition-colors focus:border-foreground focus:outline-none"
         />
-        {errors.name && <p className="mt-1 text-[12px] text-[#d32f2f]">{errors.name.message}</p>}
+        {errors.name && <p className="mt-1 text-[12px] text-destructive">{errors.name.message}</p>}
       </div>
 
       {/* Email */}
       <div>
-        <label htmlFor="email" className="mb-2 block text-[14px] font-semibold text-[#1d1d1f]">
+        <label htmlFor="email" className="mb-2 block text-[14px] font-semibold text-foreground">
           Email
         </label>
         <input
@@ -100,14 +100,16 @@ export function ContactForm() {
           type="email"
           placeholder="john@example.com"
           {...register("email")}
-          className="border-[#e0e0e0][#3a3a3a] bg-white[#1a1a1a] w-full rounded-[11px] border px-4 py-3 text-[14px] text-[#1d1d1f] transition-colors focus:border-[#EA5329] focus:outline-none"
+          className="border-border[#3a3a3a] bg-white[#1a1a1a] w-full rounded-[11px] border px-4 py-3 text-[14px] text-foreground transition-colors focus:border-foreground focus:outline-none"
         />
-        {errors.email && <p className="mt-1 text-[12px] text-[#d32f2f]">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="mt-1 text-[12px] text-destructive">{errors.email.message}</p>
+        )}
       </div>
 
       {/* Phone */}
       <div>
-        <label htmlFor="phone" className="mb-2 block text-[14px] font-semibold text-[#1d1d1f]">
+        <label htmlFor="phone" className="mb-2 block text-[14px] font-semibold text-foreground">
           Nomor Telepon
         </label>
         <input
@@ -115,14 +117,16 @@ export function ContactForm() {
           type="tel"
           placeholder="08123456789 atau +62123456789"
           {...register("phone")}
-          className="border-[#e0e0e0][#3a3a3a] bg-white[#1a1a1a] w-full rounded-[11px] border px-4 py-3 text-[14px] text-[#1d1d1f] transition-colors focus:border-[#EA5329] focus:outline-none"
+          className="border-border[#3a3a3a] bg-white[#1a1a1a] w-full rounded-[11px] border px-4 py-3 text-[14px] text-foreground transition-colors focus:border-foreground focus:outline-none"
         />
-        {errors.phone && <p className="mt-1 text-[12px] text-[#d32f2f]">{errors.phone.message}</p>}
+        {errors.phone && (
+          <p className="mt-1 text-[12px] text-destructive">{errors.phone.message}</p>
+        )}
       </div>
 
       {/* Subject */}
       <div>
-        <label htmlFor="subject" className="mb-2 block text-[14px] font-semibold text-[#1d1d1f]">
+        <label htmlFor="subject" className="mb-2 block text-[14px] font-semibold text-foreground">
           Subjek
         </label>
         <input
@@ -130,16 +134,16 @@ export function ContactForm() {
           type="text"
           placeholder="Konsultasi produk, pertanyaan pesanan, dll"
           {...register("subject")}
-          className="border-[#e0e0e0][#3a3a3a] bg-white[#1a1a1a] w-full rounded-[11px] border px-4 py-3 text-[14px] text-[#1d1d1f] transition-colors focus:border-[#EA5329] focus:outline-none"
+          className="border-border[#3a3a3a] bg-white[#1a1a1a] w-full rounded-[11px] border px-4 py-3 text-[14px] text-foreground transition-colors focus:border-foreground focus:outline-none"
         />
         {errors.subject && (
-          <p className="mt-1 text-[12px] text-[#d32f2f]">{errors.subject.message}</p>
+          <p className="mt-1 text-[12px] text-destructive">{errors.subject.message}</p>
         )}
       </div>
 
       {/* Message */}
       <div>
-        <label htmlFor="message" className="mb-2 block text-[14px] font-semibold text-[#1d1d1f]">
+        <label htmlFor="message" className="mb-2 block text-[14px] font-semibold text-foreground">
           Pesan
         </label>
         <textarea
@@ -147,10 +151,10 @@ export function ContactForm() {
           placeholder="Tulis pesan detailmu di sini..."
           rows={5}
           {...register("message")}
-          className="border-[#e0e0e0][#3a3a3a] bg-white[#1a1a1a] w-full resize-none rounded-[11px] border px-4 py-3 text-[14px] text-[#1d1d1f] transition-colors focus:border-[#EA5329] focus:outline-none"
+          className="border-border[#3a3a3a] bg-white[#1a1a1a] w-full resize-none rounded-[11px] border px-4 py-3 text-[14px] text-foreground transition-colors focus:border-foreground focus:outline-none"
         />
         {errors.message && (
-          <p className="mt-1 text-[12px] text-[#d32f2f]">{errors.message.message}</p>
+          <p className="mt-1 text-[12px] text-destructive">{errors.message.message}</p>
         )}
       </div>
 
@@ -160,12 +164,12 @@ export function ContactForm() {
       </Button>
 
       {submitError && (
-        <p role="alert" className="text-center text-[12px] text-[#d32f2f]">
+        <p role="alert" className="text-center text-[12px] text-destructive">
           {submitError}
         </p>
       )}
 
-      <p className="text-[#7a7a7a][#cccccc] text-center text-[12px]">
+      <p className="text-muted-foreground[#cccccc] text-center text-[12px]">
         Kami akan merespon dalam waktu 1-24 jam kerja.
       </p>
     </form>

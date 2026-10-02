@@ -154,7 +154,7 @@ export function PromotionForm({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder={`Contoh: ${getPlaceholderTitle(type)}`}
-              className="h-10 rounded-lg border-[#e0e0e0] text-[17px] leading-[1.47]"
+              className="h-10 rounded-lg border-border text-base leading-[1.47]"
               required
             />
           </div>
@@ -167,7 +167,7 @@ export function PromotionForm({
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
               placeholder="Contoh: Temukan produk terbaik dengan harga spesial"
-              className="h-10 rounded-lg border-[#e0e0e0] text-[17px] leading-[1.47]"
+              className="h-10 rounded-lg border-border text-base leading-[1.47]"
             />
           </div>
           <div className="space-y-1.5">
@@ -176,7 +176,7 @@ export function PromotionForm({
               type="number"
               value={maxItems}
               onChange={(e) => setMaxItems(Math.max(1, parseInt(e.target.value, 10) || 1))}
-              className="h-10 rounded-lg border-[#e0e0e0] text-[17px]"
+              className="h-10 rounded-lg border-border text-base"
               min={1}
               max={50}
             />
@@ -303,7 +303,7 @@ export function PromotionForm({
           />
 
           {bannerPreviewUrl ? (
-            <div className="relative overflow-hidden rounded-lg border border-[#e0e0e0]">
+            <div className="relative overflow-hidden rounded-lg border border-border">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={bannerPreviewUrl}
@@ -335,7 +335,7 @@ export function PromotionForm({
             <button
               type="button"
               onClick={() => bannerFileRef.current?.click()}
-              className="flex w-full flex-col items-center justify-center gap-2 rounded-md border border-dashed border-[#e0e0e0] py-8 text-muted-foreground transition-colors hover:border-brand/40 hover:text-brand"
+              className="flex w-full flex-col items-center justify-center gap-2 rounded-md border border-dashed border-border py-8 text-muted-foreground transition-colors hover:border-brand/40 hover:text-brand"
             >
               <ImagePlus size={22} strokeWidth={1.5} />
               <span className="text-xs font-semibold uppercase">Pilih gambar banner</span>

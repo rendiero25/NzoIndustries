@@ -211,7 +211,7 @@ export function ReturnManager({
                       href={url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="relative aspect-square overflow-hidden rounded-lg border border-[#e0e0e0]"
+                      className="relative aspect-square overflow-hidden rounded-lg border border-border"
                     >
                       <Image
                         src={url}
@@ -242,7 +242,7 @@ export function ReturnManager({
           {returnData.status === "received" && order && (
             <form
               onSubmit={handleCreateShipment}
-              className="space-y-4 rounded-lg border border-[#e0e0e0] p-4"
+              className="space-y-4 rounded-lg border border-border p-4"
             >
               <p className="font-semibold">Buat Shipment Penggantian</p>
               <div className="space-y-2">
@@ -263,7 +263,7 @@ export function ReturnManager({
                       max={item.quantity}
                       value={itemQtys[i] ?? item.quantity}
                       onChange={(e) => setItemQtys((p) => ({ ...p, [i]: Number(e.target.value) }))}
-                      className="w-16 rounded border border-[#e0e0e0] px-2 py-1 text-[13px]"
+                      className="w-16 rounded border border-border px-2 py-1 text-[13px]"
                     />
                   </div>
                 ))}
@@ -299,7 +299,7 @@ export function ReturnManager({
                       return (
                         <label
                           key={key}
-                          className="flex cursor-pointer items-center gap-3 rounded-lg border border-[#e0e0e0] px-3 py-2 text-[13px] has-checked:border-brand has-checked:bg-brand/5"
+                          className="flex cursor-pointer items-center gap-3 rounded-lg border border-border px-3 py-2 text-[13px] has-checked:border-brand has-checked:bg-brand/5"
                         >
                           <input
                             type="radio"
@@ -339,7 +339,7 @@ export function ReturnManager({
           )}
 
           {returnData.return_shipments.length > 0 && (
-            <div className="space-y-1 rounded-lg border border-[#e0e0e0] p-3 text-[13px]">
+            <div className="space-y-1 rounded-lg border border-border p-3 text-[13px]">
               <p className="text-[11px] font-semibold text-muted-foreground uppercase">
                 Pengiriman penggantian
               </p>

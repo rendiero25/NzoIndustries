@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { formatRupiah } from "@/lib/format";
 
 const selectClass =
-  "h-10 w-full rounded-md border border-[#e0e0e0] bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-brand";
+  "h-10 w-full rounded-md border border-border bg-card px-3 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-brand";
 
 type ProductSort =
   | "name_asc"
@@ -213,7 +213,7 @@ export function ProductBrandSelector({
                 value={productSearch}
                 onChange={(e) => setProductSearch(e.target.value)}
                 placeholder="Cari produk..."
-                className="h-10 rounded-md border-[#e0e0e0] bg-card pr-4 pl-10 text-[17px] leading-[1.47]"
+                className="h-10 rounded-md border-border bg-card pr-4 pl-10 text-base leading-[1.47]"
               />
             </div>
             {categories.length > 0 && (
@@ -243,7 +243,7 @@ export function ProductBrandSelector({
             </select>
           </div>
 
-          <div className="max-h-48 overflow-y-auto rounded-lg border border-[#e0e0e0]">
+          <div className="max-h-48 overflow-y-auto rounded-lg border border-border">
             {sortedProducts.length === 0 ? (
               <p className="py-6 text-center text-xs text-muted-foreground">Tidak ada produk</p>
             ) : (
@@ -255,14 +255,14 @@ export function ProductBrandSelector({
                     type="button"
                     onClick={() => toggleProduct(p.id)}
                     className={cn(
-                      "flex w-full items-start gap-2 border-b border-[#e0e0e0] px-3 py-2.5 text-left transition-colors last:border-b-0",
+                      "flex w-full items-start gap-2 border-b border-border px-3 py-2.5 text-left transition-colors last:border-b-0",
                       selected ? "bg-brand/5" : "hover:bg-muted/50",
                     )}
                   >
                     <div
                       className={cn(
                         "mt-0.5 h-3.5 w-3.5 shrink-0 rounded border transition-colors",
-                        selected ? "border-brand bg-brand" : "border-[#e0e0e0]",
+                        selected ? "border-brand bg-brand" : "border-border",
                       )}
                     />
                     <div className="min-w-0">
@@ -295,7 +295,7 @@ export function ProductBrandSelector({
                 value={brandSearch}
                 onChange={(e) => setBrandSearch(e.target.value)}
                 placeholder="Cari brand..."
-                className="h-10 rounded-md border-[#e0e0e0] bg-card pr-4 pl-10 text-[17px] leading-[1.47]"
+                className="h-10 rounded-md border-border bg-card pr-4 pl-10 text-base leading-[1.47]"
               />
             </div>
             {categories.length > 0 && (
@@ -349,7 +349,7 @@ export function ProductBrandSelector({
             </div>
           )}
 
-          <div className="max-h-48 overflow-y-auto rounded-lg border border-[#e0e0e0]">
+          <div className="max-h-48 overflow-y-auto rounded-lg border border-border">
             {sortedBrands.length === 0 ? (
               <p className="py-6 text-center text-xs text-muted-foreground">Tidak ada brand</p>
             ) : (
@@ -361,14 +361,14 @@ export function ProductBrandSelector({
                     type="button"
                     onClick={() => toggleBrand(b.id)}
                     className={cn(
-                      "flex w-full items-center gap-2 border-b border-[#e0e0e0] px-3 py-2.5 text-left transition-colors last:border-b-0",
+                      "flex w-full items-center gap-2 border-b border-border px-3 py-2.5 text-left transition-colors last:border-b-0",
                       selected ? "bg-brand/5" : "hover:bg-muted/50",
                     )}
                   >
                     <div
                       className={cn(
                         "h-3.5 w-3.5 shrink-0 rounded border transition-colors",
-                        selected ? "border-brand bg-brand" : "border-[#e0e0e0]",
+                        selected ? "border-brand bg-brand" : "border-border",
                       )}
                     />
                     <div>
