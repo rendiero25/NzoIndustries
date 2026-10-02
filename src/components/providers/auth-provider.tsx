@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { toast } from "sonner";
+
 import { createClient } from "@/lib/supabase/legacy/client";
 import { useAuthStore } from "@/store/auth-store";
-import { markFirstLoginDoneAction } from "@/app/(dashboard)/dashboard/notifications/_actions";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { setUser, setProfile, setLoading, setInitialized, reset } = useAuthStore();
@@ -13,16 +12,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const supabase = createClient();
 
     async function fetchProfile(userId: string) {
-      const { data } = await supabase.from("profiles").select("*").eq("id", userId).single();
+      const { data } = await supabase.from("profiles").select("*").eq("id", userId).maybeSingle();
       setProfile(data);
-      return data;
     }
 
-    // Satu sumber kebenaran: onAuthStateChange menangani semua event
-    // (INITIAL_SESSION, SIGNED_IN, SIGNED_OUT, USER_UPDATED, TOKEN_REFRESHED)
+    // PENTING: callback onAuthStateChange berjalan sambil memegang lock auth.
+    // Jangan `await` panggilan Supabase di dalamnya (deadlock) — jadwalkan
+    // dengan setTimeout agar berjalan setelah lock dilepas.
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       const user = session?.user ?? null;
       setUser(user);
 
@@ -32,27 +31,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      if (event === "INITIAL_SESSION") {
-        // InitAuthStore (di layout) sudah pre-populate dari server;
-        // hanya fetch jika store belum terisi untuk user ini.
-        const existing = useAuthStore.getState().profile;
-        if (!existing || existing.id !== user.id) {
-          await fetchProfile(user.id);
-        }
-        setLoading(false);
-        setInitialized(true);
-      } else if (event === "SIGNED_IN") {
-        const existing = useAuthStore.getState().profile;
-        const profile =
-          !existing || existing.id !== user.id ? await fetchProfile(user.id) : existing;
-        if (profile && !profile.first_login_done) {
-          toast.success(`Selamat datang di NZO Industries, ${profile.full_name ?? "Sobat Geek"}!`);
-          markFirstLoginDoneAction();
-        }
-      } else if (event === "USER_UPDATED") {
-        await fetchProfile(user.id);
-      }
-      // TOKEN_REFRESHED: profil tidak berubah, skip fetch
+      const existing = useAuthStore.getState().profile;
+      const needsProfile =
+        event === "USER_UPDATED" ||
+        ((event === "INITIAL_SESSION" || event === "SIGNED_IN") &&
+          (!existing || existing.id !== user.id));
+
+      setTimeout(() => {
+        void (needsProfile ? fetchProfile(user.id) : Promise.resolve()).finally(() => {
+          setLoading(false);
+          setInitialized(true);
+        });
+      }, 0);
     });
 
     return () => subscription.unsubscribe();

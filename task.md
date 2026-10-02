@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.4 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.5 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -34,7 +34,7 @@ Versi dokumen: 0.4 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (
 - Verifikasi: `pnpm typecheck` ✓, `pnpm lint` ✓ (0 error), `pnpm test` ✓ (2/2), `pnpm build` ✓ dengan `.env.local` dummy, `/api/health` 200 + semua security header ✓, `/login` tanpa pelanggaran CSP ✓. Halaman yang query Supabase belum bisa diuji tanpa project.
 
 ## Fase 1 — Database, auth, dan role
-- [ ] Migration tabel inti:
+- [x] Migration tabel inti (16 file di `supabase/migrations/`, 39 tabel):
   - Pengguna: `profiles` (role: owner, admin, warehouse, cs, customer), `addresses`
   - Kendaraan: `vehicle_makes`, `vehicle_models` (tipe motor/mobil, `year_start`, `year_end`), `user_vehicles` (Garasi)
   - Katalog: `categories` (parent_id), `brands`, `products`, `product_variants`, `product_categories`, `product_images` (Cloudinary `public_id`), `product_fitments`, `product_specs`
@@ -45,17 +45,29 @@ Versi dokumen: 0.4 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (
   - Purna jual: `returns`, `warranty_claims`, `reviews`
   - Sistem: `notifications`, `audit_logs`, `webhook_events`, `store_settings`
   - Import: `import_batches`, `import_products` (staging), `import_logs`
-- [ ] Kolom produk: nama, slug, SKU unik, harga (`bigint`), `compare_at_price`, stok, status draft/published/archived wajib; field lain nullable (D-05). Kolom `jubelio_item_id` (D-12)
-- [ ] Dimensi dan berat produk untuk ongkir volumetrik
-- [ ] RLS + policy untuk setiap tabel, termasuk test policy per role
-- [ ] Index untuk slug, SKU, status, kategori, fitment, pencarian (full-text / trigram)
-- [ ] Trigger: `updated_at`, snapshot `order_status_history`, audit log
-- [ ] Supabase Auth: email + password, verifikasi email, reset password, SMTP via Resend [P-09]
-- [ ] MFA (TOTP) wajib untuk role admin ke atas
-- [ ] Helper auth: `requireUser()`, `requireRole([...])` di data access layer
-- [ ] `supabase gen types` dan seed data contoh (kategori, merek/model kendaraan, produk dummy)
+- [x] Kolom produk: nama, slug, SKU unik, harga (`bigint`), `compare_at_price`, stok, status draft/published/archived wajib; field lain nullable (D-05). Kolom `jubelio_item_id` (D-12). Harga varian opsional (D-18)
+- [x] Dimensi dan berat produk untuk ongkir volumetrik (`weight_grams`, `length_mm/width_mm/height_mm`)
+- [x] RLS + policy untuk setiap tabel, termasuk test policy per role (`pnpm test:rls`, 15 kasus)
+- [x] Index untuk slug, SKU, status, kategori, fitment, pencarian (full-text / trigram)
+- [x] Trigger: `updated_at`, snapshot `order_status_history`, audit log
+- [ ] Supabase Auth: email + password, verifikasi email, reset password, SMTP via Resend [P-09] — kode siap (daftar, aktivasi, lupa/reset password). **Menunggu**: uji alur email oleh user dengan inbox sendiri; SMTP Resend setelah domain (P-09)
+- [x] MFA (TOTP) wajib untuk role staf (owner, admin, warehouse, cs) — di RLS (aal2) dan guard server; diuji end-to-end di browser
+- [x] Helper auth: `requireUser()`, `requireRole([...])`, `requireStaff()`, `checkRole()` di `src/lib/auth/guards.ts`
+- [x] `supabase gen types` dan seed data contoh (kategori, merek/model kendaraan, produk dummy)
 
 **Catatan fase:**
+- Schema ditulis ulang dari nol (D-15); 16 migration diterapkan ke project dev lewat CLI tanpa Docker (D-19). 39 tabel, semua RLS aktif. `webhook_events` sengaja tanpa policy (service role saja).
+- RBAC: helper policy di schema `private` (tidak bisa dipanggil via `/rest/v1/rpc`). Staf wajib aal2 di level RLS, bukan hanya UI. Role user hanya berubah lewat RPC `set_user_role` (owner + MFA, owner terakhir tidak bisa diturunkan); kolom profil yang boleh diubah user dibatasi column privilege.
+- Stok: `inventory_movements` append-only (trigger menolak update/delete, termasuk service role); cache `stock` hanya ditulis trigger internal (flag `nzo.cache_write`). Produk bervarian wajib `variant_id`.
+- Audit: trigger generik di 25 tabel admin, hanya aksi staf/sistem; alamat lengkap & catatan pelanggan tidak ikut disimpan. Kolom pelaku (`actor_id`, `created_by`, `changed_by`) sengaja tanpa FK agar user bisa dihapus (UU PDP) tanpa merusak jejak (migration 16, ditemukan saat teardown test).
+- Kode legacy (D-19): 167 file starter memakai `@/lib/supabase/legacy/*` + `@/types/legacy-supabase`. Halaman storefront/dashboard/admin lama akan error runtime karena tabel/kolom berubah, sampai ditulis ulang di Fase 3–8.
+- Auth: route `/api/auth/{register,admin-login,resend-activation}` diganti server action (`src/server/actions/auth.ts`); daftar anti-enumerasi; tombol Google OAuth dihapus (di luar scope). Ditemukan & diperbaiki: open redirect via `redirectTo=//domain` di login dan `/auth/callback` (`safeRedirectPath`), callback tidak lagi memantulkan teks error dari URL.
+- Ditemukan & diperbaiki: `AuthProvider` starter melakukan `await` query di dalam `onAuthStateChange` sehingga lock auth Supabase macet (semua panggilan auth di tab berhenti, termasuk MFA). Kini kerja async dijadwalkan di luar callback, dan client browser legacy memakai instance yang sama dengan client baru.
+- Advisors: tersisa 2 WARN yang disengaja (`set_user_role`, `set_user_blocked` bisa dipanggil authenticated; otorisasi di dalam fungsi). WARN `multiple_permissive_policies` (performa) ditunda ke Fase 12; INFO unused index wajar untuk DB baru.
+- `.env.local`: nilai placeholder dikosongkan (Turnstile placeholder membuat login gagal). `getServerEnv/getClientEnv` menganggap `KEY=` sebagai tidak diset.
+- Tooling: Supabase CLI + tsx sebagai dev dependency. shadcn CLI gagal karena Node menolak sertifikat registry; `InputOTP` dipasang manual dari registry JSON (perlu dicek ulang saat shadcn CLI bisa dipakai).
+- Belum: uji alur email pelanggan (butuh inbox user; SMTP bawaan Supabase hanya mengirim ke email anggota tim project, rate rendah), Resend SMTP [P-09], rate limit Upstash (Fase 5/12), captcha Turnstile di Supabase (menunggu key). Console dev masih ada warning React "duplicate key" dari komponen starter.
+- Verifikasi: `pnpm typecheck` ✓, `pnpm lint` ✓ (0 error), `pnpm test` ✓ (18), `pnpm test:rls` ✓ (15, teardown bersih), `pnpm build` ✓, redirect/guard 9/9 ✓, login staf → enroll TOTP → `/admin` ✓ di browser.
 
 ## Fase 2 — Implementasi design system
 - [ ] Token warna, radius, dan tipografi di `globals.css` sesuai design-system.md §2–4 (D-02)
@@ -217,3 +229,4 @@ Versi dokumen: 0.4 (2026-10-01). Aturan, keputusan (`D-xx`), dan pending klien (
 - 0.2 (2026-09-30): Fase 0 dikerjakan (kecuali task akun yang menunggu user), catatan fase diisi.
 - 0.3 (2026-10-01): Repo GitHub ter-push, akun Supabase/Resend dibuat user, Cloudinary pakai akun bersama dengan root `nzo/` (D-16).
 - 0.4 (2026-10-01): Supabase siap (D-17), env tervalidasi.
+- 0.5 (2026-10-01): Fase 1 dikerjakan (kecuali uji email & SMTP Resend), catatan fase diisi.

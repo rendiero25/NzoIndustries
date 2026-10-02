@@ -1,6 +1,6 @@
 # CLAUDE.md — NZO Industries E-commerce
 
-Versi dokumen: 0.4 (2026-10-01). Baca file ini di awal setiap sesi.
+Versi dokumen: 0.5 (2026-10-01). Baca file ini di awal setiap sesi.
 
 ## Proyek
 Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (plus sebagian produk non-otomotif yang masuk kategori sendiri). Ada tiga area: storefront publik, dashboard user (`/account`), dan dashboard admin/CMS (`/admin`). Prinsip utama: **security first**.
@@ -61,7 +61,10 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - Pre-commit (Husky + lint-staged): `eslint --fix` + `prettier --write` untuk file staged.
 - Env: salin `env.example` ke `.env.local`. Env server dibaca lewat `getServerEnv()` (`src/lib/env.ts`), env publik lewat `getClientEnv()` (`src/lib/env.client.ts`).
 - CSP dan security headers: `src/lib/security/csp.ts` + `headers()` di `next.config.ts`. Domain eksternal baru wajib ditambah di sana.
-- `supabase db diff -f <nama>` untuk membuat migration, `supabase gen types typescript` setelah schema berubah.
+- Database (project sudah di-link, D-19): tulis file baru di `supabase/migrations/<timestamp>_<nama>.sql`, lalu `pnpm db:push` (cek dulu `pnpm exec supabase db push --dry-run`), `pnpm db:types` (tulis `src/types/database.ts`), `pnpm exec supabase db advisors --linked`. Seed: `pnpm db:seed`. Jangan ubah migration yang sudah diterapkan; buat migration baru.
+- `pnpm test:rls`: test RLS ke project dev (membuat user test sementara lalu menghapusnya). Wajib lolos setiap ada tabel/policy baru.
+- `pnpm promote-owner <email>`: jadikan akun pertama owner (service role). Role berikutnya lewat RPC `set_user_role` oleh owner.
+- Fungsi helper policy ada di schema `private` (tidak diekspos API): `private.has_role(app_role[])`, `private.is_staff()`, `private.owns_order(uuid)`, dll. Role staf otomatis butuh MFA aal2 di RLS.
 - `pnpm tsx scripts/import-jubelio.ts --dry-run` untuk mencoba import tanpa menulis ke database.
 
 ## Konvensi kode
@@ -91,7 +94,7 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 14. Kredensial Jubelio: akun integrasi khusus dari klien, disimpan di env server, tidak pernah di-commit.
 
 ## Aturan bisnis
-- **Harga:** satu `price` + opsional `compare_at_price` untuk harga coret. Sumber harga menunggu P-01.
+- **Harga:** satu `price` + opsional `compare_at_price` untuk harga coret. Varian boleh punya `price` sendiri yang menggantikan harga produk (D-18). Sumber harga menunggu P-01.
 - **Produk:** wajib nama, SKU unik, harga, stok. Field lain nullable dan dilengkapi admin dari dashboard. Status `draft | published | archived`; hanya `published` yang tampil.
 - **Kategori:** hierarkis (parent–child), satu produk bisa di banyak kategori. Produk non-otomotif punya kategori sendiri.
 - **Fitment kendaraan:** opsional per produk (merek → model → rentang tahun). Produk tanpa fitment tidak muncul di filter kecocokan.
@@ -120,6 +123,8 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - D-15 Fork GeekyTech = salin source tanpa history git (repo NZO mulai bersih), kode dipindah ke `src/`, 37 migration GeekyTech diarsip di `supabase/_reference/` sebagai acuan dan schema NZO ditulis ulang di Fase 1. Akun GitHub/Supabase/Vercel/Cloudinary/Resend dibuat user.
 - D-16 Cloudinary memakai akun milik user yang sudah ada (bersama data lain). Semua aset NZO wajib di bawah root folder `nzo/`; folder dibangun di server lewat `src/lib/cloudinary/folders.ts`, public_id di luar `nzo/` ditolak. Repo: `github.com/rendiero25/NzoIndustries`.
 - D-17 Project Supabase NZO di region `ap-southeast-2` (Sydney), keputusan user (bukan Singapore seperti rekomendasi awal P-03). Saat setup Vercel, region function disamakan (`syd1`) supaya latensi server ↔ DB minimal. Resend dipakai tanpa domain sampai P-09 terjawab.
+- D-18 Varian produk boleh punya `price` (dan `compare_at_price`) opsional yang menggantikan harga produk; kosong = ikut harga produk. Melonggarkan D-04.
+- D-19 Kode starter GeekyTech diisolasi: memakai `@/lib/supabase/legacy/*` dan `@/types/legacy-supabase` sampai ditulis ulang (Fase 3–8); kode NZO wajib memakai `@/lib/supabase/{server,client,admin}` dan `@/types/database` (dijaga ESLint). Migration diterapkan langsung ke project dev remote lewat Supabase CLI (tanpa Docker). Aksi admin dari UI memakai client user-scoped (RLS + `auth.uid()` untuk audit); service role hanya untuk webhook, cron, script, dan operasi sistem.
 
 ## Pending info klien
 Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
@@ -147,3 +152,4 @@ Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - 0.2 (2026-09-30): Fase 0. Tambah D-15, perintah aktual (pnpm 11, test, format, env, CSP).
 - 0.3 (2026-10-01): Tambah D-16 (Cloudinary akun bersama, root folder `nzo/`, repo GitHub). Security rule 9 diperjelas.
 - 0.4 (2026-10-01): Tambah D-17 (Supabase `ap-southeast-2`, Vercel `syd1`, Resend tanpa domain sampai P-09). P-03 diperbarui.
+- 0.5 (2026-10-01): Fase 1. Tambah D-18 (harga varian opsional), D-19 (isolasi legacy, workflow migration remote, client user-scoped untuk aksi admin). Perintah database, test RLS, promote-owner. Aturan bisnis harga diperbarui.

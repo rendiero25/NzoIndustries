@@ -1,15 +1,13 @@
-import { createBrowserClient } from "@supabase/ssr";
+import type { createBrowserClient } from "@supabase/ssr";
 
+import { createClient as createNzoClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/legacy-supabase";
 
-let client: ReturnType<typeof createBrowserClient<Database>> | undefined;
-
+/**
+ * Shim legacy (D-19): memakai instance browser client yang SAMA dengan client
+ * NZO, hanya beda tipe. Dua instance GoTrueClient dengan storage key sama bisa
+ * saling berebut lock auth. Hapus file ini saat kode starter selesai ditulis ulang.
+ */
 export function createClient() {
-  if (!client) {
-    client = createBrowserClient<Database>(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    );
-  }
-  return client;
+  return createNzoClient() as unknown as ReturnType<typeof createBrowserClient<Database>>;
 }

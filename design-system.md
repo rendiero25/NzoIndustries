@@ -1,6 +1,6 @@
 # design-system.md — NZO Industries
 
-Versi dokumen: 0.4 (2026-10-01). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
+Versi dokumen: 0.5 (2026-10-01). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
 
 ## 1. Arah desain
 
@@ -248,3 +248,4 @@ Hitam-putih, tanpa warna aksen, aman untuk printer thermal/laser. Cetak massal: 
 - 0.2 (2026-09-30): Sinkron versi dengan Fase 0 (D-15). Catatan: kode starter masih memakai token/warna GeekyTech (`geeky-*`, oranye `#EA5329`, font Plus Jakarta Sans) dan logo placeholder `public/logo.svg`; diganti di Fase 2 sesuai dokumen ini.
 - 0.3 (2026-10-01): §11 rujuk D-16 (root folder `nzo/` di akun Cloudinary bersama).
 - 0.4 (2026-10-01): Sinkron versi (D-17, tanpa perubahan visual).
+- 0.5 (2026-10-01): Sinkron versi (D-18, D-19). Komponen InputOTP ditambahkan untuk halaman MFA admin.
