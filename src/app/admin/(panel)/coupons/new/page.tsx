@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/legacy/server";
 import { CouponForm } from "../_components/coupon-form";
 
-export const metadata: Metadata = { title: "Buat Kupon — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Buat Kupon · Admin" };
 
 export default async function AdminNewCouponPage() {
   const supabase = await createClient();

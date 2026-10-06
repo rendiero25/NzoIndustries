@@ -5,7 +5,7 @@ import { ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/legacy/server";
 import { CategoryForm } from "../_components/category-form";
 
-export const metadata: Metadata = { title: "Tambah Kategori — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Tambah Kategori · Admin" };
 
 export default async function NewCategoryPage() {
   const supabase = await createClient();

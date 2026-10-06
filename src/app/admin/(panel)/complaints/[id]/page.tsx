@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
     .eq("id", id)
     .maybeSingle();
   return {
-    title: `${data?.complaint_number ?? `Komplain #${id.slice(0, 8)}`} — Admin NZO Industries`,
+    title: `${data?.complaint_number ?? `Komplain #${id.slice(0, 8)}`} · Admin`,
   };
 }
 

@@ -22,7 +22,7 @@ import { StartPackingButton } from "./_components/start-packing-button";
 import { ShipmentTrackingCard } from "./_components/tracking-timeline";
 import type { OrderStatus } from "../_constants";
 
-export const metadata: Metadata = { title: "Detail Pesanan — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Detail Pesanan · Admin" };
 export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ id: string }> };

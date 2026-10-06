@@ -4,7 +4,7 @@ import { ChevronRight } from "lucide-react";
 
 import { BrandForm } from "../_components/brand-form";
 
-export const metadata: Metadata = { title: "Tambah Merek — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Tambah Merek · Admin" };
 
 export default function NewBrandPage() {
   return (

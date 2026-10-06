@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/legacy/server";
 import { BrandForm } from "../../_components/brand-form";
 
-export const metadata: Metadata = { title: "Edit Merek — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Edit Merek · Admin" };
 
 export default async function EditBrandPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

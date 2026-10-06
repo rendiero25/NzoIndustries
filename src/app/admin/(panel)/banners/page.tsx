@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { Plus } from "lucide-react";
 
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/legacy/server";
 import { BannerTable, type BannerRow } from "./_components/banner-table";
 
-export const metadata: Metadata = { title: "Banner — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Banner · Admin" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminBannersPage() {

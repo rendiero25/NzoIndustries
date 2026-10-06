@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/legacy/server";
 import { CategoryForm } from "../../_components/category-form";
 
-export const metadata: Metadata = { title: "Edit Kategori — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Edit Kategori · Admin" };
 
 type Props = { params: Promise<{ id: string }> };
 

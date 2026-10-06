@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/legacy/server";
 import { BrandFilters } from "./_components/brand-filters";
 import { BrandTable, type BrandRow } from "./_components/brand-table";
 
-export const metadata: Metadata = { title: "Kelola Merek — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Kelola Merek · Admin" };
 export const dynamic = "force-dynamic";
 
 const PER_PAGE = 20;

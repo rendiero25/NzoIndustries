@@ -1,11 +1,11 @@
-﻿import { Suspense } from "react";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 
 import { createClient } from "@/lib/supabase/legacy/server";
 import { OrderFilters } from "./_components/order-filters";
 import { OrderTable, type OrderRow } from "./_components/order-table";
 
-export const metadata: Metadata = { title: "Kelola Pesanan — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Kelola Pesanan · Admin" };
 export const dynamic = "force-dynamic";
 
 const PER_PAGE = 20;

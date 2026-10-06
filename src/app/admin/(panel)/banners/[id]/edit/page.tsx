@@ -12,7 +12,7 @@ type Params = Promise<{ id: string }>;
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   await params;
-  return { title: "Edit Banner — Admin NZO Industries" };
+  return { title: "Edit Banner · Admin" };
 }
 
 export default async function AdminBannerEditPage({ params }: { params: Params }) {

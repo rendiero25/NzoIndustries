@@ -9,7 +9,7 @@ import { CategoryFilters } from "./_components/category-filters";
 import { CategoryTable } from "./_components/category-table";
 import { buildFlatCategoryTree, type CategoryRow } from "./_lib/flat-category-tree";
 
-export const metadata: Metadata = { title: "Kelola Kategori — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Kelola Kategori · Admin" };
 export const dynamic = "force-dynamic";
 
 const PER_PAGE = 20;

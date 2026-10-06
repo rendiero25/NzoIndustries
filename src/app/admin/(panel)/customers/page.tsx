@@ -1,11 +1,11 @@
-﻿import { Suspense } from "react";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 
 import { createClient, createServiceClient } from "@/lib/supabase/legacy/server";
 import { CustomerFilters } from "./_components/customer-filters";
 import { CustomerTable, type CustomerRow } from "./_components/customer-table";
 
-export const metadata: Metadata = { title: "Kelola Pelanggan — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Kelola Pelanggan · Admin" };
 export const dynamic = "force-dynamic";
 
 const PER_PAGE = 20;

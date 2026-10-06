@@ -1,11 +1,11 @@
-﻿import { Suspense } from "react";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 
 import { createClient } from "@/lib/supabase/legacy/server";
 import { ComplaintFilters } from "./_components/complaint-filters";
 import { ComplaintTable, type ComplaintRow } from "./_components/complaint-table";
 
-export const metadata: Metadata = { title: "Komplain — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Komplain · Admin" };
 export const dynamic = "force-dynamic";
 
 const PER_PAGE = 20;

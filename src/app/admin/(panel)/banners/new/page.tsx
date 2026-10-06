@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { BannerForm } from "../_components/banner-form";
 import { templateToPromotionAdminPath } from "@/lib/banner-template-utils";
 
-export const metadata: Metadata = { title: "Tambah Banner — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Tambah Banner · Admin" };
 
 type SearchParams = Promise<{ template?: string }>;
 

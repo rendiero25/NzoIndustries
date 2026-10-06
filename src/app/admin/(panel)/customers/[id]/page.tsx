@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { CustomerEditDialog } from "../_components/customer-edit-dialog";
 import { CustomerDeleteButton } from "../_components/customer-delete-button";
 
-export const metadata: Metadata = { title: "Detail Pelanggan — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Detail Pelanggan · Admin" };
 export const dynamic = "force-dynamic";
 
 const ORDERS_PER_PAGE = 10;

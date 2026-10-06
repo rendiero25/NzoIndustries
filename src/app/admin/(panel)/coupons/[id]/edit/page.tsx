@@ -6,7 +6,7 @@ import { ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/legacy/server";
 import { CouponForm } from "../../_components/coupon-form";
 
-export const metadata: Metadata = { title: "Edit Kupon — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Edit Kupon · Admin" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminEditCouponPage({ params }: { params: Promise<{ id: string }> }) {
