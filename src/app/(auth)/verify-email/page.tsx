@@ -52,18 +52,16 @@ function VerifyEmailContent() {
       </div>
 
       <div className="space-y-3">
-        <h1 className="text-[28px] leading-[1.14] font-semibold text-foreground">
-          Cek Email Kamu!
-        </h1>
-        <p className="text-base leading-[1.47] font-normal text-foreground">
+        <h1 className="text-[1.75rem] leading-9">Cek Email Kamu!</h1>
+        <p className="text-muted-foreground">
           Kami sudah kirim email sambutan sekaligus link aktivasi ke{" "}
           {email ? <span className="font-semibold">{email}</span> : "alamat emailmu"}.
         </p>
-        <p className="text-[15px] leading-[1.6] font-normal text-foreground">
+        <p className="text-sm text-steel-700">
           Klik tombol <span className="font-semibold">&ldquo;Aktifkan Akun&rdquo;</span> di email
           tersebut untuk mulai belanja di NZO Industries.
         </p>
-        <p className="text-[14px] leading-[1.43] font-normal text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           Tidak menerima email? Cek folder{" "}
           <span className="font-semibold text-foreground">Spam</span> atau klik tombol di bawah
           untuk kirim ulang.

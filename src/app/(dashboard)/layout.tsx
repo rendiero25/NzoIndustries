@@ -46,7 +46,7 @@ export default async function DashboardRootLayout({ children }: { children: Reac
   ]);
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted">
+    <div className="flex min-h-screen w-full flex-col bg-background">
       <InitAuthStore user={user} profile={profile} />
       <StoreHeader initialCartCount={initialCartCount} showCategoryNav={false} showBorder={false} />
       <DashboardShell

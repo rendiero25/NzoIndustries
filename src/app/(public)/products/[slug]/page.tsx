@@ -74,11 +74,11 @@ export async function generateMetadata({ params }: { params: PageParams }): Prom
   const { slug } = await params;
   const product = await fetchProductDetailBySlug(slug);
   if (!product) {
-    return { title: "Produk tidak ditemukan — NZO Industries" };
+    return { title: "Produk tidak ditemukan" };
   }
   const desc = product.description?.replace(/\s+/g, " ").trim().slice(0, 155);
   return {
-    title: `${product.name} — NZO Industries`,
+    title: `${product.name}`,
     description: desc || `Beli ${product.name} di NZO Industries.`,
   };
 }

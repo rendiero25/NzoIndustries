@@ -115,10 +115,8 @@ export default function ForgotPasswordPage() {
         </div>
 
         <div className="space-y-3">
-          <h1 className="text-[28px] leading-[1.14] font-semibold text-foreground">
-            Cek Email Kamu
-          </h1>
-          <p className="text-base leading-[1.47] font-normal text-foreground">
+          <h1 className="text-[1.75rem] leading-9">Cek Email Kamu</h1>
+          <p className="text-muted-foreground">
             Link reset password telah dikirim ke <span className="font-semibold">{sentEmail}</span>.
             Cek inbox dan folder spam kamu.
           </p>
@@ -154,29 +152,31 @@ export default function ForgotPasswordPage() {
   return (
     <div className="space-y-10">
       <div className="space-y-2">
-        <h1 className="text-[28px] leading-[1.14] font-semibold text-foreground">
-          Lupa Kata Sandi?
-        </h1>
-        <p className="text-base leading-[1.47] font-normal text-foreground">
+        <h1 className="text-[1.75rem] leading-9">Lupa kata sandi??</h1>
+        <p className="text-muted-foreground">
           Masukkan emailmu dan kami kirimkan link untuk membuat kata sandi baru.
         </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-[14px] leading-[1.43] font-normal text-foreground">
+          <Label htmlFor="email" className="text-sm font-medium">
             Email
           </Label>
           <Input
             id="email"
             type="email"
             autoComplete="email"
-            placeholder="Masukin email kamu"
+            placeholder="nama@email.com"
             aria-invalid={!!errors.email}
             className={AUTH_INPUT_CLASS}
             {...register("email")}
           />
-          {errors.email && <p className="text-[14px] text-destructive">{errors.email.message}</p>}
+          {errors.email && (
+            <p role="alert" className="text-sm text-destructive">
+              {errors.email.message}
+            </p>
+          )}
         </div>
 
         <TurnstileWidgetLazy

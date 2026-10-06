@@ -112,10 +112,8 @@ export default function ResetPasswordPage() {
     return (
       <div className="space-y-10">
         <div className="space-y-2">
-          <h1 className="text-[28px] leading-[1.14] font-semibold text-foreground">
-            Verifikasi Dua Langkah
-          </h1>
-          <p className="text-base leading-[1.47] font-normal text-foreground">
+          <h1 className="text-[1.75rem] leading-9">Verifikasi Dua Langkah</h1>
+          <p className="text-muted-foreground">
             Akun ini memakai aplikasi authenticator. Masukkan kode 6 digit untuk menyimpan kata
             sandi baru.
           </p>
@@ -139,7 +137,11 @@ export default function ResetPasswordPage() {
             >
               <InputOTPGroup>
                 {Array.from({ length: 6 }, (_, i) => (
-                  <InputOTPSlot key={i} index={i} />
+                  <InputOTPSlot
+                    key={i}
+                    index={i}
+                    className="size-11 text-lg font-semibold md:size-12"
+                  />
                 ))}
               </InputOTPGroup>
             </InputOTP>
@@ -172,21 +174,14 @@ export default function ResetPasswordPage() {
   return (
     <div className="space-y-10">
       <div className="space-y-2">
-        <h1 className="text-[28px] leading-[1.14] font-semibold text-foreground">
-          Buat Kata Sandi Baru
-        </h1>
-        <p className="text-base leading-[1.47] font-normal text-foreground">
-          Pilih kata sandi yang kuat untuk melindungi akunmu.
-        </p>
+        <h1 className="text-[1.75rem] leading-9">Buat Kata sandi baru</h1>
+        <p className="text-muted-foreground">Pilih kata sandi yang kuat untuk melindungi akunmu.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
         <div className="space-y-2">
-          <Label
-            htmlFor="password"
-            className="text-[14px] leading-[1.43] font-normal text-foreground"
-          >
-            Kata Sandi Baru
+          <Label htmlFor="password" className="text-sm font-medium">
+            Kata sandi baru
           </Label>
           <div className="relative">
             <Input
@@ -206,16 +201,15 @@ export default function ResetPasswordPage() {
             />
           </div>
           {errors.password && (
-            <p className="text-[14px] text-destructive">{errors.password.message}</p>
+            <p role="alert" className="text-sm text-destructive">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label
-            htmlFor="confirm_password"
-            className="text-[14px] leading-[1.43] font-normal text-foreground"
-          >
-            Konfirmasi Kata Sandi
+          <Label htmlFor="confirm_password" className="text-sm font-medium">
+            Ulangi kata sandi
           </Label>
           <div className="relative">
             <Input
@@ -235,7 +229,9 @@ export default function ResetPasswordPage() {
             />
           </div>
           {errors.confirm_password && (
-            <p className="text-[14px] text-destructive">{errors.confirm_password.message}</p>
+            <p role="alert" className="text-sm text-destructive">
+              {errors.confirm_password.message}
+            </p>
           )}
         </div>
 
@@ -255,7 +251,7 @@ export default function ResetPasswordPage() {
         </ul>
 
         <Button type="submit" variant="primary" loading={isLoading} className="w-full">
-          Simpan Kata Sandi Baru
+          Simpan Kata sandi baru
         </Button>
       </form>
     </div>

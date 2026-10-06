@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/legacy/server";
 import { AnnouncementBarServer } from "@/components/layout/announcement-bar-server";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreFooter } from "@/components/store/store-footer";
-import { BottomNavBar } from "@/components/layout/bottom-nav-bar";
 import { WhatsAppButton } from "@/components/layout/whatsapp-button";
 import { MaintenancePage } from "@/components/layout/maintenance-page";
 import { InitAuthStore } from "@/components/providers/init-auth-store";
@@ -44,15 +43,12 @@ export default async function PublicLayout({ children }: { children: React.React
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-background">
       <InitAuthStore user={user} profile={profile} />
       <AnnouncementBarServer />
       <StoreHeader secondHandPromoId={secondHandPromoId} initialCartCount={initialCartCount} />
-      <main className="flex-1 pb-[calc(4rem+env(safe-area-inset-bottom,0px))] md:pb-0">
-        {children}
-      </main>
+      <main className="flex-1">{children}</main>
       <StoreFooter />
-      <BottomNavBar />
       <WhatsAppButton />
     </div>
   );

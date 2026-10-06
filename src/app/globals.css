@@ -63,7 +63,7 @@
   --color-signal-soft: #fff4d6;
 
   /* Semantik status (bukan dekorasi) */
-  --color-success: #1f8a4c;
+  --color-success: #1c7f46;
   --color-danger: #d92d20;
   --color-info: #2563eb;
   --color-warning: #b54708;
@@ -152,7 +152,7 @@
   --chart-1: #000000;
   --chart-2: #ffb300;
   --chart-3: #6b7079;
-  --chart-4: #1f8a4c;
+  --chart-4: #1c7f46;
   --chart-5: #2563eb;
   --radius: 12px;
   --sidebar: #f4f5f6;

@@ -53,7 +53,7 @@ export async function generateMetadata({
     if (cats.length > 0) {
       const name = cats.map((c) => c.name).join(" & ");
       return {
-        title: `${name} — NZO Industries`,
+        title: `${name}`,
         description: `Telusuri produk ${name} di NZO Industries.`,
       };
     }
@@ -62,13 +62,13 @@ export async function generateMetadata({
     const brand = await fetchBrandBySlugForStore(brandSlug);
     if (brand) {
       return {
-        title: `${brand.name} — NZO Industries`,
+        title: `${brand.name}`,
         description: `Telusuri produk ${brand.name} di NZO Industries.`,
       };
     }
   }
   return {
-    title: "Semua Produk — NZO Industries",
+    title: "Semua Produk",
     description:
       "Telusuri katalog NZO Industries: filter kategori, brand, harga, dan rating, lalu urutkan sesuai kebutuhanmu.",
   };

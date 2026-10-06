@@ -13,7 +13,7 @@ type Props = { searchParams: Promise<{ q?: string }> };
 export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
   const q = (await searchParams).q?.trim() ?? "";
   return {
-    title: q ? `"${q}" — Pencarian NZO Industries` : "Pencarian — NZO Industries",
+    title: q ? `"${q}" · Pencarian` : "Pencarian",
     description: q
       ? `Hasil pencarian untuk "${q}" di NZO Industries.`
       : "Cari produk di NZO Industries.",

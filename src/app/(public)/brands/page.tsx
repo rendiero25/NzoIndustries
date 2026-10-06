@@ -4,7 +4,7 @@ import { ShopByBrandSection } from "@/components/store/shop-by-brand-section";
 import { fetchShopBrands } from "@/lib/data/home-storefront";
 
 export const metadata: Metadata = {
-  title: "Authorized Brand — NZO Industries",
+  title: "Authorized Brand",
   description:
     "Brand-brand tech terpercaya di NZO Industries — semua produk original bergaransi resmi, langsung dari distributor resmi di Indonesia.",
 };
