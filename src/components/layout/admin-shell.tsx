@@ -153,7 +153,8 @@ export function AdminShell({
   return (
     <SidebarProvider defaultOpen={sidebarDefaultOpen}>
       <AdminSidebar role={role} name={name} email={email} />
-      <SidebarInset className="bg-background">
+      {/* min-w-0: tabel lebar menggulung di wadahnya sendiri, bukan melebarkan halaman */}
+      <SidebarInset className="min-w-0 bg-background">
         <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b border-border bg-background px-4">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mx-1 h-5" />

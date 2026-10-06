@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.7 (2026-10-02). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.8 (2026-10-06). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -11,7 +11,7 @@ Versi dokumen: 0.7 (2026-10-02). Aturan, keputusan (`D-xx`), dan pending klien (
 ## Fase 0 — Setup dan fondasi
 - [x] Fork starter GeekyTech, buang modul yang tidak relevan, rename ke `nzo-industries` (D-01, D-15)
 - [x] Repo GitHub dengan dua branch: `development` → preview, `main` → production — `github.com/rendiero25/NzoIndustries`, kedua branch ter-push (D-16)
-- [ ] Buat project Supabase dan project Vercel [P-03] — Supabase ✓ (region `ap-southeast-2`, D-17; kunci di `.env.local` tervalidasi, DB kosong, `/api/health` cek DB `ok`). **Menunggu** project Vercel (region function `syd1`)
+- [x] Buat project Supabase dan project Vercel — Supabase ✓ (region `ap-southeast-2`, D-17). Vercel ✓ `nzo-industries.vercel.app`, branch `development` (D-21); region function `syd1` dikunci di `vercel.json`. Paket produksi tetap [P-03]
 - [x] Buat akun/environment Cloudinary dan Resend (D-13) — Resend: akun dibuat user. Cloudinary: akun user yang sudah ada, aset NZO dikunci di root `nzo/` (D-16, `src/lib/cloudinary/folders.ts` + test). Kunci API diisi user di `.env.local`; domain Resend menunggu P-09
 - [x] `env.example` lengkap: Supabase, Cloudinary, Resend, Mayar, Biteship, Jubelio, Upstash, Turnstile, GA4, Meta Pixel
 - [x] TypeScript strict, ESLint, Prettier, Husky + lint-staged
@@ -79,7 +79,7 @@ Versi dokumen: 0.7 (2026-10-02). Aturan, keputusan (`D-xx`), dan pending klien (
 - [x] Komponen dasar: `Price`, `ProductCard`, `FitmentBadge` (motif perisai), `EmptyState`, `PageHeader`, skeleton set
 - [x] Halaman `/design` (dev only) untuk preview token dan komponen
 - [x] Tambahan (permintaan user): redesign shell agar tidak lagi seperti GeekyTech — header, promo bar, footer, tombol WhatsApp, 404, halaman auth, login admin, MFA, shell admin, shell akun
-- [ ] Logo resmi NZO (wordmark & perisai masih sementara) — **menunggu klien**
+- [x] Logo resmi NZO (D-25) — diterima 2026-10-06, dipasang di Fase 3
 
 **Catatan fase:**
 - Arah visual mengikuti design-system.md (user memilih tidak mengusulkan arah baru). Skill frontend-design + impeccable dipakai untuk eksekusi; Outfit dan hitam murni dipertahankan karena identitas brand sudah dikunci dokumen.
@@ -96,19 +96,29 @@ Versi dokumen: 0.7 (2026-10-02). Aturan, keputusan (`D-xx`), dan pending klien (
 - Verifikasi: `typecheck` ✓, `lint` ✓ (0 error), `test` ✓ (21), `build` ✓; cek visual desktop + mobile 375 (`/design`, `/`, `/products`, `/login`, `/admin/login`, `/admin` dengan akun staf sementara, mode gelap admin). Akun test dihapus setelahnya.
 
 ## Fase 3 — Katalog, gambar, dan import produk
-- [ ] Integrasi Cloudinary: route signature `/api/cloudinary/sign` (admin only), `CldImage`, folder sesuai design-system.md §11
-- [ ] Import CSV/Excel (fallback dan untuk update massal): upload → staging → preview → commit sebagai draft
-- [ ] Script `scripts/import-jubelio.ts` [P-04]:
-  - [ ] Login token dan ambil produk + varian dengan pagination (cek endpoint di docs.jubelio.com)
-  - [ ] Mapping field Jubelio ke schema, rapikan nama/SKU yang tidak sesuai (D-06), ambil harga dari sumber yang dipilih [P-01]
+- [x] Integrasi Cloudinary: route signature `/api/cloudinary/sign` (owner/admin), `CldImage`, folder sesuai design-system.md §11 — uploader di `/admin/products/[id]/images`. **Belum diuji dengan kunci asli**: env Cloudinary di `.env.local` masih kosong
+- [x] Import CSV/Excel (fallback dan untuk update massal): upload → staging → preview → commit sebagai draft — `/admin/import` (export Jubelio atau template NZO)
+- [x] Import awal dari export "Daftar Harga" Jubelio (D-24): `pnpm import:export` — 13.515 produk + 5.794 varian masuk dev sebagai `draft`, stok 0
+- [ ] Script `scripts/import-jubelio.ts` (API) [P-04] — kerangka + mapping siap, menunggu akses API:
+  - [ ] Login token dan ambil produk + varian dengan pagination (endpoint masih asumsi, verifikasi di docs.jubelio.com)
+  - [x] Mapping field Jubelio ke schema, rapikan nama/SKU (D-06, D-23), harga = Harga Default (D-22)
   - [ ] Unduh foto lalu upload ke Cloudinary
-  - [ ] Tulis ke `import_products`, mode `--dry-run`, upsert by SKU (idempotent)
-  - [ ] Log hasil: berhasil, gagal, dilewati + alasan
-  - [ ] Commit ke `products` sebagai `draft`
-- [ ] Kategori untuk produk non-otomotif (D-07)
-- [ ] Data merek/model/tahun kendaraan awal
+  - [x] Tulis ke `import_products`, mode `--dry-run`, upsert by SKU (idempotent)
+  - [x] Log hasil: berhasil, gagal, dilewati + alasan (`import_logs` + laporan `scripts/out/`)
+  - [x] Commit ke `products` sebagai `draft` (RPC `import_commit_batch`)
+- [ ] Stok, foto, dan berat produk nyata — menunggu export lain (Daftar Barang/Stok) atau API [P-04]
+- [x] Kategori untuk produk non-otomotif (D-07) — `Non-otomotif` › Perawatan & kebersihan / Peralatan / Lainnya
+- [x] Data merek/model/tahun kendaraan awal — 10 merek, 130 model (tahun perkiraan)
 
 **Catatan fase:**
+- Export Jubelio: 13.517 produk / 17.706 SKU. 2 baris gagal (SKU "." dan "-"). 1.028 SKU dinormalisasi (D-23), tidak ada tabrakan. Isi export hanya nama, SKU, varian, harga; tidak ada foto/stok/berat/kategori/brand.
+- Hasil saran otomatis: brand 9.367 produk (85 brand, mayoritas genuine parts YGP/HGP/KGP/SGP), saran fitment 11.401 produk (disimpan di staging saja), kategori 370 produk masih `belum-dikategorikan` (kategori internal, tidak tampil publik). Kategori/nama tetap perlu dicek admin sebelum publish.
+- Pohon kategori dan model kendaraan bersumber di `src/lib/import/{categories,vehicles}.ts`; migration `20261006000200` di-generate dari sana (ubah TS lalu buat migration baru).
+- Ditemukan & diperbaiki: trigger `guard_product_cache_columns` gagal untuk setiap UPDATE `product_variants` (membaca `new.average_rating`), bug sejak Fase 1. Migration `20261006000300` + test regresi di `test:rls`.
+- Shell admin: `SidebarInset` diberi `min-w-0` supaya tabel lebar tidak membuat scroll horizontal di seluruh halaman.
+- Produk `DEMO-*` tetap published di dev karena dipakai fixture `test:rls`; storefront legacy masih menampilkan demo sampai Fase 4.
+- Logo resmi (D-25) dipasang; favicon perisai.
+- Verifikasi: `typecheck` ✓, `lint` ✓ (0 error), `test` ✓ (37), `test:rls` ✓ (20), `build` ✓; browser: logo navbar/footer/auth (desktop + 375), `/admin/import` upload CSV → preview → commit → riwayat (akun admin uji sementara, sudah dihapus), endpoint sign: anon 401.
 
 ## Fase 4 — Storefront
 - [ ] Layout: header, bar promo, navigasi, footer, tombol WhatsApp mengambang
@@ -246,3 +256,4 @@ Versi dokumen: 0.7 (2026-10-02). Aturan, keputusan (`D-xx`), dan pending klien (
 - 0.5 (2026-10-01): Fase 1 dikerjakan (kecuali uji email & SMTP Resend), catatan fase diisi.
 - 0.6 (2026-10-02): D-20 (MFA staf lewat flag, default mati), fix reset password akun ber-TOTP, uji auth user.
 - 0.7 (2026-10-02): Fase 2 selesai (kecuali logo resmi), redesign shell, codemod palet GeekyTech.
+- 0.8 (2026-10-06): Fase 3 (katalog, import export Jubelio, Cloudinary, kategori & kendaraan). Logo resmi dicentang. Script API Jubelio dan stok/foto nyata tetap menunggu P-04.

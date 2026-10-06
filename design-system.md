@@ -1,6 +1,6 @@
 # design-system.md — NZO Industries
 
-Versi dokumen: 0.7 (2026-10-02). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
+Versi dokumen: 0.8 (2026-10-06). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
 
 ## 1. Arah desain
 
@@ -165,8 +165,8 @@ Mobile: bar beli sticky di bawah (harga + tombol).
 Komponen Magic UI lain butuh persetujuan dan update dokumen ini. NumberTicker dan BlurFade membutuhkan paket `motion`; dipakai hanya lewat dua komponen itu (animasi lain tetap GSAP).
 
 **Komponen NZO (Fase 2):**
-- `src/components/catalog/`: `Price` (format id-ID, harga coret, "Hemat X%"), `FitmentBadge` + `ShieldMark` (perisai sementara sampai logo resmi tersedia), `ProductCard`, `ProductImage` (CldImage, placeholder "Foto segera" bila belum ada foto).
-- `src/components/shared/`: `PageHeader`, `EmptyState`, skeleton set (`ProductCardSkeleton`, `ProductGridSkeleton`, `TableRowsSkeleton`, `DetailSkeleton`), `ConfirmDialog` (AlertDialog), `SiteLogo` (wordmark teks sementara, prop `tone` untuk latar gelap).
+- `src/components/catalog/`: `Price` (format id-ID, harga coret, "Hemat X%"), `FitmentBadge` + `ShieldMark` (perisai sederhana yang tetap terbaca di 14px; bentuk perisai logo resmi tersedia di `public/brand/nzo-mark.svg` untuk ukuran besar), `ProductCard`, `ProductImage` (CldImage, placeholder "Foto segera" bila belum ada foto).
+- `src/components/shared/`: `PageHeader`, `EmptyState`, skeleton set (`ProductCardSkeleton`, `ProductGridSkeleton`, `TableRowsSkeleton`, `DetailSkeleton`), `ConfirmDialog` (AlertDialog), `SiteLogo` (logo resmi D-25: lockup SVG sebagai CSS mask di atas `currentColor`, prop `tone` untuk latar gelap, varian tinggi per konteks; jangan diregangkan atau diberi warna aksen).
 - Varian tombol: `primary`, `secondary`, `signal` (satu CTA promo per viewport), `ghost`, `destructive`, `destructive-ghost`, `link`.
 - Pratinjau semua token & komponen: `/design` (hanya development).
 
@@ -226,6 +226,7 @@ Bahasa Indonesia, sapaan "kamu", sentence case, kalimat aktif, tanpa basa-basi.
 - Latar foto produk putih atau steel-50 agar grid seragam.
 - Placeholder blur saat memuat. Alt text wajib (default: nama produk + varian).
 - Folder: `nzo/products/{sku}`, `nzo/banners`, `nzo/brands`, `nzo/content`. Root `nzo/` wajib karena akun Cloudinary dipakai bersama data lain (D-16); helper `buildCloudinaryFolder()`.
+- Upload admin: `ProductImageUploader` (`CldUploadWidget` bertanda tangan `/api/cloudinary/sign`), JPG/PNG/WebP maks 5 MB, maks 12 foto, foto pertama = utama, urutan bisa digeser, hapus lewat AlertDialog. Format & ukuran diverifikasi ulang di server lewat Admin API sebelum disimpan.
 
 ## 12. Dokumen cetak
 
@@ -257,3 +258,4 @@ Hitam-putih, tanpa warna aksen, aman untuk printer thermal/laser. Cetak massal: 
 - 0.5 (2026-10-01): Sinkron versi (D-18, D-19). Komponen InputOTP ditambahkan untuk halaman MFA admin.
 - 0.6 (2026-10-02): Sinkron versi (D-20).
 - 0.7 (2026-10-02): Fase 2 diimplementasikan. `success` jadi `#1C7F46` (kontras AA), daftar komponen NZO + varian tombol `signal`, implementasi dark mode admin, catatan paket `motion` untuk Magic UI. Logo & perisai masih sementara.
+- 0.8 (2026-10-06): Logo resmi (D-25) menggantikan wordmark teks; favicon perisai (ikut skema terang/gelap). §11: alur upload foto admin.

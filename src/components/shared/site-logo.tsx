@@ -3,23 +3,26 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 /**
- * Wordmark sementara NZO Industries (logo resmi menunggu klien). Dirender
- * sebagai teks Outfit agar tajam di semua ukuran dan bisa dibalik warnanya
- * di latar gelap. Ganti isi komponen ini saat file logo tersedia.
+ * Logo resmi NZO Industries (perisai + wordmark), di-trace dari `public/logo.png`
+ * ke `public/brand/nzo-lockup.svg`. Dirender sebagai CSS mask di atas
+ * `bg-current` supaya warnanya ikut `tone` (hitam di latar terang, putih di
+ * latar gelap) tanpa menyisipkan path SVG besar ke setiap halaman.
  */
-const sizeClass = {
-  navbar: "gap-1.5 [--nzo-main:1.5rem] [--nzo-sub:0.625rem]",
-  footer: "gap-2 [--nzo-main:1.875rem] [--nzo-sub:0.6875rem]",
-  adminSidebar: "gap-1.5 [--nzo-main:1.25rem] [--nzo-sub:0.5625rem]",
-  adminTopbar: "gap-1.5 [--nzo-main:1.125rem] [--nzo-sub:0.5rem]",
-  authPanel: "gap-2 [--nzo-main:2rem] [--nzo-sub:0.75rem]",
-  authMobile: "gap-1.5 [--nzo-main:1.5rem] [--nzo-sub:0.625rem]",
-  adminLogin: "gap-1.5 [--nzo-main:1.625rem] [--nzo-sub:0.6875rem]",
-  maintenance: "mx-auto gap-2 [--nzo-main:2.25rem] [--nzo-sub:0.75rem]",
-  shippingLabel: "gap-1.5 [--nzo-main:1.375rem] [--nzo-sub:0.625rem]",
+const LOCKUP_RATIO = 3204 / 1328;
+
+const heightClass = {
+  navbar: "h-8",
+  footer: "h-11",
+  adminSidebar: "h-7",
+  adminTopbar: "h-6",
+  authPanel: "h-12",
+  authMobile: "h-8",
+  adminLogin: "h-10",
+  maintenance: "mx-auto h-14",
+  shippingLabel: "h-8",
 } as const;
 
-export type SiteLogoVariant = keyof typeof sizeClass;
+export type SiteLogoVariant = keyof typeof heightClass;
 
 type SiteLogoProps = {
   /** Default `/`; panel admin memakai `/admin`. */
@@ -30,7 +33,7 @@ type SiteLogoProps = {
   className?: string;
   /** Tanpa link (mis. halaman maintenance, dokumen cetak). */
   asStatic?: boolean;
-  /** @deprecated tidak dipakai lagi (wordmark berupa teks). */
+  /** @deprecated tidak dipakai lagi (logo berupa mask SVG). */
   priority?: boolean;
   ariaLabel?: string;
 };
@@ -44,26 +47,17 @@ export function SiteLogo({
   ariaLabel = "NZO Industries, ke beranda",
 }: SiteLogoProps) {
   const mark = (
-    <>
-      <span
-        aria-hidden="true"
-        className="text-(length:--nzo-main) leading-none font-extrabold tracking-[-0.04em]"
-      >
-        NZO
-      </span>
-      <span
-        aria-hidden="true"
-        className="text-(length:--nzo-sub) leading-none font-semibold tracking-[0.22em] uppercase"
-      >
-        Industries
-      </span>
-    </>
+    <span
+      aria-hidden="true"
+      className="block h-full bg-current [mask:url(/brand/nzo-lockup.svg)_center/contain_no-repeat] [print-color-adjust:exact]"
+      style={{ aspectRatio: LOCKUP_RATIO }}
+    />
   );
 
   const box = cn(
-    "inline-flex shrink-0 items-baseline whitespace-nowrap select-none",
+    "inline-flex shrink-0 select-none",
     tone === "light" ? "text-white" : "text-foreground",
-    sizeClass[variant],
+    heightClass[variant],
     className,
   );
 

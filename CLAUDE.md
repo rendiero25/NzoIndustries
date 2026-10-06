@@ -1,6 +1,6 @@
 # CLAUDE.md — NZO Industries E-commerce
 
-Versi dokumen: 0.7 (2026-10-02). Baca file ini di awal setiap sesi.
+Versi dokumen: 0.8 (2026-10-06). Baca file ini di awal setiap sesi.
 
 ## Proyek
 Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (plus sebagian produk non-otomotif yang masuk kategori sendiri). Ada tiga area: storefront publik, dashboard user (`/account`), dan dashboard admin/CMS (`/admin`). Prinsip utama: **security first**.
@@ -65,7 +65,8 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - `pnpm test:rls`: test RLS ke project dev (membuat user test sementara lalu menghapusnya). Wajib lolos setiap ada tabel/policy baru.
 - `pnpm promote-owner <email>`: jadikan akun pertama owner (service role). Role berikutnya lewat RPC `set_user_role` oleh owner.
 - Fungsi helper policy ada di schema `private` (tidak diekspos API): `private.has_role(app_role[])`, `private.is_staff()`, `private.owns_order(uuid)`, dll. Role staf butuh MFA aal2 di RLS hanya bila `require_staff_mfa` menyala (D-20).
-- `pnpm tsx scripts/import-jubelio.ts --dry-run` untuk mencoba import tanpa menulis ke database.
+- Import katalog (D-24): `pnpm import:export "<export Daftar Harga Jubelio.xls>" --dry-run` (laporan di `scripts/out/`, gitignore), lalu tanpa `--dry-run` untuk menulis (staging → RPC `import_commit_batch` → produk `draft`). Aman diulang: upsert by SKU web. Update massal kecil lewat `/admin/import` (template NZO atau export Jubelio, diparse di browser). `pnpm import:jubelio --dry-run` = kerangka API Jubelio (P-04). Logika mapping bersama di `src/lib/import/`; data kategori/kendaraan bersumber di `src/lib/import/{categories,vehicles}.ts` (migration `20261006000200` di-generate dari sana).
+- File export klien (`docs/*.xls*`, `docs/*.csv`) tidak di-commit.
 
 ## Konvensi kode
 - Identifier dalam bahasa Inggris; semua teks UI dalam Bahasa Indonesia (aturan copy di design-system.md).
@@ -126,12 +127,17 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - D-18 Varian produk boleh punya `price` (dan `compare_at_price`) opsional yang menggantikan harga produk; kosong = ikut harga produk. Melonggarkan D-04.
 - D-19 Kode starter GeekyTech diisolasi: memakai `@/lib/supabase/legacy/*` dan `@/types/legacy-supabase` sampai ditulis ulang (Fase 3–8); kode NZO wajib memakai `@/lib/supabase/{server,client,admin}` dan `@/types/database` (dijaga ESLint). Migration diterapkan langsung ke project dev remote lewat Supabase CLI (tanpa Docker). Aksi admin dari UI memakai client user-scoped (RLS + `auth.uid()` untuk audit); service role hanya untuk webhook, cron, script, dan operasi sistem.
 - D-20 Login staf tanpa scan QR/TOTP (keputusan user 2026-10-02, sudah diberi peringatan risiko). MFA tidak dihapus: flag `store_settings.require_staff_mfa` (default false, hanya owner yang bisa ubah) dibaca `private.has_role` di RLS dan `getStaffMfaRequired()` di aplikasi. Gagal membaca flag = MFA dianggap wajib. Akun yang sudah punya faktor TOTP tetap diminta kode saat ganti password (aturan Supabase Auth).
+- D-21 Vercel project `nzo-industries.vercel.app` hanya untuk branch `development` (staging). Branch `main` nanti di domain utama (P-09). Supabase Auth: Site URL/Redirect URLs wajib memuat `https://nzo-industries.vercel.app/**`.
+- D-22 P-01 terjawab: harga web = **Harga Default** dari Jubelio. Harga marketplace tidak dipakai; harga coret diatur admin.
+- D-23 SKU web dinormalisasi agar cocok `^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$` (spasi, `/`, `+` jadi `-`; simbol dibuang; tabrakan diberi akhiran `-2`). SKU asli disimpan di `products.source_sku` / `product_variants.source_sku` untuk sinkron Jubelio/marketplace. Produk bervarian memakai SKU induk = prefix bersama SKU varian.
+- D-24 Import awal dari export "Daftar Harga" Jubelio (XLS) lewat script, semua `draft`, stok 0 (export tanpa stok/foto/berat; menyusul via export lain atau API P-04). Nama tampil dirapikan otomatis (sinonim, alias model, "ORI/ASLI", nomor part dipindah ke spesifikasi); judul asli di `products.search_keywords` (ikut full-text search, tidak tampil). Kategori dan brand disarankan otomatis dari nama; saran fitment hanya disimpan di staging (dikonfirmasi admin di Fase 8). `products.import_locked` mencegah import ulang menimpa nama/harga hasil edit admin.
+- D-25 Logo resmi dari klien (`public/logo.png`) di-trace ke SVG (`public/brand/nzo-lockup.svg`, `nzo-mark.svg`); dirender sebagai CSS mask supaya mengikuti warna tema. Favicon = perisai.
 
 ## Pending info klien
 Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
-- P-01 ⏳ Harga mana yang dipakai di web.
+- P-01 ✅ Harga Default Jubelio (D-22).
 - P-02 ⏳ Pembayaran final: Mayar, transfer langsung ke rekening klien, atau keduanya. Juga data rekening untuk transfer manual.
-- P-03 ⏳ Hosting final (rekomendasi: Vercel Pro + Supabase Pro). Region Supabase sudah diputuskan: D-17.
+- P-03 ⏳ Hosting final (rekomendasi: Vercel Pro + Supabase Pro). Region Supabase sudah diputuskan: D-17. Vercel staging sudah ada (D-21); paket & production menunggu.
 - P-04 ⏳ Akses Jubelio API: akun integrasi, paket yang mencakup API, dan izin tertulis menyalin katalog.
 - P-05 ⏳ Toko Shopify: diganti web ini atau tetap berjalan.
 - P-06 ⏳ Ada harga grosir/bengkel (reseller) atau tidak.
@@ -156,3 +162,4 @@ Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - 0.5 (2026-10-01): Fase 1. Tambah D-18 (harga varian opsional), D-19 (isolasi legacy, workflow migration remote, client user-scoped untuk aksi admin). Perintah database, test RLS, promote-owner. Aturan bisnis harga diperbarui.
 - 0.6 (2026-10-02): Tambah D-20 (MFA staf lewat flag, default mati). Security rule 7 diperbarui.
 - 0.7 (2026-10-02): Fase 2 (design system + redesign shell). Sinkron versi, tanpa keputusan baru.
+- 0.8 (2026-10-06): Fase 3. Tambah D-21 (Vercel staging), D-22 (P-01 terjawab), D-23 (normalisasi SKU), D-24 (import export Jubelio), D-25 (logo resmi). Perintah import.

@@ -2,6 +2,7 @@ import {
   BarChart3,
   Boxes,
   FileBarChart,
+  FileUp,
   Image as ImageIcon,
   LayoutList,
   Package,
@@ -67,6 +68,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       { label: "Kategori", href: "/admin/categories", icon: LayoutList, roles: MANAGERS },
       { label: "Brand", href: "/admin/brands", icon: Tags, roles: MANAGERS },
       { label: "Stok", href: "/admin/stock", icon: Boxes, roles: ["owner", "admin", "warehouse"] },
+      { label: "Import produk", href: "/admin/import", icon: FileUp, roles: MANAGERS },
     ],
   },
   {
@@ -103,6 +105,8 @@ export const ROLE_LABEL: Record<StaffRole, string> = {
 /** Label breadcrumb dari segmen URL. */
 export const SEGMENT_LABELS: Record<string, string> = {
   admin: "Admin",
+  import: "Import produk",
+  images: "Foto",
   products: "Produk",
   brands: "Brand",
   categories: "Kategori",
