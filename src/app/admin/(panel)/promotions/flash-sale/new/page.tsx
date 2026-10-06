@@ -6,7 +6,7 @@ import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { FlashSaleForm } from "../_components/flash-sale-form-client";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Buat Flash Sale — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Buat Flash Sale · Admin" };
 
 export default async function AdminFlashSaleNewPage() {
   const supabase = createServiceClient();

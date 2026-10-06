@@ -1,9 +1,9 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/legacy/server";
 import { SettingsNav } from "../_components/settings-nav";
 import { TimeoutForm } from "./_components/timeout-form";
 
-export const metadata: Metadata = { title: "Pembayaran — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Pembayaran · Admin" };
 export const dynamic = "force-dynamic";
 
 type SettingRow = { key: string; value: unknown };

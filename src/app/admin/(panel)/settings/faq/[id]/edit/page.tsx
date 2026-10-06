@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/legacy/server";
 import { FaqForm } from "../../_components/faq-form";
 
-export const metadata: Metadata = { title: "Edit FAQ — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Edit FAQ · Admin" };
 export const dynamic = "force-dynamic";
 
 interface PageProps {

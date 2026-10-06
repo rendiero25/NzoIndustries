@@ -14,7 +14,7 @@ type Params = Promise<{ id: string }>;
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { id } = await params;
   const { promo } = await fetchPromotionWithAssociations(id);
-  return { title: `${promo?.title ?? "Promosi"} — Admin NZO Industries` };
+  return { title: `${promo?.title ?? "Promosi"} · Admin` };
 }
 
 const BACK_PATH = "/admin/promotions/featured-products";

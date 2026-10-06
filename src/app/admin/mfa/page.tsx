@@ -16,8 +16,8 @@ export default async function AdminMfaPage() {
   if (user.aal === "aal2" || !(await getStaffMfaRequired())) redirect("/admin");
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-white px-6 py-12">
-      <div className="w-full max-w-sm">
+    <main className="flex min-h-svh items-center justify-center bg-steel-50 px-5 py-12">
+      <div className="w-full max-w-sm rounded-xl border border-border bg-background p-6 sm:p-8">
         <MfaForm />
       </div>
     </main>

@@ -12,7 +12,7 @@ import { Code128Barcode } from "@/components/shared/code128-barcode";
 import { SiteLogo } from "@/components/shared/site-logo";
 import { PrintPageButton } from "@/components/admin/print-page-button";
 
-export const metadata: Metadata = { title: "Cetak Resi — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Cetak Resi · Admin" };
 export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ id: string }> };

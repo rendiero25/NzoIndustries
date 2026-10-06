@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronLeft, Plus } from "lucide-react";
 
@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/legacy/server";
 import { SettingsNav } from "../_components/settings-nav";
 import { FaqTable, type FaqRow } from "./_components/faq-table";
 
-export const metadata: Metadata = { title: "Kelola FAQ — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Kelola FAQ · Admin" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsFaqPage() {

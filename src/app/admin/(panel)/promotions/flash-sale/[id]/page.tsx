@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { id } = await params;
   const supabase = await createClient();
   const { data } = await supabase.from("flash_sales").select("name").eq("id", id).single();
-  return { title: `${data?.name ?? "Flash Sale"} — Admin NZO Industries` };
+  return { title: `${data?.name ?? "Flash Sale"} · Admin` };
 }
 
 function getStatusInfo(sale: { is_active: boolean; starts_at: string; ends_at: string }): {

@@ -1,4 +1,4 @@
-﻿import { Suspense } from "react";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AlertTriangle } from "lucide-react";
@@ -16,7 +16,7 @@ import {
   type StockListFilters,
 } from "./_lib/stock-query";
 
-export const metadata: Metadata = { title: "Stok — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Stok · Admin" };
 export const dynamic = "force-dynamic";
 
 const PER_PAGE = 20;

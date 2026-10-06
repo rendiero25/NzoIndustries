@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { Plus } from "lucide-react";
 
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/legacy/server";
 import { FlashSaleTable, type FlashSaleRow } from "./_components/flash-sale-table";
 
-export const metadata: Metadata = { title: "Flash Sale — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Flash Sale · Admin" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminFlashSalePage() {

@@ -3,7 +3,7 @@ import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { SettingsNav } from "../_components/settings-nav";
 import { CourierBrandForm } from "./_components/courier-brand-form";
 
-export const metadata: Metadata = { title: "Kurir — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Kurir · Admin" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsCouriersPage() {

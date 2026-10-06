@@ -1,11 +1,11 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 
 import { listBanners } from "./_actions";
 import { MainBannerForm } from "./_components/main-banner-form";
 import { MainBannerTable } from "./_components/main-banner-table";
 
 export const metadata: Metadata = {
-  title: "Main Banner — Promosi Admin NZO Industries",
+  title: "Main Banner · Admin",
 };
 export const dynamic = "force-dynamic";
 

@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/legacy/server";
 import { ReviewFilters } from "./_components/review-filters";
 import { ReviewTable, type ReviewRow } from "./_components/review-table";
 
-export const metadata: Metadata = { title: "Ulasan — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Ulasan · Admin" };
 export const dynamic = "force-dynamic";
 
 const PER_PAGE = 20;

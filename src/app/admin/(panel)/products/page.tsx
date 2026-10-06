@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/legacy/server";
 import { ProductFilters } from "./_components/product-filters";
 import { ProductTable, type ProductRow } from "./_components/product-table";
 
-export const metadata: Metadata = { title: "Kelola Produk — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Kelola Produk · Admin" };
 export const dynamic = "force-dynamic";
 
 const PER_PAGE = 20;

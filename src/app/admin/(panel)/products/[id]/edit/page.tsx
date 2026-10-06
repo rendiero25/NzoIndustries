@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/legacy/server";
 import { ProductForm } from "../../_components/product-form";
 import type { ImageItem } from "../../_components/image-uploader";
 
-export const metadata: Metadata = { title: "Edit Produk — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Edit Produk · Admin" };
 
 export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

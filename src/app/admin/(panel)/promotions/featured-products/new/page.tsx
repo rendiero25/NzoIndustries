@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowLeft } from "lucide-react";
 
@@ -6,7 +6,7 @@ import { PromotionForm } from "../../_components/promotion-form";
 import { fetchSelectorData } from "../../_lib/fetch-selector-data";
 
 export const dynamic = "force-dynamic";
-export const metadata: Metadata = { title: "Buat Rekomendasi Produk — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Buat Rekomendasi Produk · Admin" };
 
 const BACK_PATH = "/admin/promotions/featured-products";
 

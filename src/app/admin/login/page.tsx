@@ -84,89 +84,78 @@ function AdminLoginContent() {
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* ── Panel ─────────────────────────────────────────────────── */}
-      <main className="flex flex-1 flex-col items-center justify-center bg-white px-6 py-12 sm:px-10">
-        <div className="w-full max-w-sm">
-          {/* Logo */}
-          <div className="mb-10">
-            <SiteLogo variant="adminLogin" />
-          </div>
+    <main className="flex min-h-svh flex-col bg-steel-50">
+      <div className="flex items-center justify-between px-5 pt-5 sm:px-8 sm:pt-8">
+        <SiteLogo variant="adminLogin" />
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 rounded-sm text-sm font-medium text-steel-700 hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" strokeWidth={1.75} />
+          Ke toko
+        </Link>
+      </div>
 
-          {/* Header */}
-          <div className="mb-9">
-            <div className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-foreground/20 bg-primary/6 px-3 py-1.5">
-              <Lock className="h-3 w-3 text-foreground" strokeWidth={2.5} />
-              <span className="text-[10px] font-bold tracking-[0.14em] text-foreground uppercase">
-                Akses Terbatas
-              </span>
-            </div>
-
-            <h1 className="text-[28px] leading-[1.1] font-semibold text-foreground">
-              Masuk ke
-              <br />
-              Admin Panel
-            </h1>
-            <p className="mt-2.5 text-[14px] leading-[1.47] text-muted-foreground">
-              Gunakan email dan password administrator Anda.
+      <div className="flex flex-1 items-center justify-center px-5 py-12">
+        <div className="w-full max-w-sm rounded-xl border border-border bg-background p-6 sm:p-8">
+          <div className="mb-8 flex flex-col gap-2">
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-sm bg-muted px-2 py-1 text-caption font-medium text-steel-700">
+              <Lock className="size-3.5" strokeWidth={1.75} />
+              Khusus staf
+            </span>
+            <h1 className="text-[1.75rem] leading-9">Masuk ke panel admin</h1>
+            <p className="text-sm text-muted-foreground">
+              Pakai email dan kata sandi akun staf kamu.
             </p>
           </div>
 
-          {/* Form */}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7" noValidate>
-              {/* Email */}
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem className="gap-1.5">
-                    <FormLabel className="text-[10px] font-bold tracking-[0.12em] text-muted-foreground uppercase">
-                      Email
-                    </FormLabel>
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Email</FormLabel>
                     <FormControl>
                       <Input
                         type="email"
                         autoComplete="email"
-                        placeholder="admin@nzo-industries.test"
-                        className="h-11 rounded-none border-x-0 border-t-0 border-b-2 border-border bg-transparent px-0 text-[15px] shadow-none placeholder:text-muted-foreground focus-visible:border-foreground focus-visible:ring-0"
+                        placeholder="nama@nzo-industries.test"
+                        className="h-11"
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className="text-[12px]" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
 
-              {/* Password */}
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
-                  <FormItem className="gap-1.5">
-                    <FormLabel className="text-[10px] font-bold tracking-[0.12em] text-muted-foreground uppercase">
-                      Password
-                    </FormLabel>
+                  <FormItem>
+                    <FormLabel className="text-sm font-medium">Kata sandi</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
                           type={showPassword ? "text" : "password"}
                           autoComplete="current-password"
-                          placeholder="••••••••"
-                          className="h-11 rounded-none border-x-0 border-t-0 border-b-2 border-border bg-transparent px-0 pr-10 text-[15px] shadow-none placeholder:text-muted-foreground focus-visible:border-foreground focus-visible:ring-0"
+                          className="h-11 pr-11"
                           {...field}
                         />
                         <PasswordVisibilityToggle
                           visible={showPassword}
                           onToggle={() => setShowPassword((v) => !v)}
-                          className="right-0"
-                          labelVisible="Tampilkan password"
-                          labelHidden="Sembunyikan password"
-                          iconSize={15}
+                          className="right-1.5"
+                          labelVisible="Tampilkan kata sandi"
+                          labelHidden="Sembunyikan kata sandi"
+                          iconSize={16}
                         />
                       </div>
                     </FormControl>
-                    <FormMessage className="text-[12px]" />
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -177,30 +166,14 @@ function AdminLoginContent() {
                 onExpire={() => setTurnstileToken(null)}
               />
 
-              {/* Submit */}
-              <Button
-                type="submit"
-                loading={isLoading}
-                className="h-11 w-full rounded-none bg-primary text-[14px] font-semibold text-white hover:bg-primary active:scale-[0.98]"
-              >
-                Masuk ke Admin Panel
+              <Button type="submit" loading={isLoading} className="mt-1 w-full">
+                Masuk
               </Button>
             </form>
           </Form>
-
-          {/* Footer */}
-          <div className="mt-8 border-t border-border pt-6">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <ArrowLeft className="h-3.5 w-3.5" />
-              Kembali ke website
-            </Link>
-          </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }
 

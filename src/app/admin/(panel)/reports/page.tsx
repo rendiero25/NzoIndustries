@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Download } from "lucide-react";
 
@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/legacy/server";
 import { formatRupiah } from "@/lib/format";
 import { DashboardRevenueChart, DashboardOrdersChart } from "@/components/admin/dashboard-charts";
 
-export const metadata: Metadata = { title: "Laporan — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Laporan · Admin" };
 export const dynamic = "force-dynamic";
 
 type OrderStatus =

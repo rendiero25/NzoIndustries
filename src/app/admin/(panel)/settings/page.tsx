@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/legacy/server";
 import { SettingsNav } from "./_components/settings-nav";
 import { MaintenanceToggle } from "./_components/maintenance-toggle";
@@ -6,7 +6,7 @@ import { AnnouncementForm } from "./_components/announcement-form";
 import { WhatsappForm } from "./_components/whatsapp-form";
 import { AutoCompleteForm } from "./_components/auto-complete-form";
 
-export const metadata: Metadata = { title: "Pengaturan — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Pengaturan · Admin" };
 export const dynamic = "force-dynamic";
 
 type SettingRow = { key: string; value: unknown };

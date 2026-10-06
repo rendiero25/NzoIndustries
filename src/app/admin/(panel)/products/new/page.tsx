@@ -5,7 +5,7 @@ import { ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/legacy/server";
 import { ProductForm } from "../_components/product-form";
 
-export const metadata: Metadata = { title: "Tambah Produk — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Tambah Produk · Admin" };
 
 export default async function NewProductPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

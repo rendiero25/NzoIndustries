@@ -1,9 +1,9 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { FaqForm } from "../_components/faq-form";
 
-export const metadata: Metadata = { title: "Tambah FAQ — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Tambah FAQ · Admin" };
 
 export default function AdminFaqNewPage() {
   return (

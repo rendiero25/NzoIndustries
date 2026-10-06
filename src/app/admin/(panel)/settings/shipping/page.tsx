@@ -1,10 +1,10 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/legacy/server";
 import { SettingsNav } from "../_components/settings-nav";
 import { OriginForm } from "./_components/origin-form";
 import { parseStoreOrigin } from "@/lib/settings/store-origin";
 
-export const metadata: Metadata = { title: "Pengiriman — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Pengiriman · Admin" };
 export const dynamic = "force-dynamic";
 
 type SettingRow = { key: string; value: unknown };

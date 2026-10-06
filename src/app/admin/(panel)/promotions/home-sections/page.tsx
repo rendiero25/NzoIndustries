@@ -1,9 +1,9 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { createServiceClient } from "@/lib/supabase/legacy/server";
 import { HomeSectionsEditor } from "./_components/home-sections-editor";
 import type { HomeSection } from "./_actions";
 
-export const metadata: Metadata = { title: "Tampilan Beranda — Admin NZO Industries" };
+export const metadata: Metadata = { title: "Tampilan Beranda · Admin" };
 export const dynamic = "force-dynamic";
 
 const DEFAULT_SECTIONS: HomeSection[] = [
