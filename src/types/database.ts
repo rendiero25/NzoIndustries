@@ -513,9 +513,11 @@ export type Database = {
           mapped: Json | null;
           product_id: string | null;
           raw: Json;
+          row_index: number | null;
           sku: string | null;
           status: Database["public"]["Enums"]["import_row_status"];
           updated_at: string;
+          warnings: string[];
         };
         Insert: {
           batch_id: string;
@@ -526,9 +528,11 @@ export type Database = {
           mapped?: Json | null;
           product_id?: string | null;
           raw: Json;
+          row_index?: number | null;
           sku?: string | null;
           status?: Database["public"]["Enums"]["import_row_status"];
           updated_at?: string;
+          warnings?: string[];
         };
         Update: {
           batch_id?: string;
@@ -539,9 +543,11 @@ export type Database = {
           mapped?: Json | null;
           product_id?: string | null;
           raw?: Json;
+          row_index?: number | null;
           sku?: string | null;
           status?: Database["public"]["Enums"]["import_row_status"];
           updated_at?: string;
+          warnings?: string[];
         };
         Relationships: [
           {
@@ -1137,6 +1143,7 @@ export type Database = {
           product_id: string;
           sku: string;
           sort_order: number;
+          source_sku: string | null;
           stock: number;
           updated_at: string;
           weight_grams: number | null;
@@ -1154,6 +1161,7 @@ export type Database = {
           product_id: string;
           sku: string;
           sort_order?: number;
+          source_sku?: string | null;
           stock?: number;
           updated_at?: string;
           weight_grams?: number | null;
@@ -1171,6 +1179,7 @@ export type Database = {
           product_id?: string;
           sku?: string;
           sort_order?: number;
+          source_sku?: string | null;
           stock?: number;
           updated_at?: string;
           weight_grams?: number | null;
@@ -1194,6 +1203,7 @@ export type Database = {
           description: string | null;
           height_mm: number | null;
           id: string;
+          import_locked: boolean;
           installation_guide: string | null;
           jubelio_item_id: string | null;
           length_mm: number | null;
@@ -1203,10 +1213,12 @@ export type Database = {
           price: number;
           published_at: string | null;
           review_count: number;
+          search_keywords: string | null;
           search_vector: unknown;
           short_description: string | null;
           sku: string;
           slug: string;
+          source_sku: string | null;
           status: Database["public"]["Enums"]["product_status"];
           stock: number;
           total_sold: number;
@@ -1223,6 +1235,7 @@ export type Database = {
           description?: string | null;
           height_mm?: number | null;
           id?: string;
+          import_locked?: boolean;
           installation_guide?: string | null;
           jubelio_item_id?: string | null;
           length_mm?: number | null;
@@ -1232,10 +1245,12 @@ export type Database = {
           price: number;
           published_at?: string | null;
           review_count?: number;
+          search_keywords?: string | null;
           search_vector?: unknown;
           short_description?: string | null;
           sku: string;
           slug: string;
+          source_sku?: string | null;
           status?: Database["public"]["Enums"]["product_status"];
           stock?: number;
           total_sold?: number;
@@ -1252,6 +1267,7 @@ export type Database = {
           description?: string | null;
           height_mm?: number | null;
           id?: string;
+          import_locked?: boolean;
           installation_guide?: string | null;
           jubelio_item_id?: string | null;
           length_mm?: number | null;
@@ -1261,10 +1277,12 @@ export type Database = {
           price?: number;
           published_at?: string | null;
           review_count?: number;
+          search_keywords?: string | null;
           search_vector?: unknown;
           short_description?: string | null;
           sku?: string;
           slug?: string;
+          source_sku?: string | null;
           status?: Database["public"]["Enums"]["product_status"];
           stock?: number;
           total_sold?: number;
@@ -1984,6 +2002,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      import_commit_batch: {
+        Args: { p_batch_id: string; p_limit?: number };
+        Returns: Json;
+      };
       set_user_blocked: {
         Args: { blocked: boolean; target_user: string };
         Returns: undefined;
@@ -2002,7 +2024,7 @@ export type Database = {
       claim_status: "submitted" | "in_review" | "approved" | "rejected" | "resolved";
       discount_type: "percent" | "fixed";
       import_row_status: "pending" | "valid" | "invalid" | "committed" | "skipped";
-      import_source: "jubelio" | "csv";
+      import_source: "jubelio" | "csv" | "jubelio_export";
       import_status: "pending" | "running" | "completed" | "failed";
       inventory_movement_type:
         "initial" | "adjustment" | "import" | "sale" | "return" | "correction";
@@ -2175,7 +2197,7 @@ export const Constants = {
       claim_status: ["submitted", "in_review", "approved", "rejected", "resolved"],
       discount_type: ["percent", "fixed"],
       import_row_status: ["pending", "valid", "invalid", "committed", "skipped"],
-      import_source: ["jubelio", "csv"],
+      import_source: ["jubelio", "csv", "jubelio_export"],
       import_status: ["pending", "running", "completed", "failed"],
       inventory_movement_type: ["initial", "adjustment", "import", "sale", "return", "correction"],
       order_status: [

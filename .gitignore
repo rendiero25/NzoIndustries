@@ -50,5 +50,11 @@ next-env.d.ts
 # claude (CLAUDE.md wajib di-commit; setting lokal tidak)
 .claude/settings.local.json
 
+# data klien (export harga Jubelio) dan laporan import lokal
+/docs/*.xls
+/docs/*.xlsx
+/docs/*.csv
+/scripts/out/
+
 # git worktrees (local isolation, never commit)
 /.worktrees/

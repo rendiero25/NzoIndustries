@@ -468,3 +468,81 @@ describe("staf & MFA", () => {
     }
   });
 });
+
+describe("import katalog (Fase 3)", () => {
+  test("staging import hanya untuk owner/admin", async () => {
+    const { data: batch, error } = await adminUser.client
+      .from("import_batches")
+      .insert({ source: "csv", file_name: `rls-${RUN_ID}.csv`, status: "pending" })
+      .select("id")
+      .single();
+    assert.ifError(error);
+
+    const batchId: string = batch!.id;
+    for (const user of [cs, warehouse, customerA]) {
+      const { data: seen } = await user.client
+        .from("import_batches")
+        .select("id")
+        .eq("id", batchId);
+      assert.equal(seen?.length ?? 0, 0, `${user.role} tidak boleh melihat batch`);
+      const { error: insertError } = await user.client
+        .from("import_products")
+        .insert({ batch_id: batch!.id, raw: {}, status: "pending" });
+      assert.ok(insertError, `${user.role} tidak boleh menulis staging`);
+    }
+    await admin.from("import_batches").delete().eq("id", batch!.id);
+  });
+
+  test("RPC import_commit_batch ditolak untuk selain owner/admin", async () => {
+    const { data: batch } = await admin
+      .from("import_batches")
+      .insert({ source: "csv", file_name: `rls-${RUN_ID}.csv`, status: "pending" })
+      .select("id")
+      .single();
+    for (const client of [cs.client, warehouse.client, customerA.client, anon()]) {
+      const { error } = await client.rpc("import_commit_batch", {
+        p_batch_id: batch!.id,
+        p_limit: 1,
+      });
+      assert.ok(error, "harus ditolak");
+    }
+    const { data, error } = await adminUser.client.rpc("import_commit_batch", {
+      p_batch_id: batch!.id,
+      p_limit: 1,
+    });
+    assert.ifError(error);
+    assert.deepEqual(data, { committed: 0, failed: 0, remaining: 0 });
+    await admin.from("import_batches").delete().eq("id", batch!.id);
+  });
+});
+
+describe("regresi trigger cache varian", () => {
+  test("admin bisa mengubah kolom non-cache varian", async () => {
+    const { data: v } = await admin
+      .from("product_variants")
+      .select("id, name")
+      .eq("sku", "DEMO-WPR-101-14")
+      .single();
+    const { data, error } = await adminUser.client
+      .from("product_variants")
+      .update({ name: `${v!.name} ${RUN_ID}` })
+      .eq("id", v!.id)
+      .select("id");
+    assert.ifError(error);
+    assert.equal(data?.length, 1);
+    await admin.from("product_variants").update({ name: v!.name }).eq("id", v!.id);
+  });
+
+  test("stok varian tetap tidak bisa diubah langsung", async () => {
+    const { data: v } = await admin
+      .from("product_variants")
+      .select("id")
+      .eq("sku", "DEMO-WPR-101-14")
+      .single();
+    const { error } = await adminUser.client
+      .from("product_variants")
+      .update({ stock: 999 })
+      .eq("id", v!.id);
+    assert.ok(error);
+  });
+});
