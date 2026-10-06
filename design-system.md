@@ -1,6 +1,6 @@
 # design-system.md — NZO Industries
 
-Versi dokumen: 0.8 (2026-10-06). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
+Versi dokumen: 0.9 (2026-10-07). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
 
 ## 1. Arah desain
 
@@ -170,6 +170,15 @@ Komponen Magic UI lain butuh persetujuan dan update dokumen ini. NumberTicker da
 - Varian tombol: `primary`, `secondary`, `signal` (satu CTA promo per viewport), `ghost`, `destructive`, `destructive-ghost`, `link`.
 - Pratinjau semua token & komponen: `/design` (hanya development).
 
+**Komponen storefront (Fase 4, `src/components/storefront/`):**
+- `VehicleSelector`: jenis (Motor/Mobil, ToggleGroup) → merek → model → tahun (Select bertahap, langkah berikutnya aktif setelah sebelumnya dipilih). Varian `hero` (latar hitam, tombol `signal` "Cari part") dan `compact` (Popover chip Garasi di header, PDP).
+- `GarageChip`: chip header berisi kendaraan aktif ("Vario 125 · 2022") dengan perisai; satu-satunya sinyal kendaraan di header.
+- Kecocokan dua tingkat (D-27): `FitmentBadge` perisai **hanya** untuk fitment terverifikasi. Fitment saran import tampil sebagai teks kecil steel-500 "Disebut untuk {kendaraan}" tanpa perisai dan tanpa warna aksen. PDP: kalimat penjelas "belum diverifikasi tim kami; tanyakan CS bila ragu".
+- `CatalogPage` + `CatalogFilters`: semua state filter di URL; banner kecocokan `signal-soft` dengan ✕; filter sidebar desktop, Sheet mobile; pagination bernomor.
+- `ProductView` (PDP): galeri + zoom Dialog, varian ToggleGroup (varian habis dicoret), harga crossfade (`animate-tick`), sticky buy bar mobile.
+- Statistik beranda hanya angka nyata dari database (produk, brand, model kendaraan). Section yang datanya kosong (banner, flash sale, ulasan) tidak dirender, bukan menampilkan instruksi admin.
+- Animasi CSS tambahan: `animate-bump` (badge keranjang), `animate-pop` (hati wishlist), `animate-tick` (digit countdown/harga). Semua `motion-safe:`.
+
 **Ikon:** lucide-react, stroke 1.75, ukuran 16/20/24.
 
 ## 8. Motion dan micro-interaction
@@ -258,4 +267,5 @@ Hitam-putih, tanpa warna aksen, aman untuk printer thermal/laser. Cetak massal: 
 - 0.5 (2026-10-01): Sinkron versi (D-18, D-19). Komponen InputOTP ditambahkan untuk halaman MFA admin.
 - 0.6 (2026-10-02): Sinkron versi (D-20).
 - 0.7 (2026-10-02): Fase 2 diimplementasikan. `success` jadi `#1C7F46` (kontras AA), daftar komponen NZO + varian tombol `signal`, implementasi dark mode admin, catatan paket `motion` untuk Magic UI. Logo & perisai masih sementara.
+- 0.9 (2026-10-07): Komponen storefront Fase 4 (VehicleSelector, GarageChip, CatalogPage, ProductView), aturan tampilan kecocokan dua tingkat (D-27), animasi bump/pop/tick. Header tetap tidak mengubah tinggi saat scroll (hanya bayangan) agar konten tidak melompat.
 - 0.8 (2026-10-06): Logo resmi (D-25) menggantikan wordmark teks; favicon perisai (ikut skema terang/gelap). §11: alur upload foto admin.

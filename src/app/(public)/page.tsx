@@ -1,52 +1,124 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { HomeDynamicPromoBlocksFetcher } from "@/components/store/home-dynamic-promo-blocks";
-import { HomeFlashSaleBlock } from "@/components/store/home-flash-sale-block";
-import { HomeLatestProductsSection } from "@/components/store/home-latest-products-section";
-import { HomeMainHero } from "@/components/store/home-main-hero";
+import { ProductGridSkeleton } from "@/components/shared/skeletons";
+import { BannerCarousel } from "@/components/storefront/banner-carousel";
+import { FlashSaleSection } from "@/components/storefront/flash-sale";
+import { HomeHero } from "@/components/storefront/home-hero";
+import { HomeProductTabs } from "@/components/storefront/home-product-tabs";
 import {
-  fetchLatestHomeProducts,
-  fetchMainHeroBanners,
-  fetchPrimaryHomeFlashSaleBlock,
-} from "@/lib/data/home-storefront";
+  BrandMarquee,
+  CategoryChips,
+  ReviewsSection,
+  StoreStatsSection,
+} from "@/components/storefront/home-sections";
+import { ProductGrid } from "@/components/storefront/product-grid";
+import { getWishlistIds } from "@/server/actions/wishlist";
+import { getPublicReviews, listProductCards } from "@/server/queries/catalog";
+import { getActiveFlashSale, getBanners } from "@/server/queries/home";
+import {
+  getBrands,
+  getCategoryTree,
+  getStoreStats,
+  getVehicleCatalog,
+} from "@/server/queries/reference";
+import { getActiveVehicle } from "@/server/queries/vehicle";
 
 export const metadata: Metadata = {
-  title: "Beranda",
+  title: { absolute: "NZO Industries — Sparepart & aksesoris motor dan mobil" },
   description:
-    "Toko tech & gadget terpercaya. Produk original bergaransi resmi. Pengiriman ke seluruh Indonesia.",
+    "Sparepart dan aksesoris motor & mobil: genuine parts dan aftermarket pilihan. Pilih kendaraanmu, cek kecocokan, kirim ke seluruh Indonesia.",
+  alternates: { canonical: "/" },
 };
 
-export const dynamic = "force-dynamic";
-
+/** Beranda (design-system §5): urutan section tetap, tiap section mandiri. */
 export default async function HomePage() {
-  const loaded = await Promise.all([
-    fetchMainHeroBanners(),
-    fetchPrimaryHomeFlashSaleBlock(),
-    fetchLatestHomeProducts(18),
-  ]).catch(() => null);
-
-  if (loaded === null) {
-    return (
-      <div className="mx-auto max-w-[1440px] px-4 py-16 text-center">
-        <p className="text-sm text-muted-foreground">
-          Gagal memuat beranda. Silakan muat ulang halaman.
-        </p>
-      </div>
-    );
-  }
-
-  const [heroBanners, flashSaleBlock, latestProducts] = loaded;
-  const excludeFlashSaleIds = flashSaleBlock?.saleId ? [flashSaleBlock.saleId] : [];
+  const [vehicles, vehicle, tree] = await Promise.all([
+    getVehicleCatalog().catch(() => ({ makes: [], models: [] })),
+    getActiveVehicle().catch(() => null),
+    getCategoryTree().catch(() => []),
+  ]);
 
   return (
-    <div className="bg-white">
-      <HomeMainHero banners={heroBanners} />
-      <HomeFlashSaleBlock block={flashSaleBlock} />
-      <HomeLatestProductsSection products={latestProducts} />
-      <Suspense>
-        <HomeDynamicPromoBlocksFetcher excludeFlashSaleIds={excludeFlashSaleIds} />
+    <>
+      <HomeHero
+        makes={vehicles.makes}
+        models={vehicles.models}
+        active={
+          vehicle ? { modelId: vehicle.modelId, year: vehicle.year, label: vehicle.label } : null
+        }
+      />
+      <CategoryChips tree={tree} />
+      <Suspense fallback={null}>
+        <BannersBlock />
       </Suspense>
+      <Suspense fallback={null}>
+        <FlashSaleBlock />
+      </Suspense>
+      <Suspense
+        fallback={
+          <div className="nzo-container py-12 md:py-16">
+            <ProductGridSkeleton count={8} />
+          </div>
+        }
+      >
+        <ProductTabsBlock />
+      </Suspense>
+      <Suspense fallback={null}>
+        <BrandsBlock />
+      </Suspense>
+      <Suspense fallback={null}>
+        <StatsBlock />
+      </Suspense>
+      <Suspense fallback={null}>
+        <ReviewsBlock />
+      </Suspense>
+    </>
+  );
+}
+
+async function BannersBlock() {
+  const banners = await getBanners("hero").catch(() => []);
+  return <BannerCarousel banners={banners} />;
+}
+
+async function FlashSaleBlock() {
+  const sale = await getActiveFlashSale().catch(() => null);
+  if (!sale) return null;
+  return (
+    <div className="nzo-container pt-10">
+      <FlashSaleSection sale={sale} />
     </div>
   );
+}
+
+async function ProductTabsBlock() {
+  const vehicle = await getActiveVehicle().catch(() => null);
+  const [bestseller, newest, wishlist] = await Promise.all([
+    listProductCards({ sort: "bestseller", limit: 8 }, vehicle),
+    listProductCards({ sort: "newest", limit: 8 }, vehicle),
+    getWishlistIds(),
+  ]);
+  const saved = new Set(wishlist);
+  return (
+    <HomeProductTabs
+      bestseller={<ProductGrid items={bestseller} wishlistIds={saved} priorityCount={0} />}
+      newest={<ProductGrid items={newest} wishlistIds={saved} priorityCount={0} />}
+    />
+  );
+}
+
+async function BrandsBlock() {
+  const brands = await getBrands().catch(() => []);
+  return <BrandMarquee brands={brands} />;
+}
+
+async function StatsBlock() {
+  const stats = await getStoreStats().catch(() => null);
+  return stats ? <StoreStatsSection stats={stats} /> : null;
+}
+
+async function ReviewsBlock() {
+  const reviews = await getPublicReviews(null, 6).catch(() => []);
+  return <ReviewsSection reviews={reviews} />;
 }

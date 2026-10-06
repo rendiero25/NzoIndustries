@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.8 (2026-10-06). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.9 (2026-10-07). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -121,16 +121,23 @@ Versi dokumen: 0.8 (2026-10-06). Aturan, keputusan (`D-xx`), dan pending klien (
 - Verifikasi: `typecheck` ✓, `lint` ✓ (0 error), `test` ✓ (37), `test:rls` ✓ (20), `build` ✓; browser: logo navbar/footer/auth (desktop + 375), `/admin/import` upload CSV → preview → commit → riwayat (akun admin uji sementara, sudah dihapus), endpoint sign: anon 401.
 
 ## Fase 4 — Storefront
-- [ ] Layout: header, bar promo, navigasi, footer, tombol WhatsApp mengambang
-- [ ] Beranda sesuai urutan section design-system.md §5 (hero + pemilih kendaraan, chip kategori, banner, flash sale, terlaris/terbaru, brand, statistik, ulasan)
-- [ ] Animasi hero (GSAP timeline) dan micro-interaction §8
-- [ ] Halaman kategori, brand, promo, dan pencarian dengan filter (kendaraan, kategori, brand, harga, rating, stok) dan urutan
-- [ ] Pemilih kendaraan global: tersimpan di cookie untuk guest, di Garasi untuk user login
-- [ ] Detail produk: galeri, varian, cek kecocokan, tabs (deskripsi, spesifikasi, kecocokan, cara pasang, ulasan), produk terkait, sticky buy bar mobile
-- [ ] Wishlist
-- [ ] Halaman statis: tentang, kontak, FAQ, cara belanja [P-08]
+- [x] Layout: header, bar promo, navigasi, footer, tombol WhatsApp mengambang — header: menu Kategori (NavigationMenu dari DB), chip Garasi, saran pencarian NZO, badge keranjang
+- [x] Beranda sesuai urutan section design-system.md §5 (hero + pemilih kendaraan, chip kategori, banner, flash sale, terlaris/terbaru, brand, statistik, ulasan) — section tanpa data tidak dirender; artikel pemasangan (opsional) dilewati
+- [x] Animasi hero (GSAP timeline) dan micro-interaction §8 — terbang ke keranjang, badge memantul, hati pop, harga crossfade, countdown flip, NumberTicker; semua mati saat reduced motion
+- [x] Halaman kategori, brand, promo, dan pencarian dengan filter (kendaraan, kategori, brand, harga, rating, stok) dan urutan
+- [x] Pemilih kendaraan global: tersimpan di cookie untuk guest, di Garasi untuk user login
+- [x] Detail produk: galeri, varian, cek kecocokan, tabs (deskripsi, spesifikasi, kecocokan, cara pasang, ulasan), produk terkait, sticky buy bar mobile
+- [x] Wishlist
+- [x] Halaman statis: tentang, kontak, FAQ, cara belanja [P-08] — data toko (alamat, jam, email CS) placeholder sampai P-09/P-11
 
 **Catatan fase:**
+- D-26: produk import dipublish di DB dev (13.528 published). D-27: 22.042 fitment saran (`is_verified = false`) dari import untuk 11.401 produk; badge perisai hanya untuk fitment terverifikasi (saat ini hanya produk DEMO).
+- RPC `catalog_search`/`catalog_facets` + `private.catalog_filter`. Performa (warm, 13,5 rb produk): tanpa filter ±130 ms, kendaraan ±7 ms, pencarian ±5–120 ms, kategori ±90 ms, facet ±150 ms. Pelajaran: fungsi SQL non-inline dengan CTE kecil bisa ±500 ms karena plan generik (CTE di-inline lalu dijalankan per baris); solusinya plpgsql + `MATERIALIZED`. RLS tabel anak yang memanggil `is_product_visible()` per baris juga mahal → filter dijadikan security definer dengan batas `published` eksplisit.
+- Keranjang guest (Zustand persist `nzo-cart`, versi 1, data legacy diabaikan): validasi server sebelum tambah (published, varian, stok). Halaman `/cart` & checkout masih legacy sampai Fase 5.
+- Dihapus: komponen & data storefront legacy (beranda, PLP, PDP, promo/flash-sale lama, FAQ/kontak lama) dan endpoint `/api/contact` (mengirim email tanpa rate limit; form kontak menunggu Resend P-09 + rate limit). Yang masih dipakai halaman legacy dibiarkan: `home-product-tile`, `home-storefront`, `product-detail-page`, `store-header-server`, `products/_actions`.
+- Header dipakai seragam lewat `StoreHeaderServer` (layout publik, 404, dashboard). Header tidak mengecil saat scroll (hanya bayangan) supaya konten tidak melompat.
+- Bug ditemukan & diperbaiki: separator breadcrumb bersarang di `<li>` (hydration error); relasi self-join kategori di embed bertingkat tidak didukung PostgREST (induk kategori diambil dari pohon yang di-cache); `loading.tsx` membuat `notFound()` berstatus 200.
+- Verifikasi: `typecheck` ✓, `lint` ✓ (0 error, 40 warning legacy), `test` ✓ (41), `test:rls` ✓ (22), `build` ✓; browser: beranda (hero + animasi), pilih Honda Vario 125 2022 → PLP 470 produk dengan banner kecocokan, badge "Cocok" (DEMO) dan "Disebut untuk…"; PDP bervarian (`?v=`, SKU varian, breadcrumb), cek kecocokan terverifikasi; tambah ke keranjang (toast + badge + localStorage); wishlist guest → login; mobile 375 (sticky buy bar); status 404 rute tidak dikenal.
 
 ## Fase 5 — Keranjang dan checkout
 - [ ] Keranjang: Zustand untuk guest, sinkron ke `carts` saat login; Sheet + halaman `/cart`
@@ -256,4 +263,5 @@ Versi dokumen: 0.8 (2026-10-06). Aturan, keputusan (`D-xx`), dan pending klien (
 - 0.5 (2026-10-01): Fase 1 dikerjakan (kecuali uji email & SMTP Resend), catatan fase diisi.
 - 0.6 (2026-10-02): D-20 (MFA staf lewat flag, default mati), fix reset password akun ber-TOTP, uji auth user.
 - 0.7 (2026-10-02): Fase 2 selesai (kecuali logo resmi), redesign shell, codemod palet GeekyTech.
+- 0.9 (2026-10-07): Fase 4 selesai (storefront NZO: beranda, PLP, PDP, Garasi, wishlist, halaman statis).
 - 0.8 (2026-10-06): Fase 3 (katalog, import export Jubelio, Cloudinary, kategori & kendaraan). Logo resmi dicentang. Script API Jubelio dan stok/foto nyata tetap menunggu P-04.

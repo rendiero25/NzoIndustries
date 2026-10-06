@@ -7,8 +7,7 @@ import { requireUser } from "@/lib/auth/guards";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { InitAuthStore } from "@/components/providers/init-auth-store";
 import { fetchUserProfile } from "@/lib/data/dashboard-user";
-import { StoreHeader } from "@/components/store/store-header";
-import { fetchStoreHeaderCartCount } from "@/lib/data/store-header-server";
+import { StoreHeaderServer } from "@/components/store/store-header-server";
 import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppButton } from "@/components/layout/whatsapp-button";
 
@@ -39,16 +38,15 @@ export default async function DashboardRootLayout({ children }: { children: Reac
   const cookieStore = await cookies();
   const sidebarDefaultOpen = cookieStore.get("sidebar_state")?.value !== "false";
 
-  const [unreadNotifications, profile, initialCartCount] = await Promise.all([
+  const [unreadNotifications, profile] = await Promise.all([
     user ? getUnreadNotificationsCount(user.id) : Promise.resolve(0),
     user ? fetchUserProfile(user.id) : Promise.resolve(null),
-    fetchStoreHeaderCartCount().catch(() => 0),
   ]);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <InitAuthStore user={user} profile={profile} />
-      <StoreHeader initialCartCount={initialCartCount} showCategoryNav={false} showBorder={false} />
+      <StoreHeaderServer showCategoryNav={false} showBorder={false} />
       <DashboardShell
         unreadNotifications={unreadNotifications}
         sidebarDefaultOpen={sidebarDefaultOpen}

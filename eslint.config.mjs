@@ -39,9 +39,20 @@ const eslintConfig = defineConfig([
       "src/proxy.ts",
       "src/app/admin/mfa/**",
       "src/components/admin/mfa-form.tsx",
+      "src/components/admin/import-*.tsx",
+      "src/components/admin/product-image-uploader.tsx",
+      "src/components/storefront/**",
+      "src/components/catalog/**",
+      "src/lib/import/**",
+      "src/lib/validations/catalog.ts",
+      "src/app/(public)/{page,layout}.tsx",
+      "src/app/(public)/{products,categories,brands,search,promo,wishlist,about,contact,faq,how-to-buy}/**",
+      "src/app/admin/(panel)/import/**",
       "tests/**",
       "scripts/**",
     ],
+    // Aksi legacy yang masih dipakai wishlist dashboard lama (ditulis ulang Fase 7).
+    ignores: ["src/app/(public)/products/_actions/**"],
     rules: {
       "no-restricted-imports": [
         "error",

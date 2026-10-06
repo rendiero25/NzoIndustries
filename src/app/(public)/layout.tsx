@@ -1,52 +1,24 @@
-import { createClient } from "@/lib/supabase/legacy/server";
 import { AnnouncementBarServer } from "@/components/layout/announcement-bar-server";
-import { StoreHeader } from "@/components/store/store-header";
-import { StoreFooter } from "@/components/store/store-footer";
 import { WhatsAppButton } from "@/components/layout/whatsapp-button";
-import { MaintenancePage } from "@/components/layout/maintenance-page";
 import { InitAuthStore } from "@/components/providers/init-auth-store";
-import {
-  fetchStoreHeaderCartCount,
-  fetchStoreHeaderSecondHandPromoId,
-} from "@/lib/data/store-header-server";
+import { StoreFooter } from "@/components/store/store-footer";
+import { StoreHeaderServer } from "@/components/store/store-header-server";
 import { fetchUserProfile } from "@/lib/data/dashboard-user";
-
-async function getMaintenanceMode(): Promise<boolean> {
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("settings")
-      .select("value")
-      .eq("key", "maintenance_mode")
-      .single();
-    return data?.value === true || data?.value === "true";
-  } catch {
-    return false;
-  }
-}
+import { createClient } from "@/lib/supabase/server";
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const [isMaintenance, secondHandPromoId, initialCartCount, profile] = await Promise.all([
-    getMaintenanceMode(),
-    fetchStoreHeaderSecondHandPromoId().catch(() => null),
-    fetchStoreHeaderCartCount().catch(() => 0),
-    user ? fetchUserProfile(user.id).catch(() => null) : Promise.resolve(null),
-  ]);
-
-  if (isMaintenance) {
-    return <MaintenancePage />;
-  }
+  // Profil untuk auth store legacy (dashboard lama) sampai Fase 7.
+  const profile = user ? await fetchUserProfile(user.id).catch(() => null) : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <InitAuthStore user={user} profile={profile} />
       <AnnouncementBarServer />
-      <StoreHeader secondHandPromoId={secondHandPromoId} initialCartCount={initialCartCount} />
+      <StoreHeaderServer />
       <main className="flex-1">{children}</main>
       <StoreFooter />
       <WhatsAppButton />

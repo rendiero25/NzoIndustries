@@ -5,15 +5,13 @@ import { Suspense } from "react";
 import { AnnouncementBarServer } from "@/components/layout/announcement-bar-server";
 import { InitAuthStore } from "@/components/providers/init-auth-store";
 import { StoreFooter } from "@/components/store/store-footer";
-import { StoreHeader } from "@/components/store/store-header";
+import { StoreHeaderServer } from "@/components/store/store-header-server";
 import { Button } from "@/components/ui/button";
 import { fetchUserProfile } from "@/lib/data/dashboard-user";
-import { fetchStoreHeaderCartCount } from "@/lib/data/store-header-server";
 import { createClient } from "@/lib/supabase/legacy/server";
 import type { Tables } from "@/types/legacy-supabase";
 
-// StoreHeader memakai useSearchParams(); /_not-found diprerender statis,
-// jadi wajib dibungkus Suspense.
+// /_not-found diprerender statis; header (data server) dibungkus Suspense.
 function StoreHeaderFallback() {
   return <div className="h-16 w-full border-b border-border md:h-[7.25rem]" aria-hidden="true" />;
 }
@@ -21,32 +19,28 @@ function StoreHeaderFallback() {
 async function fetchLayoutData(): Promise<{
   user: User | null;
   profile: Tables<"profiles"> | null;
-  initialCartCount: number;
 }> {
   try {
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const [initialCartCount, profile] = await Promise.all([
-      fetchStoreHeaderCartCount().catch(() => 0),
-      user ? fetchUserProfile(user.id).catch(() => null) : Promise.resolve(null),
-    ]);
-    return { user, profile, initialCartCount };
+    const profile = user ? await fetchUserProfile(user.id).catch(() => null) : null;
+    return { user, profile };
   } catch {
-    return { user: null, profile: null, initialCartCount: 0 };
+    return { user: null, profile: null };
   }
 }
 
 export default async function NotFound() {
-  const { user, profile, initialCartCount } = await fetchLayoutData();
+  const { user, profile } = await fetchLayoutData();
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <InitAuthStore user={user} profile={profile} />
       <AnnouncementBarServer />
       <Suspense fallback={<StoreHeaderFallback />}>
-        <StoreHeader initialCartCount={initialCartCount} />
+        <StoreHeaderServer />
       </Suspense>
       <main className="flex-1">
         <section className="nzo-container py-20 md:py-32">

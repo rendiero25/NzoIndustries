@@ -1,6 +1,6 @@
 # CLAUDE.md — NZO Industries E-commerce
 
-Versi dokumen: 0.8 (2026-10-06). Baca file ini di awal setiap sesi.
+Versi dokumen: 0.9 (2026-10-07). Baca file ini di awal setiap sesi.
 
 ## Proyek
 Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (plus sebagian produk non-otomotif yang masuk kategori sendiri). Ada tiga area: storefront publik, dashboard user (`/account`), dan dashboard admin/CMS (`/admin`). Prinsip utama: **security first**.
@@ -67,6 +67,8 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - Fungsi helper policy ada di schema `private` (tidak diekspos API): `private.has_role(app_role[])`, `private.is_staff()`, `private.owns_order(uuid)`, dll. Role staf butuh MFA aal2 di RLS hanya bila `require_staff_mfa` menyala (D-20).
 - Import katalog (D-24): `pnpm import:export "<export Daftar Harga Jubelio.xls>" --dry-run` (laporan di `scripts/out/`, gitignore), lalu tanpa `--dry-run` untuk menulis (staging → RPC `import_commit_batch` → produk `draft`). Aman diulang: upsert by SKU web. Update massal kecil lewat `/admin/import` (template NZO atau export Jubelio, diparse di browser). `pnpm import:jubelio --dry-run` = kerangka API Jubelio (P-04). Logika mapping bersama di `src/lib/import/`; data kategori/kendaraan bersumber di `src/lib/import/{categories,vehicles}.ts` (migration `20261006000200` di-generate dari sana).
 - File export klien (`docs/*.xls*`, `docs/*.csv`) tidak di-commit.
+- Storefront (Fase 4): rute `/products`, `/products/[slug]`, `/categories/[slug]`, `/brands`, `/brands/[slug]`, `/search`, `/promo`, `/wishlist`, `/about`, `/contact`, `/faq`, `/how-to-buy`. Data katalog lewat `src/server/queries/{catalog,reference,home,vehicle}.ts` (client anon tanpa cookie `src/lib/supabase/public.ts` untuk data publik/cache, `unstable_cache` tag `catalog`). PLP memakai RPC `catalog_search` + `catalog_facets` (filter di `private.catalog_filter`, plpgsql security definer, selalu `status = 'published'`); filter URL di `src/lib/validations/catalog.ts`. Kendaraan aktif: cookie `nzo_vehicle` + Garasi default (`user_vehicles`). Keranjang guest: `src/store/cart-store.ts` (snapshot tampilan; harga final dihitung server di Fase 5).
+- Rute yang bisa `notFound()` jangan diberi `loading.tsx` (streaming dimulai sebelum 404, status jadi 200); bungkus konten lambat dengan `Suspense` setelah validasi.
 
 ## Konvensi kode
 - Identifier dalam bahasa Inggris; semua teks UI dalam Bahasa Indonesia (aturan copy di design-system.md).
@@ -131,6 +133,8 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - D-22 P-01 terjawab: harga web = **Harga Default** dari Jubelio. Harga marketplace tidak dipakai; harga coret diatur admin.
 - D-23 SKU web dinormalisasi agar cocok `^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$` (spasi, `/`, `+` jadi `-`; simbol dibuang; tabrakan diberi akhiran `-2`). SKU asli disimpan di `products.source_sku` / `product_variants.source_sku` untuk sinkron Jubelio/marketplace. Produk bervarian memakai SKU induk = prefix bersama SKU varian.
 - D-24 Import awal dari export "Daftar Harga" Jubelio (XLS) lewat script, semua `draft`, stok 0 (export tanpa stok/foto/berat; menyusul via export lain atau API P-04). Nama tampil dirapikan otomatis (sinonim, alias model, "ORI/ASLI", nomor part dipindah ke spesifikasi); judul asli di `products.search_keywords` (ikut full-text search, tidak tampil). Kategori dan brand disarankan otomatis dari nama; saran fitment hanya disimpan di staging (dikonfirmasi admin di Fase 8). `products.import_locked` mencegah import ulang menimpa nama/harga hasil edit admin.
+- D-26 DB dev: semua produk import dipublish agar storefront diuji dengan data nyata (tampil "Foto segera"/"Stok habis"). Produksi: admin publish manual setelah foto/stok/berat lengkap. Produk `DEMO-*` tetap published di dev (fixture `test:rls`).
+- D-27 Fitment dua tingkat: `product_fitments.is_verified = true` (dikonfirmasi admin) = badge perisai "Cocok"; `false` (saran dari nama produk saat import, `source = 'import'`) = label teks "Disebut untuk {kendaraan}" tanpa perisai. Keduanya dipakai filter kendaraan, verified diurutkan dulu. Badge perisai **hanya** untuk verified.
 - D-25 Logo resmi dari klien (`public/logo.png`) di-trace ke SVG (`public/brand/nzo-lockup.svg`, `nzo-mark.svg`); dirender sebagai CSS mask supaya mengikuti warna tema. Favicon = perisai.
 
 ## Pending info klien
@@ -162,4 +166,5 @@ Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - 0.5 (2026-10-01): Fase 1. Tambah D-18 (harga varian opsional), D-19 (isolasi legacy, workflow migration remote, client user-scoped untuk aksi admin). Perintah database, test RLS, promote-owner. Aturan bisnis harga diperbarui.
 - 0.6 (2026-10-02): Tambah D-20 (MFA staf lewat flag, default mati). Security rule 7 diperbarui.
 - 0.7 (2026-10-02): Fase 2 (design system + redesign shell). Sinkron versi, tanpa keputusan baru.
+- 0.9 (2026-10-07): Fase 4 (storefront di schema NZO). Tambah D-26 (publish dev), D-27 (fitment dua tingkat). Catatan rute storefront & DAL.
 - 0.8 (2026-10-06): Fase 3. Tambah D-21 (Vercel staging), D-22 (P-01 terjawab), D-23 (normalisasi SKU), D-24 (import export Jubelio), D-25 (logo resmi). Perintah import.
