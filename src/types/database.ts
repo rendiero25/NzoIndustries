@@ -1005,27 +1005,33 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
+          is_verified: boolean;
           model_id: string;
           notes: string | null;
           product_id: string;
+          source: string;
           year_end: number | null;
           year_start: number | null;
         };
         Insert: {
           created_at?: string;
           id?: string;
+          is_verified?: boolean;
           model_id: string;
           notes?: string | null;
           product_id: string;
+          source?: string;
           year_end?: number | null;
           year_start?: number | null;
         };
         Update: {
           created_at?: string;
           id?: string;
+          is_verified?: boolean;
           model_id?: string;
           notes?: string | null;
           product_id?: string;
+          source?: string;
           year_end?: number | null;
           year_start?: number | null;
         };
@@ -2002,9 +2008,85 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      catalog_brands: {
+        Args: never;
+        Returns: {
+          logo_public_id: string;
+          name: string;
+          product_count: number;
+          slug: string;
+        }[];
+      };
+      catalog_facets: {
+        Args: {
+          p_brand_slugs?: string[];
+          p_category_slug?: string;
+          p_in_stock?: boolean;
+          p_max_price?: number;
+          p_min_price?: number;
+          p_min_rating?: number;
+          p_model_id?: string;
+          p_on_sale?: boolean;
+          p_query?: string;
+          p_vehicle_only?: boolean;
+          p_year?: number;
+        };
+        Returns: Json;
+      };
+      catalog_search: {
+        Args: {
+          p_brand_slugs?: string[];
+          p_category_slug?: string;
+          p_in_stock?: boolean;
+          p_limit?: number;
+          p_max_price?: number;
+          p_min_price?: number;
+          p_min_rating?: number;
+          p_model_id?: string;
+          p_offset?: number;
+          p_on_sale?: boolean;
+          p_query?: string;
+          p_sort?: string;
+          p_vehicle_only?: boolean;
+          p_year?: number;
+        };
+        Returns: {
+          average_rating: number;
+          brand_name: string;
+          brand_slug: string;
+          compare_at_price: number;
+          fit_level: string;
+          has_variants: boolean;
+          id: string;
+          name: string;
+          price: number;
+          primary_image: string;
+          review_count: number;
+          sku: string;
+          slug: string;
+          stock: number;
+          total_count: number;
+          total_sold: number;
+        }[];
+      };
+      catalog_stats: { Args: never; Returns: Json };
       import_commit_batch: {
         Args: { p_batch_id: string; p_limit?: number };
         Returns: Json;
+      };
+      public_reviews: {
+        Args: { p_limit?: number; p_product_id?: string };
+        Returns: {
+          comment: string;
+          created_at: string;
+          id: string;
+          product_id: string;
+          product_name: string;
+          product_slug: string;
+          rating: number;
+          reply: string;
+          reviewer: string;
+        }[];
       };
       set_user_blocked: {
         Args: { blocked: boolean; target_user: string };

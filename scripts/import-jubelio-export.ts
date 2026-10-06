@@ -24,7 +24,7 @@ import { describeStaged, toStagingInsert } from "../src/lib/import/staging";
 import type { Database } from "../src/types/database";
 
 const STAGE_CHUNK = 500;
-const COMMIT_CHUNK = 500;
+const COMMIT_CHUNK = 200;
 
 function arg(name: string): string | undefined {
   const i = process.argv.indexOf(name);

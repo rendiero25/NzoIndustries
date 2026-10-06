@@ -169,7 +169,7 @@ export async function stageTemplateRows(
 
 const commitSchema = z.object({ batchId: z.uuid() });
 
-/** Satu putaran commit (maks 500 produk). Client memanggil berulang sampai remaining = 0. */
+/** Satu putaran commit (maks 200 produk). Client memanggil berulang sampai remaining = 0. */
 export async function commitImportBatch(
   input: z.infer<typeof commitSchema>,
 ): Promise<ImportActionResult<{ committed: number; failed: number; remaining: number }>> {
@@ -181,7 +181,7 @@ export async function commitImportBatch(
   const supabase = await createClient();
   const { data, error } = await supabase.rpc("import_commit_batch", {
     p_batch_id: parsed.data.batchId,
-    p_limit: 500,
+    p_limit: 200,
   });
   if (error) return { ok: false, error: "Commit gagal. Coba lagi." };
   const res = data as { committed: number; failed: number; remaining: number };

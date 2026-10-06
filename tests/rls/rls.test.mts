@@ -546,3 +546,67 @@ describe("regresi trigger cache varian", () => {
     assert.ok(error);
   });
 });
+
+describe("katalog storefront (Fase 4)", () => {
+  test("RPC katalog & fitment tidak membocorkan produk draft", async () => {
+    const sku = `RLS-DRAFT-${RUN_ID}`.toUpperCase();
+    const { data: product, error } = await admin
+      .from("products")
+      .insert({
+        name: `Produk draft ${RUN_ID}`,
+        slug: `rls-draft-${RUN_ID}`,
+        sku,
+        price: 1000,
+        status: "draft",
+      })
+      .select("id")
+      .single();
+    assert.ifError(error);
+    const { data: model } = await admin.from("vehicle_models").select("id").limit(1).single();
+    await admin
+      .from("product_fitments")
+      .insert({
+        product_id: product!.id,
+        model_id: model!.id,
+        is_verified: false,
+        source: "import",
+      });
+
+    const { data: search } = await anon().rpc("catalog_search", { p_query: sku });
+    assert.equal((search ?? []).length, 0, "draft tidak boleh muncul di catalog_search");
+
+    const { data: vehicleSearch } = await anon().rpc("catalog_search", {
+      p_model_id: model!.id,
+      p_vehicle_only: true,
+      p_limit: 60,
+    });
+    assert.ok(
+      !(vehicleSearch ?? []).some((r) => r.id === product!.id),
+      "draft tidak boleh muncul lewat filter kendaraan",
+    );
+
+    const { data: facets } = await anon().rpc("catalog_facets", { p_query: sku });
+    assert.deepEqual((facets as { brands: unknown[] }).brands, []);
+
+    const { data: fitments } = await anon()
+      .from("product_fitments")
+      .select("id")
+      .eq("product_id", product!.id);
+    assert.equal(fitments?.length ?? 0, 0, "fitment produk draft tersembunyi");
+
+    // staf tetap tidak melihat draft lewat RPC storefront (selalu published)
+    const { data: staffSearch } = await adminUser.client.rpc("catalog_search", { p_query: sku });
+    assert.equal((staffSearch ?? []).length, 0);
+
+    await admin.from("products").delete().eq("id", product!.id);
+  });
+
+  test("public_reviews hanya ulasan published dengan nama disamarkan", async () => {
+    const { data, error } = await anon().rpc("public_reviews", { p_limit: 30 });
+    assert.ifError(error);
+    for (const r of data ?? []) {
+      assert.ok(!/@/.test(r.reviewer), "nama pengulas tidak boleh berisi email");
+      assert.ok(r.reviewer.split(" ").length <= 2);
+    }
+  });
+});
