@@ -69,7 +69,8 @@ async function fetchDemoProducts(): Promise<CatalogProductCard[]> {
       averageRating: i === 0 ? 4.8 : Number(p.average_rating),
       reviewCount: i === 0 ? 37 : p.review_count,
       totalSold: i === 0 ? 1240 : p.total_sold,
-      fits: i === 1,
+      fitLevel: i === 1 ? "verified" : i === 2 ? "mentioned" : null,
+      vehicleLabel: "Honda Vario 125 2022",
     };
   });
 }

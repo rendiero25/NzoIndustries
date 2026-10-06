@@ -9,7 +9,10 @@ import { FitmentBadge } from "./fitment-badge";
 import { Price } from "./price";
 import { ProductImage } from "./product-image";
 
+export type FitLevel = "verified" | "mentioned";
+
 export type CatalogProductCard = {
+  id?: string;
   slug: string;
   name: string;
   brandName?: string | null;
@@ -20,14 +23,22 @@ export type CatalogProductCard = {
   reviewCount: number;
   totalSold: number;
   imagePublicId?: string | null;
-  /** true bila produk cocok dengan kendaraan aktif di Garasi. */
-  fits?: boolean;
+  hasVariants?: boolean;
+  /**
+   * D-27: kecocokan dengan kendaraan aktif di Garasi. `verified` = badge
+   * perisai "Cocok"; `mentioned` = disebut di nama produk (teks, tanpa perisai).
+   */
+  fitLevel?: FitLevel | null;
+  /** "Honda Vario 125 2022" untuk label kecocokan. */
+  vehicleLabel?: string | null;
 };
 
 type ProductCardProps = {
   product: CatalogProductCard;
   /** Tombol tambah ke keranjang (client), disuntik dari luar. */
   action?: ReactNode;
+  /** Tombol kanan atas (wishlist). */
+  topAction?: ReactNode;
   priority?: boolean;
   className?: string;
 };
@@ -38,7 +49,7 @@ const soldFormat = new Intl.NumberFormat("id-ID", { notation: "compact" });
  * Kartu produk (design-system.md §5): gambar 1:1 → badge → nama 2 baris →
  * rating & terjual → harga. Hover desktop: naik 2px, bayangan, zoom 1.03.
  */
-export function ProductCard({ product, action, priority, className }: ProductCardProps) {
+export function ProductCard({ product, action, topAction, priority, className }: ProductCardProps) {
   const saving = discountPercent(product.price, product.compareAtPrice);
   const soldOut = product.stock <= 0;
 
@@ -52,7 +63,10 @@ export function ProductCard({ product, action, priority, className }: ProductCar
       )}
     >
       <div className="relative aspect-square overflow-hidden bg-steel-50">
-        <div className="size-full transition-transform duration-300 ease-out-nzo motion-safe:group-hover/card:scale-[1.03]">
+        <div
+          data-product-image
+          className="size-full transition-transform duration-300 ease-out-nzo motion-safe:group-hover/card:scale-[1.03]"
+        >
           <ProductImage
             publicId={product.imagePublicId}
             alt={product.name}
@@ -71,8 +85,10 @@ export function ProductCard({ product, action, priority, className }: ProductCar
               -{saving}%
             </span>
           ) : null}
-          {product.fits ? <FitmentBadge /> : null}
+          {product.fitLevel === "verified" ? <FitmentBadge /> : null}
         </div>
+
+        {topAction ? <div className="absolute top-2 right-2 z-10">{topAction}</div> : null}
 
         {action && !soldOut ? (
           <div className="absolute right-2 bottom-2 z-10 transition-opacity duration-200 md:opacity-0 md:group-focus-within/card:opacity-100 md:group-hover/card:opacity-100">
@@ -93,6 +109,11 @@ export function ProductCard({ product, action, priority, className }: ProductCar
             {product.name}
           </Link>
         </h3>
+        {product.fitLevel === "mentioned" ? (
+          <p className="text-caption text-muted-foreground">
+            Disebut untuk {product.vehicleLabel ?? "kendaraanmu"}
+          </p>
+        ) : null}
         {product.reviewCount > 0 || product.totalSold > 0 ? (
           <p className="flex items-center gap-1.5 text-caption text-muted-foreground">
             {product.reviewCount > 0 ? (

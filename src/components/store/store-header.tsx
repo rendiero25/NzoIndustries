@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   ChevronDown,
   Heart,
@@ -17,9 +17,9 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { ShieldMark } from "@/components/catalog/shield-mark";
 import { NotificationBell } from "@/components/layout/notification-bell";
 import { SiteLogo } from "@/components/shared/site-logo";
+import { GarageChip, type GarageData } from "@/components/storefront/garage-chip";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -29,53 +29,49 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/hooks/use-auth";
 import { formatIDR } from "@/lib/money";
 import { cn } from "@/lib/utils";
+import type { SearchSuggestion } from "@/app/api/search/route";
 import { useAuthStore } from "@/store/auth-store";
-import { useCartStore } from "@/store/cart-store";
-
-type SearchResult = {
-  id: string;
-  name: string;
-  slug: string;
-  base_price: number;
-  sale_price: number | null;
-};
+import { selectCartCount, useCartHydrated, useCartStore } from "@/store/cart-store";
 
 type NavItem = {
   label: string;
   href: string;
-  match: (path: string, category: string | null) => boolean;
+  match: (path: string) => boolean;
 };
 
-/** Navigasi utama design-system.md §5. Slug kategori sesuai seed (motor, mobil). */
+/** Navigasi utama design-system.md §5 (slug kategori dari pohon katalog NZO). */
 const NAV_ITEMS: NavItem[] = [
-  { label: "Semua part", href: "/products", match: (p, c) => p === "/products" && !c },
-  {
-    label: "Motor",
-    href: "/products?category=motor",
-    match: (p, c) => p === "/products" && c === "motor",
-  },
-  {
-    label: "Mobil",
-    href: "/products?category=mobil",
-    match: (p, c) => p === "/products" && c === "mobil",
-  },
+  { label: "Semua part", href: "/products", match: (p) => p === "/products" },
+  { label: "Motor", href: "/categories/motor", match: (p) => p === "/categories/motor" },
+  { label: "Mobil", href: "/categories/mobil", match: (p) => p === "/categories/mobil" },
   { label: "Brand", href: "/brands", match: (p) => p.startsWith("/brands") },
-  {
-    label: "Perawatan & alat",
-    href: "/products?category=non-otomotif",
-    match: (p, c) => p === "/products" && c === "non-otomotif",
-  },
+  { label: "Promo", href: "/promo", match: (p) => p.startsWith("/promo") },
 ];
 
+export type HeaderCategory = {
+  slug: string;
+  name: string;
+  children: { slug: string; name: string }[];
+};
+
 type StoreHeaderProps = {
-  /** @deprecated warisan starter, tidak dipakai lagi. */
-  secondHandPromoId?: string | null;
-  initialCartCount?: number;
+  /** Kategori top-level + anak untuk menu Kategori. */
+  categories?: HeaderCategory[];
+  /** Data pemilih kendaraan + kendaraan aktif (chip Garasi). */
+  garage?: GarageData;
   /** Matikan bila header dibungkus elemen sticky di parent. */
   sticky?: boolean;
   showCategoryNav?: boolean;
@@ -103,7 +99,8 @@ function initialsOf(name: string | null | undefined, email: string | null | unde
  * supaya konten tidak melompat).
  */
 export function StoreHeader({
-  initialCartCount = 0,
+  categories = [],
+  garage,
   sticky = true,
   showCategoryNav = true,
   showBorder = true,
@@ -111,22 +108,18 @@ export function StoreHeader({
 }: StoreHeaderProps) {
   const router = useRouter();
   const pathname = usePathname() ?? "/";
-  const searchParams = useSearchParams();
-  const category = pathname === "/products" ? searchParams.get("category") : null;
 
   const { user, profile, isAuthenticated, isAdmin } = useAuth();
   const resetAuth = useAuthStore((s) => s.reset);
-  const cartCount = useCartStore((s) => s.cartCount);
-  const setCartCount = useCartStore((s) => s.setCartCount);
-
-  useEffect(() => {
-    setCartCount(initialCartCount);
-  }, [initialCartCount, setCartCount]);
+  const cartCount = useCartStore(selectCartCount);
+  const bumpKey = useCartStore((s) => s.bumpKey);
+  const hydrated = useCartHydrated();
+  const shownCount = hydrated ? cartCount : 0;
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [query, setQuery] = useState("");
-  const [results, setResults] = useState<SearchResult[]>([]);
+  const [results, setResults] = useState<SearchSuggestion | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [searching, setSearching] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -142,18 +135,17 @@ export function StoreHeader({
 
   const runSearch = useCallback(async (q: string) => {
     if (q.trim().length < 2) {
-      setResults([]);
+      setResults(null);
       setShowResults(false);
       return;
     }
     setSearching(true);
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(q.trim())}`);
-      const data = (await res.json()) as { results?: SearchResult[] };
-      setResults(data.results ?? []);
+      setResults((await res.json()) as SearchSuggestion);
       setShowResults(true);
     } catch {
-      setResults([]);
+      setResults(null);
     } finally {
       setSearching(false);
     }
@@ -177,8 +169,11 @@ export function StoreHeader({
   function clearSearch() {
     setShowResults(false);
     setQuery("");
-    setResults([]);
+    setResults(null);
   }
+
+  const hasResults =
+    !!results && results.products.length + results.categories.length + results.brands.length > 0;
 
   async function logout() {
     if (loggingOut) return;
@@ -208,7 +203,7 @@ export function StoreHeader({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           onKeyDown={(e) => e.key === "Escape" && setShowResults(false)}
-          onFocus={() => results.length > 0 && setShowResults(true)}
+          onFocus={() => hasResults && setShowResults(true)}
           onBlur={() => setTimeout(() => setShowResults(false), 150)}
           placeholder="Cari kampas rem, oli, lampu…"
           autoComplete="off"
@@ -216,10 +211,36 @@ export function StoreHeader({
         />
         {searching ? <Spinner className="size-4 text-steel-500" /> : null}
       </div>
-      {showResults && results.length > 0 ? (
+      {showResults && results && hasResults ? (
         <div className="absolute inset-x-0 top-full z-50 mt-2 overflow-hidden rounded-lg border border-border bg-popover shadow-[0_16px_40px_-16px_rgb(0_0_0/0.3)]">
+          {results.categories.length + results.brands.length > 0 ? (
+            <div className="flex flex-wrap gap-1.5 border-b border-border px-4 py-3">
+              {results.categories.map((c) => (
+                <Link
+                  key={`c-${c.slug}`}
+                  href={`/categories/${c.slug}`}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={clearSearch}
+                  className="rounded-full border border-border px-3 py-1 text-caption hover:border-foreground"
+                >
+                  Kategori: {c.name}
+                </Link>
+              ))}
+              {results.brands.map((b) => (
+                <Link
+                  key={`b-${b.slug}`}
+                  href={`/brands/${b.slug}`}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={clearSearch}
+                  className="rounded-full border border-border px-3 py-1 text-caption hover:border-foreground"
+                >
+                  Brand: {b.name}
+                </Link>
+              ))}
+            </div>
+          ) : null}
           <ul>
-            {results.map((r) => (
+            {results.products.map((r) => (
               <li key={r.id}>
                 <Link
                   href={`/products/${r.slug}`}
@@ -227,10 +248,8 @@ export function StoreHeader({
                   onClick={clearSearch}
                   className="flex items-center justify-between gap-4 px-4 py-2.5 text-sm hover:bg-muted"
                 >
-                  <span className="truncate">{r.name}</span>
-                  <span className="shrink-0 font-semibold tabular-nums">
-                    {formatIDR(r.sale_price ?? r.base_price)}
-                  </span>
+                  <span className="line-clamp-1">{r.name}</span>
+                  <span className="shrink-0 font-semibold tabular-nums">{formatIDR(r.price)}</span>
                 </Link>
               </li>
             ))}
@@ -251,7 +270,7 @@ export function StoreHeader({
   const accountLinks = [
     { href: "/dashboard", label: "Ringkasan akun", icon: LayoutDashboard },
     { href: "/dashboard/orders", label: "Pesanan", icon: Package },
-    { href: "/dashboard/wishlist", label: "Wishlist", icon: Heart },
+    { href: "/wishlist", label: "Wishlist", icon: Heart },
     { href: "/dashboard/profile", label: "Profil", icon: User },
   ];
 
@@ -283,17 +302,8 @@ export function StoreHeader({
 
             {searchForm("store-search", "hidden flex-1 md:block md:max-w-xl")}
 
-            {/* Signature: konteks kendaraan aktif (pemilih kendaraan dibangun Fase 4) */}
-            <Link
-              href="/#pilih-kendaraan"
-              className="group hidden h-11 shrink-0 items-center gap-2 rounded-md border border-border px-3 text-sm transition-colors hover:border-foreground lg:flex"
-            >
-              <ShieldMark checked={false} className="size-4 text-foreground" />
-              <span className="flex flex-col leading-tight">
-                <span className="text-caption text-muted-foreground">Garasi</span>
-                <span className="font-medium">Pilih kendaraan</span>
-              </span>
-            </Link>
+            {/* Signature: konteks kendaraan aktif (prinsip "kecocokan dulu") */}
+            {garage ? <GarageChip garage={garage} className="hidden lg:flex" /> : null}
 
             <div className="ml-auto flex shrink-0 items-center gap-0.5 md:gap-1">
               <Button asChild variant="ghost" size="icon" className="md:hidden" aria-label="Cari">
@@ -311,7 +321,7 @@ export function StoreHeader({
                     className="hidden md:inline-flex"
                     aria-label="Wishlist"
                   >
-                    <Link href="/dashboard/wishlist">
+                    <Link href="/wishlist">
                       <Heart className="size-5" strokeWidth={1.75} />
                     </Link>
                   </Button>
@@ -326,13 +336,16 @@ export function StoreHeader({
                 variant="ghost"
                 size="icon"
                 className="relative"
-                aria-label={`Keranjang, ${cartCount} barang`}
+                aria-label={`Keranjang, ${shownCount} barang`}
               >
-                <Link href="/cart">
+                <Link href="/cart" data-cart-target>
                   <ShoppingBag className="size-5" strokeWidth={1.75} />
-                  {cartCount > 0 ? (
-                    <span className="absolute top-1 right-0.5 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-signal px-1 text-[0.6875rem] leading-none font-bold text-brand-black tabular-nums">
-                      {cartCount > 99 ? "99+" : cartCount}
+                  {shownCount > 0 ? (
+                    <span
+                      key={bumpKey}
+                      className="absolute top-1 right-0.5 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-signal px-1 text-[0.6875rem] leading-none font-bold text-brand-black tabular-nums motion-safe:animate-bump"
+                    >
+                      {shownCount > 99 ? "99+" : shownCount}
                     </span>
                   ) : null}
                 </Link>
@@ -404,10 +417,11 @@ export function StoreHeader({
           </div>
 
           {showCategoryNav ? (
-            <nav aria-label="Navigasi utama" className="-mx-4 hidden md:-mx-6 md:block lg:-mx-8">
-              <ul className="scrollbar-none flex gap-1 overflow-x-auto px-2 md:px-4 lg:px-6">
+            <nav aria-label="Navigasi utama" className="-mx-4 hidden md:-mx-6 md:flex lg:-mx-8">
+              {categories.length ? <CategoryMenu categories={categories} /> : null}
+              <ul className="scrollbar-none flex gap-1 overflow-x-auto px-2 md:px-0">
                 {NAV_ITEMS.map((item) => {
-                  const active = item.match(pathname, category);
+                  const active = item.match(pathname);
                   return (
                     <li key={item.href}>
                       <Link
@@ -438,17 +452,9 @@ export function StoreHeader({
           <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-5 py-5">
             {searchForm("store-search-mobile")}
 
-            <Link
-              href="/#pilih-kendaraan"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-3 rounded-md border border-border p-3"
-            >
-              <ShieldMark checked={false} className="size-5 text-foreground" />
-              <span className="flex flex-col leading-tight">
-                <span className="text-caption text-muted-foreground">Garasi</span>
-                <span className="font-medium">Pilih kendaraan</span>
-              </span>
-            </Link>
+            {garage ? (
+              <GarageChip garage={garage} className="w-full" onDone={() => setMenuOpen(false)} />
+            ) : null}
 
             <nav aria-label="Navigasi utama">
               <ul className="flex flex-col">
@@ -459,7 +465,7 @@ export function StoreHeader({
                       onClick={() => setMenuOpen(false)}
                       className={cn(
                         "flex h-12 items-center border-b border-border text-[0.9375rem]",
-                        item.match(pathname, category) && "font-semibold",
+                        item.match(pathname) && "font-semibold",
                       )}
                     >
                       {item.label}
@@ -468,6 +474,35 @@ export function StoreHeader({
                 ))}
               </ul>
             </nav>
+
+            {categories.length ? (
+              <div className="flex flex-col gap-3">
+                <p className="text-caption text-muted-foreground">Kategori</p>
+                {categories.map((root) => (
+                  <div key={root.slug} className="flex flex-col gap-1.5">
+                    <Link
+                      href={`/categories/${root.slug}`}
+                      onClick={() => setMenuOpen(false)}
+                      className="font-semibold"
+                    >
+                      {root.name}
+                    </Link>
+                    <div className="flex flex-wrap gap-1.5">
+                      {root.children.map((c) => (
+                        <Link
+                          key={c.slug}
+                          href={`/categories/${c.slug}`}
+                          onClick={() => setMenuOpen(false)}
+                          className="rounded-full border border-border px-3 py-1.5 text-caption"
+                        >
+                          {c.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : null}
 
             {isAuthenticated ? (
               <div className="flex flex-col gap-1">
@@ -514,5 +549,47 @@ export function StoreHeader({
         </SheetContent>
       </Sheet>
     </>
+  );
+}
+
+/** Menu "Kategori" desktop: kolom per kategori induk (Motor, Mobil, Non-otomotif). */
+function CategoryMenu({ categories }: { categories: HeaderCategory[] }) {
+  return (
+    <NavigationMenu viewport={false} className="pl-2 md:pl-4 lg:pl-6">
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger className="h-11 rounded-none bg-transparent px-3 text-sm font-semibold">
+            Kategori
+          </NavigationMenuTrigger>
+          <NavigationMenuContent className="z-50">
+            <div className="grid w-[min(90vw,46rem)] grid-cols-3 gap-6 p-5">
+              {categories.map((root) => (
+                <div key={root.slug} className="flex flex-col gap-2">
+                  <NavigationMenuLink asChild>
+                    <Link href={`/categories/${root.slug}`} className="font-semibold">
+                      {root.name}
+                    </Link>
+                  </NavigationMenuLink>
+                  <ul className="flex flex-col">
+                    {root.children.map((c) => (
+                      <li key={c.slug}>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href={`/categories/${c.slug}`}
+                            className="text-sm text-steel-700 hover:text-foreground"
+                          >
+                            {c.name}
+                          </Link>
+                        </NavigationMenuLink>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
   );
 }

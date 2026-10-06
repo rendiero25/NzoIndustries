@@ -5,15 +5,19 @@ import { SiteLogo } from "@/components/shared/site-logo";
 type FooterLink = { label: string; href: string; external?: boolean };
 
 const SHOP: FooterLink[] = [
-  { label: "Part motor", href: "/products?category=motor" },
-  { label: "Part mobil", href: "/products?category=mobil" },
-  { label: "Perawatan & alat", href: "/products?category=non-otomotif" },
+  { label: "Part motor", href: "/categories/motor" },
+  { label: "Part mobil", href: "/categories/mobil" },
+  { label: "Perawatan & alat", href: "/categories/non-otomotif" },
+  { label: "Promo", href: "/promo" },
   { label: "Semua brand", href: "/brands" },
 ];
 
 const HELP: FooterLink[] = [
   { label: "Lacak pesanan", href: "/dashboard/orders" },
   { label: "Akun saya", href: "/dashboard" },
+  { label: "Cara belanja", href: "/how-to-buy" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Kontak", href: "/contact" },
   { label: "Tentang NZO", href: "/about" },
 ];
 
