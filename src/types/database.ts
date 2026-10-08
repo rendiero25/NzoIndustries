@@ -664,6 +664,7 @@ export type Database = {
       order_items: {
         Row: {
           created_at: string;
+          flash_sale_item_id: string | null;
           id: string;
           line_total: number;
           order_id: string;
@@ -678,6 +679,7 @@ export type Database = {
         };
         Insert: {
           created_at?: string;
+          flash_sale_item_id?: string | null;
           id?: string;
           line_total: number;
           order_id: string;
@@ -692,6 +694,7 @@ export type Database = {
         };
         Update: {
           created_at?: string;
+          flash_sale_item_id?: string | null;
           id?: string;
           line_total?: number;
           order_id?: string;
@@ -705,6 +708,13 @@ export type Database = {
           weight_grams?: number | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "order_items_flash_sale_item_id_fkey";
+            columns: ["flash_sale_item_id"];
+            isOneToOne: false;
+            referencedRelation: "flash_sale_items";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "order_items_order_id_fkey";
             columns: ["order_id"];
@@ -770,6 +780,7 @@ export type Database = {
         Row: {
           cancel_reason: string | null;
           cancelled_at: string | null;
+          checkout_key: string | null;
           created_at: string;
           customer_note: string | null;
           discount_total: number;
@@ -791,6 +802,7 @@ export type Database = {
         Insert: {
           cancel_reason?: string | null;
           cancelled_at?: string | null;
+          checkout_key?: string | null;
           created_at?: string;
           customer_note?: string | null;
           discount_total?: number;
@@ -812,6 +824,7 @@ export type Database = {
         Update: {
           cancel_reason?: string | null;
           cancelled_at?: string | null;
+          checkout_key?: string | null;
           created_at?: string;
           customer_note?: string | null;
           discount_total?: number;
@@ -2008,6 +2021,30 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      cart_lines: {
+        Args: { p_items: Json };
+        Returns: {
+          available: number;
+          compare_at_price: number;
+          flash_sale_item_id: string;
+          height_mm: number;
+          image_public_id: string;
+          length_mm: number;
+          line_no: number;
+          product_id: string;
+          product_name: string;
+          quantity: number;
+          regular_price: number;
+          sku: string;
+          slug: string;
+          status: string;
+          unit_price: number;
+          variant_id: string;
+          variant_name: string;
+          weight_grams: number;
+          width_mm: number;
+        }[];
+      };
       catalog_brands: {
         Args: never;
         Returns: {
@@ -2070,8 +2107,25 @@ export type Database = {
         }[];
       };
       catalog_stats: { Args: never; Returns: Json };
+      checkout_quote: {
+        Args: { p_items: Json; p_user: string; p_voucher_code?: string };
+        Returns: Json;
+      };
       import_commit_batch: {
         Args: { p_batch_id: string; p_limit?: number };
+        Returns: Json;
+      };
+      place_order: {
+        Args: {
+          p_address: Json;
+          p_checkout_key: string;
+          p_items: Json;
+          p_note?: string;
+          p_payment_provider: Database["public"]["Enums"]["payment_provider"];
+          p_shipping: Json;
+          p_user: string;
+          p_voucher_code: string;
+        };
         Returns: Json;
       };
       public_reviews: {
@@ -2088,6 +2142,7 @@ export type Database = {
           reviewer: string;
         }[];
       };
+      release_expired_orders: { Args: never; Returns: number };
       set_user_blocked: {
         Args: { blocked: boolean; target_user: string };
         Returns: undefined;

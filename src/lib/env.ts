@@ -31,6 +31,16 @@ const serverEnvSchema = z.object({
     .string()
     .regex(/^\d{5}$/)
     .optional(),
+  BITESHIP_ORIGIN_AREA_ID: z.string().min(1).optional(),
+  // Kode kurir Biteship dipisah koma (P-12).
+  BITESHIP_COURIERS: z
+    .string()
+    .regex(/^[a-z0-9_]+(,[a-z0-9_]+)*$/)
+    .default("jne,jnt,sicepat,anteraja"),
+  // Dipakai bila berat produk belum diisi (D-30).
+  DEFAULT_ITEM_WEIGHT_GRAMS: z.coerce.number().int().positive().max(100000).default(1000),
+  // Tarif uji bila BITESHIP_API_KEY kosong. Opt-in eksplisit, jangan di produksi.
+  SHIPPING_TEST_RATES: z.enum(["true", "false"]).default("false"),
 
   JUBELIO_BASE_URL: z.url().optional(),
   JUBELIO_EMAIL: z.string().min(1).optional(),

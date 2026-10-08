@@ -563,14 +563,12 @@ describe("katalog storefront (Fase 4)", () => {
       .single();
     assert.ifError(error);
     const { data: model } = await admin.from("vehicle_models").select("id").limit(1).single();
-    await admin
-      .from("product_fitments")
-      .insert({
-        product_id: product!.id,
-        model_id: model!.id,
-        is_verified: false,
-        source: "import",
-      });
+    await admin.from("product_fitments").insert({
+      product_id: product!.id,
+      model_id: model!.id,
+      is_verified: false,
+      source: "import",
+    });
 
     const { data: search } = await anon().rpc("catalog_search", { p_query: sku });
     assert.equal((search ?? []).length, 0, "draft tidak boleh muncul di catalog_search");
@@ -608,5 +606,227 @@ describe("katalog storefront (Fase 4)", () => {
       assert.ok(!/@/.test(r.reviewer), "nama pengulas tidak boleh berisi email");
       assert.ok(r.reviewer.split(" ").length <= 2);
     }
+  });
+});
+
+describe("checkout (Fase 5)", () => {
+  // customerB sudah dijadikan staf (cs) oleh test role di atas.
+  let outsider: TestUser;
+  let productId: string;
+  let voucherId: string;
+  const voucherCode = `RLS${RUN_ID}`.toUpperCase();
+  const address = {
+    recipient: "Uji",
+    phone: "081234567890",
+    city: "Bandung",
+    postal_code: "40132",
+  };
+  const shipping = { courier_code: "uji", courier_service: "reg", cost: 10000 };
+  const items = (quantity = 2) => [
+    { product_id: productId, variant_id: null, quantity, unit_price: 1 },
+  ];
+
+  before(async () => {
+    outsider = await createTestUser("customer");
+    const { data: product, error } = await admin
+      .from("products")
+      .insert({
+        name: `Produk checkout ${RUN_ID}`,
+        slug: `rls-checkout-${RUN_ID}`,
+        sku: `RLS-CO-${RUN_ID}`.toUpperCase(),
+        price: 50000,
+        status: "published",
+      })
+      .select("id")
+      .single();
+    if (error || !product) throw new Error(`produk checkout: ${error?.message}`);
+    productId = product.id;
+    const { error: stockError } = await admin
+      .from("inventory_movements")
+      .insert({ product_id: productId, quantity: 3, type: "initial" });
+    if (stockError) throw new Error(`stok awal: ${stockError.message}`);
+
+    const { data: voucher, error: vErr } = await admin
+      .from("vouchers")
+      .insert({
+        code: voucherCode,
+        discount_type: "percent",
+        discount_value: 10,
+        max_discount: 5000,
+        per_user_limit: 1,
+      })
+      .select("id")
+      .single();
+    if (vErr || !voucher) throw new Error(`voucher: ${vErr?.message}`);
+    voucherId = voucher.id;
+  });
+
+  after(async () => {
+    const { data: rows } = await admin
+      .from("order_items")
+      .select("order_id")
+      .eq("product_id", productId);
+    const ids = [...new Set((rows ?? []).map((o) => o.order_id))];
+    if (ids.length) await admin.from("orders").delete().in("id", ids);
+    await admin.from("vouchers").delete().eq("id", voucherId);
+    // Ledger stok append-only: produk uji diarsipkan, bukan dihapus.
+    await admin.from("products").update({ status: "archived" }).eq("id", productId);
+  });
+
+  test("RPC tulis checkout tidak bisa dipanggil anon/authenticated", async () => {
+    const args = {
+      p_user: customerA.id,
+      p_checkout_key: crypto.randomUUID(),
+      p_items: items(),
+      p_address: address,
+      p_shipping: { ...shipping, cost: 0 },
+      p_voucher_code: "",
+      p_payment_provider: "manual_transfer" as const,
+    };
+    for (const client of [anon(), customerA.client]) {
+      const { error } = await client.rpc("place_order", args);
+      assert.ok(error, "place_order wajib ditolak");
+      const { error: qErr } = await client.rpc("checkout_quote", {
+        p_user: customerA.id,
+        p_items: items(),
+      });
+      assert.ok(qErr, "checkout_quote wajib ditolak");
+      const { error: rErr } = await client.rpc("release_expired_orders");
+      assert.ok(rErr, "release_expired_orders wajib ditolak");
+    }
+  });
+
+  test("cart_lines publik: harga dari DB, draft tidak bocor", async () => {
+    const { data, error } = await anon().rpc("cart_lines", { p_items: items() });
+    assert.ifError(error);
+    assert.equal(data?.[0]?.unit_price, 50000);
+    assert.equal(data?.[0]?.status, "ok");
+
+    const { data: draft } = await admin
+      .from("products")
+      .select("id")
+      .eq("status", "draft")
+      .limit(1)
+      .maybeSingle();
+    if (draft) {
+      const { data: hidden } = await anon().rpc("cart_lines", {
+        p_items: [{ product_id: draft.id, variant_id: null, quantity: 1 }],
+      });
+      assert.equal(hidden?.[0]?.status, "unavailable");
+      assert.equal(hidden?.[0]?.product_name, null);
+    }
+  });
+
+  test("keranjang user lain tidak terbaca atau diubah", async () => {
+    const { data: cart, error } = await customerA.client
+      .from("carts")
+      .upsert({ user_id: customerA.id }, { onConflict: "user_id" })
+      .select("id")
+      .single();
+    assert.ifError(error);
+    const { error: itemErr } = await customerA.client
+      .from("cart_items")
+      .insert({ cart_id: cart!.id, product_id: productId, quantity: 2 });
+    assert.ifError(itemErr);
+
+    const { data: seen } = await outsider.client
+      .from("cart_items")
+      .select("id")
+      .eq("cart_id", cart!.id);
+    assert.equal(seen?.length ?? 0, 0);
+    const { error: injectErr } = await outsider.client
+      .from("cart_items")
+      .insert({ cart_id: cart!.id, product_id: productId, quantity: 1 });
+    assert.ok(injectErr, "tidak boleh menambah ke keranjang orang lain");
+  });
+
+  test("place_order: total dari DB, reservasi, idempotent, voucher, expired", async () => {
+    const args = {
+      p_user: customerA.id,
+      p_checkout_key: crypto.randomUUID(),
+      p_items: items(),
+      p_address: address,
+      p_shipping: shipping,
+      p_voucher_code: voucherCode.toLowerCase(),
+      p_payment_provider: "manual_transfer" as const,
+    };
+    const { data, error } = await admin.rpc("place_order", args);
+    assert.ifError(error);
+    const created = data as { order_id: string; order_number: string; created: boolean };
+    assert.equal(created.created, true);
+
+    const { data: order } = await admin
+      .from("orders")
+      .select("subtotal, discount_total, shipping_cost, grand_total, status")
+      .eq("id", created.order_id)
+      .single();
+    // unit_price palsu di input diabaikan: 2 × 50.000, diskon 10% maks 5.000
+    assert.equal(Number(order!.subtotal), 100000);
+    assert.equal(Number(order!.discount_total), 5000);
+    assert.equal(Number(order!.grand_total), 105000);
+    assert.equal(order!.status, "pending_payment");
+
+    // stok tersedia turun (3 − 2); baris keranjang yang dibeli terhapus
+    const { data: lines } = await anon().rpc("cart_lines", { p_items: items() });
+    assert.equal(lines?.[0]?.available, 1);
+    assert.equal(lines?.[0]?.status, "insufficient");
+    const { data: cartLeft } = await customerA.client
+      .from("cart_items")
+      .select("id")
+      .eq("product_id", productId);
+    assert.equal(cartLeft?.length ?? 0, 0);
+
+    // pesanan A tidak terbaca B
+    const { data: seenByB } = await outsider.client
+      .from("orders")
+      .select("id")
+      .eq("id", created.order_id);
+    assert.equal(seenByB?.length ?? 0, 0);
+
+    // checkout_key sama: pesanan yang sama
+    const { data: again } = await admin.rpc("place_order", args);
+    assert.equal((again as { order_id: string }).order_id, created.order_id);
+    assert.equal((again as { created: boolean }).created, false);
+
+    // stok kurang ditolak
+    const { error: stockErr } = await admin.rpc("place_order", {
+      ...args,
+      p_checkout_key: crypto.randomUUID(),
+      p_voucher_code: "",
+    });
+    assert.match(stockErr?.message ?? "", /Stok/);
+
+    // lewat batas bayar: expired, stok & voucher kembali
+    await admin
+      .from("orders")
+      .update({ payment_due_at: new Date(Date.now() - 60_000).toISOString() })
+      .eq("id", created.order_id);
+    const { data: expired, error: expErr } = await admin.rpc("release_expired_orders");
+    assert.ifError(expErr);
+    assert.ok((expired ?? 0) >= 1);
+    const { data: afterExpire } = await admin
+      .from("orders")
+      .select("status")
+      .eq("id", created.order_id)
+      .single();
+    assert.equal(afterExpire!.status, "expired");
+    const { data: restored } = await anon().rpc("cart_lines", { p_items: items() });
+    assert.equal(restored?.[0]?.available, 3);
+    const { data: v } = await admin
+      .from("vouchers")
+      .select("used_count")
+      .eq("id", voucherId)
+      .single();
+    assert.equal(v!.used_count, 0);
+
+    // per_user_limit 1: dipakai lagi berhasil (redemption dilepas), berikutnya ditolak
+    const second = { ...args, p_checkout_key: crypto.randomUUID(), p_items: items(1) };
+    const { error: okAgain } = await admin.rpc("place_order", second);
+    assert.ifError(okAgain);
+    const { error: limitErr } = await admin.rpc("place_order", {
+      ...second,
+      p_checkout_key: crypto.randomUUID(),
+    });
+    assert.match(limitErr?.message ?? "", /sudah memakai voucher/);
   });
 });
