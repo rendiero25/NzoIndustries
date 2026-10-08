@@ -6,6 +6,7 @@ import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/guards";
 import { verifyTurnstile } from "@/lib/auth/turnstile";
 import { getServerEnv } from "@/lib/env";
+import { startPayment } from "@/lib/payments/start";
 import { checkRateLimit } from "@/lib/security/rate-limit";
 import {
   getShippingProvider,
@@ -171,7 +172,7 @@ export async function previewCheckout(input: { voucherCode?: string }): Promise<
 }
 
 export type PlaceOrderResult =
-  | { ok: true; orderNumber: string }
+  | { ok: true; orderNumber: string; paymentUrl: string | null; paymentError: string | null }
   | { ok: false; error: string; fieldErrors?: Record<string, string[]> };
 
 export async function placeOrder(input: PlaceOrderInput): Promise<PlaceOrderResult> {
@@ -247,13 +248,24 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlaceOrderResu
       .eq("checkout_key", v.checkoutKey)
       .eq("user_id", user.id)
       .maybeSingle();
-    if (existing) return { ok: true, orderNumber: existing.order_number };
+    if (existing) {
+      return { ok: true, orderNumber: existing.order_number, paymentUrl: null, paymentError: null };
+    }
     const message =
       error?.code === "P0001" && error.message ? error.message : "Pesanan gagal dibuat. Coba lagi.";
     return { ok: false, error: message };
   }
 
-  const result = data as { order_number: string };
+  const result = data as { order_id: string; order_number: string };
   revalidatePath("/cart");
-  return { ok: true, orderNumber: result.order_number };
+
+  // Link bayar Mayar (D-31). Gagal di sini tidak membatalkan pesanan:
+  // halaman status menyediakan "Bayar sekarang" untuk mencoba lagi.
+  const payment = await startPayment(result.order_id, { id: user.id, email: user.email });
+  return {
+    ok: true,
+    orderNumber: result.order_number,
+    paymentUrl: payment.ok ? payment.checkoutUrl : null,
+    paymentError: payment.ok ? null : payment.error,
+  };
 }

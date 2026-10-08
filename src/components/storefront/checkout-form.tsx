@@ -237,6 +237,12 @@ export function CheckoutForm({
         return;
       }
       useCartStore.getState().replaceItems([], userId);
+      if (res.paymentUrl) {
+        // Halaman bayar Mayar (atau simulator di dev). Kembali ke halaman status setelahnya.
+        window.location.assign(res.paymentUrl);
+        return;
+      }
+      if (res.paymentError) toast.info(res.paymentError);
       router.replace(`/checkout/success?order=${encodeURIComponent(res.orderNumber)}`);
     });
   }
@@ -465,7 +471,7 @@ export function CheckoutForm({
             </RadioGroup>
           )}
           <p className="text-caption text-muted-foreground">
-            Instruksi pembayaran muncul setelah pesanan dibuat. Batas waktu bayar{" "}
+            Setelah pesanan dibuat, kamu diarahkan ke halaman pembayaran Mayar. Batas waktu bayar{" "}
             {formatTimeout(paymentTimeoutMinutes)}.
           </p>
         </Step>
@@ -592,7 +598,7 @@ export function CheckoutForm({
               aria-describedby={missing ? "checkout-missing" : undefined}
             >
               {placing ? <Spinner className="size-4" /> : null}
-              {placing ? "Membuat pesanan…" : "Buat pesanan"}
+              {placing ? "Membuat pesanan…" : "Buat pesanan & bayar"}
             </Button>
             {missing && quote.allOk ? (
               <p id="checkout-missing" className="text-caption text-muted-foreground">

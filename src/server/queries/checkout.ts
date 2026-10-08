@@ -93,6 +93,8 @@ export type OrderSummary = {
   discountTotal: number;
   paymentProvider: PaymentProviderId | null;
   paymentDueAt: string | null;
+  paidAt: string | null;
+  paymentMethod: string | null;
   createdAt: string;
   itemCount: number;
   courier: string | null;
@@ -106,7 +108,7 @@ export async function getOrderForUser(orderNumber: string): Promise<OrderSummary
   const { data } = await supabase
     .from("orders")
     .select(
-      "id, order_number, status, grand_total, subtotal, shipping_cost, discount_total, payment_provider, payment_due_at, created_at, order_items(quantity), shipments(courier_code, courier_service)",
+      "id, order_number, status, grand_total, subtotal, shipping_cost, discount_total, payment_provider, payment_due_at, paid_at, created_at, order_items(quantity), shipments(courier_code, courier_service), payments(status, method, created_at)",
     )
     .eq("order_number", orderNumber)
     .eq("user_id", user.id)
@@ -123,6 +125,11 @@ export async function getOrderForUser(orderNumber: string): Promise<OrderSummary
     discountTotal: Number(data.discount_total),
     paymentProvider: data.payment_provider,
     paymentDueAt: data.payment_due_at,
+    paidAt: data.paid_at,
+    paymentMethod:
+      [...(data.payments ?? [])]
+        .filter((p) => p.status === "paid")
+        .sort((a, b) => b.created_at.localeCompare(a.created_at))[0]?.method ?? null,
     createdAt: data.created_at,
     itemCount: (data.order_items ?? []).reduce((n, i) => n + i.quantity, 0),
     courier: shipment

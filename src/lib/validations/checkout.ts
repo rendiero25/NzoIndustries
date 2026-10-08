@@ -40,8 +40,9 @@ export type PlaceOrderInput = z.infer<typeof placeOrderSchema>;
 export const PAYMENT_LABELS: Record<PaymentProviderId, { title: string; description: string }> = {
   mayar: {
     title: "Pembayaran online",
-    description: "Virtual account, e-wallet, QRIS, atau kartu lewat Mayar.",
+    description: "QRIS, virtual account, e-wallet, atau kartu lewat Mayar.",
   },
+  // Tidak dipakai sejak D-31 (Mayar saja); disimpan untuk change request.
   manual_transfer: {
     title: "Transfer bank",
     description: "Transfer manual ke rekening NZO, lalu unggah bukti transfer.",

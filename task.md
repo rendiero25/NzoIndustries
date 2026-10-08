@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.10 (2026-10-08). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.11 (2026-10-08). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -159,15 +159,22 @@ Versi dokumen: 0.10 (2026-10-08). Aturan, keputusan (`D-xx`), dan pending klien 
 - Cek: `pnpm test` 50/50, `pnpm test:rls` 26/26, typecheck, lint 0 error.
 - Menunggu: env Upstash, Turnstile, Biteship (key, `BITESHIP_ORIGIN_AREA_ID`/kode pos, `BITESHIP_COURIERS`), jadwal cron-job.org tiap 10 menit, berat/dimensi produk nyata (sementara `DEFAULT_ITEM_WEIGHT_GRAMS`).
 
-## Fase 6 — Pembayaran [P-02]
-- [ ] Interface `PaymentProvider` (`createPayment`, `verifyWebhook`, `getStatus`) (D-08)
-- [ ] Provider Mayar: buat pembayaran, redirect, webhook dengan verifikasi signature + idempotency (`webhook_events`)
-- [ ] Provider transfer manual: kode unik 3 digit, instruksi rekening, upload bukti ke bucket privat (validasi tipe dan ukuran), status `awaiting_verification`
-- [ ] Toggle provider aktif di `store_settings`
-- [ ] Expired otomatis untuk pesanan tidak dibayar (batas waktu diatur admin)
-- [ ] Update status pesanan dan stok final setelah pembayaran terkonfirmasi
+## Fase 6 — Pembayaran (D-31: Mayar saja)
+- [x] Interface `PaymentProvider` (`createPayment`, `verifyWebhook`, `getStatus`, `close`) (D-08)
+- [x] Provider Mayar: buat pembayaran, redirect, webhook dengan verifikasi token + idempotency (`webhook_events`) — **menunggu** `MAYAR_API_KEY` + `MAYAR_WEBHOOK_TOKEN` dari user; dev memakai simulator (D-32)
+- [x] ~~Provider transfer manual~~ — dibatalkan (D-31); toggle dimatikan, abstraksi disimpan
+- [x] Toggle provider aktif di `store_settings` (checkout hanya menampilkan provider aktif; UI admin di Fase 8)
+- [x] Expired otomatis untuk pesanan tidak dibayar (cron Fase 5 + payment ikut expired + tutup link Mayar; batas waktu dari `payment_timeout_minutes`, UI admin Fase 8)
+- [x] Update status pesanan dan stok final setelah pembayaran terkonfirmasi (RPC `mark_order_paid`)
 
 **Catatan fase:**
+- Migration `20261009000100_payments.sql`: `payments.method`, `payments.transaction_ref`, unik 1 payment pending per order, RPC `mark_order_paid` (service role, idempotent: settled / already_paid / amount_mismatch / paid_after_cancel), `release_expired_orders` mengembalikan `(order_id, provider_ref)` dan meng-expire payment.
+- `src/lib/payments/`: `provider`, `mayar` (klien HTTP dipindah dari legacy; `lib/mayar/client.ts` tinggal re-export), `mayar-method`, `mayar-webhook`, `test-provider`, `settle`, `start`. Legacy `reconcile-mayar`, `apply-paid-order`, `close-pending`, `manual-refund` ditandai `@deprecated` (dashboard lama, Fase 7/8).
+- UI: checkout redirect ke halaman bayar; `/checkout/success` jadi halaman status (Bayar sekarang, Cek status, cek otomatis saat kembali); simulator `/checkout/pay-test/[ref]`.
+- Dev: `manual_transfer_enabled = false`; `.env.local` `PAYMENT_TEST_MODE=true`.
+- Diuji di browser (akun uji sementara, sudah dihapus): checkout → simulator → batal → "Bayar sekarang" memakai link sama → bayar berhasil → status "Pembayaran diterima"; DB: order paid, payment paid, reservasi consumed, movement sale, stok turun, notifikasi user. Webhook: tanpa/salah token 401, kiriman ganda diproses sekali. Stok DEMO dikembalikan dengan movement `correction`.
+- Cek: `pnpm test` 54/54, `pnpm test:rls` 29/29, typecheck, lint 0 error.
+- Menunggu user: kunci Mayar sandbox/produksi + token webhook, daftarkan URL webhook di dashboard Mayar.
 
 ## Fase 7 — Dashboard user (`/account`)
 - [ ] Ringkasan akun
@@ -271,5 +278,6 @@ Versi dokumen: 0.10 (2026-10-08). Aturan, keputusan (`D-xx`), dan pending klien 
 - 0.6 (2026-10-02): D-20 (MFA staf lewat flag, default mati), fix reset password akun ber-TOTP, uji auth user.
 - 0.7 (2026-10-02): Fase 2 selesai (kecuali logo resmi), redesign shell, codemod palet GeekyTech.
 - 0.9 (2026-10-07): Fase 4 selesai (storefront NZO: beranda, PLP, PDP, Garasi, wishlist, halaman statis).
+- 0.11 (2026-10-08): Fase 6 selesai (Mayar saja, D-31; simulator dev, D-32). Transfer manual dibatalkan.
 - 0.10 (2026-10-08): Fase 5 selesai (keranjang, checkout, ongkir lewat ShippingProvider, reservasi stok, cron expired). Biteship asli menunggu env/P-11/P-12.
 - 0.8 (2026-10-06): Fase 3 (katalog, import export Jubelio, Cloudinary, kategori & kendaraan). Logo resmi dicentang. Script API Jubelio dan stok/foto nyata tetap menunggu P-04.

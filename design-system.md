@@ -1,6 +1,6 @@
 # design-system.md — NZO Industries
 
-Versi dokumen: 0.10 (2026-10-08). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
+Versi dokumen: 0.11 (2026-10-08). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
 
 ## 1. Arah desain
 
@@ -145,7 +145,9 @@ Mobile: bar beli sticky di bawah (harga + tombol).
 - Keranjang: Sheet dari kanan untuk ringkasan cepat (ikon keranjang header = pemicu Sheet sekaligus target animasi "terbang"), halaman `/cart` untuk detail. Komponen: `CartSheet`, `CartView`, `CartLineItem` (`src/components/storefront/`).
 - Harga & stok di keranjang selalu dari server (`useLiveCart`, dicek ulang setiap qty berubah). Pesan baris (`text-caption`): "Stok tinggal N." (abu, bila ≤ 5), "Stok tinggal N. Kurangi jumlahnya." / "Stok habis. Hapus dari keranjang." / "Tidak tersedia. Hapus dari keranjang." (`danger`, `role="alert"`). Badge `signal` "Flash sale" bila harga flash sale berlaku. Tombol checkout nonaktif selama ada baris bermasalah.
 - Checkout satu halaman (`CheckoutForm`) dengan langkah bernomor dalam kartu: alamat → kurir & ongkir → voucher → metode pembayaran; ringkasan sticky di kanan (desktop), di bawah (mobile). Pilihan alamat/kurir/pembayaran = RadioGroup dalam kartu yang bisa diklik penuh (terpilih: `border-primary bg-steel-50`). Alamat baru lewat Dialog (`AddressDialog`, pencarian kecamatan Popover + Command). Tarif uji diberi Badge outline "Tarif uji" (D-30).
-- Halaman sukses: ikon centang `success`, nomor pesanan (mono), total, metode, kurir, batas bayar (WIB). Instruksi pembayaran (kode unik transfer manual, Mayar) menyusul di Fase 6.
+- Halaman status pesanan (`/checkout/success`): tiga keadaan. Menunggu bayar = ikon jam `steel-700`, judul "Selesaikan pembayaran", kotak batas bayar (WIB), tombol "Bayar sekarang" (primary) + "Cek status pembayaran" (outline). Lunas = ikon centang `success`, "Pembayaran diterima", metode & waktu bayar. Batal/expired = ikon silang `danger`, "Pesanan dibatalkan", ajakan belanja lagi. Nomor pesanan selalu mono.
+- Checkout langkah 4 hanya Mayar (D-31); tombol utama "Buat pesanan & bayar" lalu redirect penuh ke halaman Mayar.
+- Simulator pembayaran dev (D-32): kartu bergaris putus-putus dengan label "Mode uji — bukan pembayaran sungguhan", tidak pernah tampil di produksi.
 
 ## 6. Dashboard user dan admin
 
@@ -269,5 +271,6 @@ Hitam-putih, tanpa warna aksen, aman untuk printer thermal/laser. Cetak massal: 
 - 0.6 (2026-10-02): Sinkron versi (D-20).
 - 0.7 (2026-10-02): Fase 2 diimplementasikan. `success` jadi `#1C7F46` (kontras AA), daftar komponen NZO + varian tombol `signal`, implementasi dark mode admin, catatan paket `motion` untuk Magic UI. Logo & perisai masih sementara.
 - 0.9 (2026-10-07): Komponen storefront Fase 4 (VehicleSelector, GarageChip, CatalogPage, ProductView), aturan tampilan kecocokan dua tingkat (D-27), animasi bump/pop/tick. Header tetap tidak mengubah tinggi saat scroll (hanya bayangan) agar konten tidak melompat.
+- 0.11 (2026-10-08): Halaman status pembayaran (3 keadaan), checkout hanya Mayar, tampilan simulator dev.
 - 0.10 (2026-10-08): Pola keranjang & checkout Fase 5 (CartSheet, label status baris, CheckoutForm, AddressDialog, Badge "Tarif uji").
 - 0.8 (2026-10-06): Logo resmi (D-25) menggantikan wordmark teks; favicon perisai (ikut skema terang/gelap). §11: alur upload foto admin.

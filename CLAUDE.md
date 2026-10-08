@@ -1,6 +1,6 @@
 # CLAUDE.md — NZO Industries E-commerce
 
-Versi dokumen: 0.10 (2026-10-08). Baca file ini di awal setiap sesi.
+Versi dokumen: 0.11 (2026-10-08). Baca file ini di awal setiap sesi.
 
 ## Proyek
 Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (plus sebagian produk non-otomotif yang masuk kategori sendiri). Ada tiga area: storefront publik, dashboard user (`/account`), dan dashboard admin/CMS (`/admin`). Prinsip utama: **security first**.
@@ -25,7 +25,7 @@ Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (pl
 - **Backend:** Supabase (Postgres, Auth, RLS, Storage privat untuk bukti transfer), server actions + route handlers.
 - **Gambar:** Cloudinary (`next-cloudinary`) untuk foto produk, banner, brand, konten. Upload selalu signed dari server.
 - **Email:** Resend + React Email (transaksional dan SMTP untuk email Supabase Auth).
-- **Pembayaran:** Mayar + transfer manual lewat lapisan `PaymentProvider` (lihat P-02).
+- **Pembayaran:** Mayar saja (D-31) lewat lapisan `PaymentProvider` (`src/lib/payments/`).
 - **Ongkir:** Biteship.
 - **Form & validasi:** React Hook Form + Zod (schema dipakai bersama client dan server).
 - **Tabel admin:** TanStack Table via shadcn Data Table.
@@ -70,6 +70,7 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - Storefront (Fase 4): rute `/products`, `/products/[slug]`, `/categories/[slug]`, `/brands`, `/brands/[slug]`, `/search`, `/promo`, `/wishlist`, `/about`, `/contact`, `/faq`, `/how-to-buy`. Data katalog lewat `src/server/queries/{catalog,reference,home,vehicle}.ts` (client anon tanpa cookie `src/lib/supabase/public.ts` untuk data publik/cache, `unstable_cache` tag `catalog`). PLP memakai RPC `catalog_search` + `catalog_facets` (filter di `private.catalog_filter`, plpgsql security definer, selalu `status = 'published'`); filter URL di `src/lib/validations/catalog.ts`. Kendaraan aktif: cookie `nzo_vehicle` + Garasi default (`user_vehicles`). Keranjang guest: `src/store/cart-store.ts` (snapshot tampilan; harga final dihitung server di Fase 5).
 - Keranjang & checkout (Fase 5): `/cart`, `/checkout` (wajib login), `/checkout/success?order=`. Harga/stok keranjang dari RPC `cart_lines` (`src/server/queries/cart.ts`); `<CartSync>` di layout publik menggabungkan keranjang guest ke `carts` saat login. Pesanan hanya lewat server action `placeOrder` → RPC `place_order` (service role). Ongkir lewat `getShippingProvider()` (`src/lib/shipping/`); env `BITESHIP_ORIGIN_AREA_ID`/`BITESHIP_ORIGIN_POSTAL_CODE`, `BITESHIP_COURIERS`, `DEFAULT_ITEM_WEIGHT_GRAMS`, `SHIPPING_TEST_RATES` (dev/staging saja). Rate limit: `checkRateLimit()` (`src/lib/security/rate-limit.ts`, Upstash; tanpa env = in-memory, wajib diisi sebelum launch).
 - Cron: `GET /api/cron/expire-orders` dengan header `Authorization: Bearer <CRON_SECRET>`, dijadwalkan tiap 10 menit di cron-job.org (Vercel Hobby hanya harian).
+- Pembayaran (Fase 6): `placeOrder` → `startPayment` (link Mayar, reuse link pending) → redirect. Halaman status `/checkout/success?order=` (bayar ulang, cek status). Webhook `POST /api/webhooks/mayar` (header `x-callback-token` = `MAYAR_WEBHOOK_TOKEN`, idempotent di `webhook_events`); daftarkan `${NEXT_PUBLIC_APP_URL}/api/webhooks/mayar` di dashboard Mayar (sandbox web.mayar.club, produksi web.mayar.id). Simulator dev `/checkout/pay-test/[ref]` bila `MAYAR_API_KEY` kosong dan `PAYMENT_TEST_MODE=true` (D-32).
 - Rute yang bisa `notFound()` jangan diberi `loading.tsx` (streaming dimulai sebelum 404, status jadi 200); bungkus konten lambat dengan `Suspense` setelah validasi.
 
 ## Konvensi kode
@@ -105,7 +106,7 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - **Fitment kendaraan:** opsional per produk (merek → model → rentang tahun). Produk tanpa fitment tidak muncul di filter kecocokan.
 - **Stok:** ledger `inventory_movements`. Stok di-reserve saat pesanan dibuat, dilepas saat expired/batal, dikurangi final saat dibayar.
 - **Status pesanan:** `pending_payment → awaiting_verification (transfer manual) → paid → processing → shipped → delivered → completed`, plus `cancelled`, `expired`, `refunded`. Setiap perubahan dicatat di `order_status_history`.
-- **Pembayaran:** interface `PaymentProvider` dengan provider `mayar` dan `manual_transfer`, bisa diaktif/nonaktifkan di pengaturan toko. Transfer manual memakai kode unik 3 digit dan diverifikasi admin.
+- **Pembayaran:** Mayar saja (D-31) lewat interface `PaymentProvider`. Pelunasan hanya lewat `settlePayment()` yang selalu menanyakan ulang status & nominal ke provider, lalu RPC `mark_order_paid` (stok final `sale`, reservasi `consumed`). Transfer manual dinonaktifkan (toggle `store_settings`), abstraksinya disimpan untuk change request.
 - **Ongkir:** Biteship, berat dihitung dari yang terbesar antara berat aktual dan volumetrik (p×l×t/6000).
 - **Dokumen:** invoice PDF (A4) diunduh user dari detail pesanan; resi A5 dicetak admin, bisa massal.
 - **Import:** Jubelio → tabel staging → produk berstatus `draft` → admin review lalu publish. Upsert by SKU, simpan `jubelio_item_id`, foto diunggah ulang ke Cloudinary.
@@ -140,12 +141,14 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - D-28 Checkout wajib login (schema `orders.user_id not null` tetap). Keranjang guest tetap di localStorage dan digabung ke tabel `carts` saat login (qty terbesar, dibatasi stok); setelah login tabel `carts` jadi sumber kebenaran, logout mengosongkan keranjang lokal.
 - D-29 Pesanan hanya dibuat lewat RPC `public.place_order` (security definer, `execute` hanya `service_role`) dari server action setelah auth, rate limit, Turnstile, dan Zod. Keranjang dibaca dari DB, ongkir diambil ulang server dari provider (pilihan client hanya id layanan), harga/flash sale/voucher dihitung di DB, idempotent via `orders.checkout_key`. Stok tersedia = stok cache − reservasi `active` yang belum kedaluwarsa (`private.available_stock`). Pembayaran (instruksi, kode unik, Mayar) di Fase 6; pesanan dibuat `pending_payment` dengan metode dari toggle `store_settings`.
 - D-30 Ongkir lewat interface `ShippingProvider` (`src/lib/shipping/`): Biteship bila `BITESHIP_API_KEY` ada; tarif uji (Badge "Tarif uji") hanya bila key kosong dan `SHIPPING_TEST_RATES=true` (dev/staging, jangan di produksi). Berat tagihan = max(aktual, p×l×t/6000); berat kosong memakai `DEFAULT_ITEM_WEIGHT_GRAMS` (1000) sampai data berat produk masuk.
+- D-31 P-02 terjawab: pembayaran **hanya Mayar** (QRIS, VA, e-wallet, kartu lewat halaman Mayar). `manual_transfer` dinonaktifkan di `store_settings` dan tidak tampil di checkout; enum, interface `PaymentProvider`, dan label disimpan supaya bisa diaktifkan lagi lewat change request. Kode unik & upload bukti transfer tidak dikerjakan. Pembayaran yang masuk setelah pesanan expired/batal dicatat `paid_after_cancel` + notifikasi admin (refund/aktifkan ulang di Fase 8).
+- D-32 Simulator pembayaran dev: provider `test` (ref berawalan `TEST-`) hanya aktif bila `MAYAR_API_KEY` kosong dan `PAYMENT_TEST_MODE=true`; halaman `/checkout/pay-test/[ref]` memakai jalur pelunasan yang sama dengan webhook. Jangan nyalakan di produksi.
 - D-25 Logo resmi dari klien (`public/logo.png`) di-trace ke SVG (`public/brand/nzo-lockup.svg`, `nzo-mark.svg`); dirender sebagai CSS mask supaya mengikuti warna tema. Favicon = perisai.
 
 ## Pending info klien
 Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - P-01 ✅ Harga Default Jubelio (D-22).
-- P-02 ⏳ Pembayaran final: Mayar, transfer langsung ke rekening klien, atau keduanya. Juga data rekening untuk transfer manual.
+- P-02 ✅ Mayar saja (D-31).
 - P-03 ⏳ Hosting final (rekomendasi: Vercel Pro + Supabase Pro). Region Supabase sudah diputuskan: D-17. Vercel staging sudah ada (D-21); paket & production menunggu.
 - P-04 ⏳ Akses Jubelio API: akun integrasi, paket yang mencakup API, dan izin tertulis menyalin katalog.
 - P-05 ⏳ Toko Shopify: diganti web ini atau tetap berjalan.
@@ -172,5 +175,6 @@ Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - 0.6 (2026-10-02): Tambah D-20 (MFA staf lewat flag, default mati). Security rule 7 diperbarui.
 - 0.7 (2026-10-02): Fase 2 (design system + redesign shell). Sinkron versi, tanpa keputusan baru.
 - 0.9 (2026-10-07): Fase 4 (storefront di schema NZO). Tambah D-26 (publish dev), D-27 (fitment dua tingkat). Catatan rute storefront & DAL.
+- 0.11 (2026-10-08): Fase 6 (pembayaran Mayar). P-02 terjawab → D-31 (Mayar saja), D-32 (simulator dev). Aturan bisnis pembayaran & tech stack diperbarui, catatan webhook/simulator.
 - 0.10 (2026-10-08): Fase 5 (keranjang & checkout). Tambah D-28 (checkout wajib login, merge cart), D-29 (pesanan via RPC `place_order` service role, reservasi stok), D-30 (ShippingProvider, tarif uji, berat default). Perintah/rute checkout, cron, env baru. Aturan bisnis harga dirujuk ke D-22.
 - 0.8 (2026-10-06): Fase 3. Tambah D-21 (Vercel staging), D-22 (P-01 terjawab), D-23 (normalisasi SKU), D-24 (import export Jubelio), D-25 (logo resmi). Perintah import.
