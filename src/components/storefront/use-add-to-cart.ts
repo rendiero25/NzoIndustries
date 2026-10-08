@@ -7,6 +7,8 @@ import { flyToCart } from "@/lib/motion/fly-to-cart";
 import { validateCartAdd } from "@/server/actions/cart";
 import { useCartStore } from "@/store/cart-store";
 
+import { persistCartLine } from "./use-cart-mutations";
+
 /**
  * Validasi ke server (published, varian, stok) → simpan ke keranjang guest →
  * animasi terbang + badge memantul → toast (design-system §8, §10).
@@ -27,6 +29,7 @@ export function useAddToCart() {
       }
       flyToCart(opts.imageEl ?? null);
       addItem({ ...result.item, quantity: input.quantity });
+      void persistCartLine(result.item.productId, result.item.variantId);
       toast.success("Ditambahkan ke keranjang", {
         description: result.item.variantName
           ? `${result.item.name} · ${result.item.variantName}`

@@ -44,6 +44,7 @@ import { formatIDR } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import type { SearchSuggestion } from "@/app/api/search/route";
 import { useAuthStore } from "@/store/auth-store";
+import { CartSheet } from "@/components/storefront/cart-sheet";
 import { selectCartCount, useCartHydrated, useCartStore } from "@/store/cart-store";
 
 type NavItem = {
@@ -331,14 +332,15 @@ export function StoreHeader({
                 </>
               ) : null}
 
-              <Button
-                asChild
-                variant="ghost"
-                size="icon"
-                className="relative"
-                aria-label={`Keranjang, ${shownCount} barang`}
-              >
-                <Link href="/cart" data-cart-target>
+              <CartSheet isLoggedIn={isAuthenticated}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="relative"
+                  aria-label={`Keranjang, ${shownCount} barang`}
+                  data-cart-target
+                >
                   <ShoppingBag className="size-5" strokeWidth={1.75} />
                   {shownCount > 0 ? (
                     <span
@@ -348,8 +350,8 @@ export function StoreHeader({
                       {shownCount > 99 ? "99+" : shownCount}
                     </span>
                   ) : null}
-                </Link>
-              </Button>
+                </Button>
+              </CartSheet>
 
               {isAuthenticated ? (
                 <DropdownMenu>

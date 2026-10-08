@@ -3,6 +3,7 @@ import { WhatsAppButton } from "@/components/layout/whatsapp-button";
 import { InitAuthStore } from "@/components/providers/init-auth-store";
 import { StoreFooter } from "@/components/store/store-footer";
 import { StoreHeaderServer } from "@/components/store/store-header-server";
+import { CartSync } from "@/components/storefront/cart-sync";
 import { fetchUserProfile } from "@/lib/data/dashboard-user";
 import { createClient } from "@/lib/supabase/server";
 
@@ -17,6 +18,7 @@ export default async function PublicLayout({ children }: { children: React.React
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <InitAuthStore user={user} profile={profile} />
+      <CartSync userId={user?.id ?? null} />
       <AnnouncementBarServer />
       <StoreHeaderServer />
       <main className="flex-1">{children}</main>

@@ -5,7 +5,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 /**
  * Keranjang guest (Zustand + localStorage). Snapshot nama/harga hanya untuk
  * tampilan; harga final dihitung ulang server saat checkout (security rule 4).
- * Sinkron ke tabel `carts` saat login di Fase 5.
+ * User login: isi disinkron dengan tabel `carts` lewat <CartSync> (D-28).
  */
 export type CartItem = {
   productId: string;
@@ -25,6 +25,8 @@ type CartState = {
   items: CartItem[];
   /** Penanda animasi badge (naik setiap item ditambahkan). */
   bumpKey: number;
+  /** User pemilik isi keranjang (null = guest). Diatur <CartSync>. */
+  ownerId: string | null;
 };
 
 type CartActions = {
@@ -32,6 +34,8 @@ type CartActions = {
   setQuantity: (productId: string, variantId: string | null, quantity: number) => void;
   removeItem: (productId: string, variantId: string | null) => void;
   clear: () => void;
+  /** Ganti seluruh isi (hasil sinkron server) dan tandai pemiliknya. */
+  replaceItems: (items: Omit<CartItem, "addedAt">[], ownerId: string | null) => void;
   /** @deprecated keranjang legacy (dashboard wishlist lama, Fase 7). */
   incrementCart: (by?: number) => void;
 };
@@ -47,6 +51,7 @@ export const useCartStore = create<CartStore>()(
     (set) => ({
       items: [],
       bumpKey: 0,
+      ownerId: null,
       addItem: (item) =>
         set((s) => {
           const existing = s.items.find((i) => same(i, item.productId, item.variantId));
@@ -80,15 +85,28 @@ export const useCartStore = create<CartStore>()(
       removeItem: (productId, variantId) =>
         set((s) => ({ items: s.items.filter((i) => !same(i, productId, variantId)) })),
       clear: () => set({ items: [] }),
+      replaceItems: (items, ownerId) =>
+        set((s) => ({
+          ownerId,
+          items: items.map((i) => ({
+            ...i,
+            addedAt: s.items.find((x) => same(x, i.productId, i.variantId))?.addedAt ?? Date.now(),
+          })),
+        })),
       incrementCart: () => {},
     }),
     {
       name: "nzo-cart",
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
-      partialize: (s) => ({ items: s.items }),
-      // Data keranjang versi lama (schema GeekyTech) diabaikan.
-      migrate: () => ({ items: [] }),
+      partialize: (s) => ({ items: s.items, ownerId: s.ownerId }),
+      // v0 (schema GeekyTech) diabaikan; v1 → v2 menambah ownerId (guest).
+      migrate: (persisted, version) => {
+        if (version === 1 && persisted && typeof persisted === "object" && "items" in persisted) {
+          return { items: (persisted as { items: CartItem[] }).items, ownerId: null };
+        }
+        return { items: [], ownerId: null };
+      },
     },
   ),
 );

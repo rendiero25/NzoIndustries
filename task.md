@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.9 (2026-10-07). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.10 (2026-10-08). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -140,17 +140,24 @@ Versi dokumen: 0.9 (2026-10-07). Aturan, keputusan (`D-xx`), dan pending klien (
 - Verifikasi: `typecheck` ✓, `lint` ✓ (0 error, 40 warning legacy), `test` ✓ (41), `test:rls` ✓ (22), `build` ✓; browser: beranda (hero + animasi), pilih Honda Vario 125 2022 → PLP 470 produk dengan banner kecocokan, badge "Cocok" (DEMO) dan "Disebut untuk…"; PDP bervarian (`?v=`, SKU varian, breadcrumb), cek kecocokan terverifikasi; tambah ke keranjang (toast + badge + localStorage); wishlist guest → login; mobile 375 (sticky buy bar); status 404 rute tidak dikenal.
 
 ## Fase 5 — Keranjang dan checkout
-- [ ] Keranjang: Zustand untuk guest, sinkron ke `carts` saat login; Sheet + halaman `/cart`
-- [ ] Validasi stok real-time di keranjang
-- [ ] Checkout: alamat → kurir & ongkir → voucher → pembayaran → ringkasan
-- [ ] Integrasi Biteship: cek tarif dengan berat aktual vs volumetrik [P-11] [P-12]
-- [ ] Voucher dan flash sale diterapkan di server
-- [ ] **Perhitungan ulang total di server** (harga, diskon, ongkir) sebelum membuat pesanan
-- [ ] Reservasi stok saat pesanan dibuat, dilepas otomatis saat expired (cron)
-- [ ] Rate limit + Turnstile di checkout
-- [ ] Halaman sukses pesanan
+- [x] Keranjang: Zustand untuk guest, sinkron ke `carts` saat login; Sheet + halaman `/cart` (D-28)
+- [x] Validasi stok real-time di keranjang (RPC `cart_lines`, stok tersedia = stok − reservasi aktif)
+- [x] Checkout: alamat → kurir & ongkir → voucher → pembayaran → ringkasan
+- [x] Integrasi Biteship: cek tarif dengan berat aktual vs volumetrik — kode siap (`ShippingProvider`, D-30); **menunggu** API key, origin gudang [P-11], daftar kurir [P-12] di env. Dev memakai tarif uji.
+- [x] Voucher dan flash sale diterapkan di server
+- [x] **Perhitungan ulang total di server** (harga, diskon, ongkir) sebelum membuat pesanan (RPC `place_order`, D-29)
+- [x] Reservasi stok saat pesanan dibuat, dilepas otomatis saat expired (cron `/api/cron/expire-orders`)
+- [x] Rate limit + Turnstile di checkout (Upstash; fallback in-memory sampai env Upstash diisi)
+- [x] Halaman sukses pesanan
 
 **Catatan fase:**
+- Migration `20261008000100_checkout.sql`: `orders.checkout_key` (idempotency), `order_items.flash_sale_item_id`, helper `private.available_stock / price_lines / apply_voucher / release_order_holds`, RPC `cart_lines` (publik), `checkout_quote`, `place_order`, `release_expired_orders` (service role saja).
+- Server: `src/server/actions/{cart,address,checkout}.ts`, `src/server/queries/{cart,checkout}.ts`, `src/lib/shipping/{provider,biteship,stub,weight}.ts`, `src/lib/security/rate-limit.ts`, `src/lib/validations/{address,checkout}.ts`.
+- UI: `CartSync` di layout publik, `CartSheet` di header, `/cart`, `/checkout`, `/checkout/success`. Legacy dihapus: `checkout-page-client`, `api/checkout/create`, `api/coupons/validate`, `api/shipping/rates`, `cart/_actions`, `cart-line-card`, `cart-client-shell`, `cart-checkout-stepper`, `coupon-discount`, `user-cart-lines`. Dibiarkan untuk Fase 7/8: `lib/orders/cancel-expired`, `lib/biteship/fetch-courier-rates`, `api/shipping/areas` (dashboard legacy).
+- Dev: `store_settings.mayar_enabled` dan `manual_transfer_enabled` dinyalakan; `.env.local` `SHIPPING_TEST_RATES=true`.
+- Diuji di browser (akun uji sementara, sudah dihapus): merge keranjang guest saat login, tambah alamat, tarif uji, voucher 10%, buat pesanan (klik ganda = 1 pesanan), DB berisi order + 3 reservasi + shipment, cart kosong, cron expired melepas reservasi & voucher. Mobile 375 px tanpa scroll horizontal.
+- Cek: `pnpm test` 50/50, `pnpm test:rls` 26/26, typecheck, lint 0 error.
+- Menunggu: env Upstash, Turnstile, Biteship (key, `BITESHIP_ORIGIN_AREA_ID`/kode pos, `BITESHIP_COURIERS`), jadwal cron-job.org tiap 10 menit, berat/dimensi produk nyata (sementara `DEFAULT_ITEM_WEIGHT_GRAMS`).
 
 ## Fase 6 — Pembayaran [P-02]
 - [ ] Interface `PaymentProvider` (`createPayment`, `verifyWebhook`, `getStatus`) (D-08)
@@ -264,4 +271,5 @@ Versi dokumen: 0.9 (2026-10-07). Aturan, keputusan (`D-xx`), dan pending klien (
 - 0.6 (2026-10-02): D-20 (MFA staf lewat flag, default mati), fix reset password akun ber-TOTP, uji auth user.
 - 0.7 (2026-10-02): Fase 2 selesai (kecuali logo resmi), redesign shell, codemod palet GeekyTech.
 - 0.9 (2026-10-07): Fase 4 selesai (storefront NZO: beranda, PLP, PDP, Garasi, wishlist, halaman statis).
+- 0.10 (2026-10-08): Fase 5 selesai (keranjang, checkout, ongkir lewat ShippingProvider, reservasi stok, cron expired). Biteship asli menunggu env/P-11/P-12.
 - 0.8 (2026-10-06): Fase 3 (katalog, import export Jubelio, Cloudinary, kategori & kendaraan). Logo resmi dicentang. Script API Jubelio dan stok/foto nyata tetap menunggu P-04.
