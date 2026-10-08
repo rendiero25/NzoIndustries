@@ -941,11 +941,13 @@ export type Database = {
           created_at: string;
           expires_at: string | null;
           id: string;
+          method: string | null;
           order_id: string;
           paid_at: string | null;
           provider: Database["public"]["Enums"]["payment_provider"];
           provider_ref: string | null;
           status: Database["public"]["Enums"]["payment_status"];
+          transaction_ref: string | null;
           updated_at: string;
         };
         Insert: {
@@ -954,11 +956,13 @@ export type Database = {
           created_at?: string;
           expires_at?: string | null;
           id?: string;
+          method?: string | null;
           order_id: string;
           paid_at?: string | null;
           provider: Database["public"]["Enums"]["payment_provider"];
           provider_ref?: string | null;
           status?: Database["public"]["Enums"]["payment_status"];
+          transaction_ref?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -967,11 +971,13 @@ export type Database = {
           created_at?: string;
           expires_at?: string | null;
           id?: string;
+          method?: string | null;
           order_id?: string;
           paid_at?: string | null;
           provider?: Database["public"]["Enums"]["payment_provider"];
           provider_ref?: string | null;
           status?: Database["public"]["Enums"]["payment_status"];
+          transaction_ref?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -2115,6 +2121,15 @@ export type Database = {
         Args: { p_batch_id: string; p_limit?: number };
         Returns: Json;
       };
+      mark_order_paid: {
+        Args: {
+          p_amount: number;
+          p_method?: string;
+          p_payment_id: string;
+          p_transaction_ref?: string;
+        };
+        Returns: string;
+      };
       place_order: {
         Args: {
           p_address: Json;
@@ -2142,7 +2157,13 @@ export type Database = {
           reviewer: string;
         }[];
       };
-      release_expired_orders: { Args: never; Returns: number };
+      release_expired_orders: {
+        Args: never;
+        Returns: {
+          order_id: string;
+          provider_ref: string;
+        }[];
+      };
       set_user_blocked: {
         Args: { blocked: boolean; target_user: string };
         Returns: undefined;

@@ -24,6 +24,8 @@ const serverEnvSchema = z.object({
   MAYAR_API_KEY: z.string().min(1).optional(),
   MAYAR_WEBHOOK_TOKEN: z.string().min(1).optional(),
   MAYAR_IS_PRODUCTION: z.enum(["true", "false"]).default("false"),
+  // Simulator pembayaran bila MAYAR_API_KEY kosong (D-32). Dev/staging saja.
+  PAYMENT_TEST_MODE: z.enum(["true", "false"]).default("false"),
 
   BITESHIP_API_KEY: z.string().min(1).optional(),
   BITESHIP_IS_PRODUCTION: z.enum(["true", "false"]).default("false"),

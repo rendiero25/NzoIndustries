@@ -1,134 +1,116 @@
-import { z } from "zod";
+import { createHash } from "node:crypto";
 
-import { createServiceClient } from "@/lib/supabase/legacy/server";
-import { verifyMayarWebhookToken } from "@/lib/mayar/verify-webhook";
-import { reconcileMayarPayment } from "@/lib/payments/reconcile-mayar";
-import type { Json } from "@/types/legacy-supabase";
+import { verifyMayarCallbackToken } from "@/lib/payments/mayar";
+import { parseMayarWebhook } from "@/lib/payments/mayar-webhook";
+import { settlePayment } from "@/lib/payments/settle";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+export const dynamic = "force-dynamic";
 
 /**
- * POST /api/webhooks/mayar
+ * POST /api/webhooks/mayar (daftarkan di dashboard Mayar; header x-callback-token).
+ * Mayar mengulang hingga 5× bila respons bukan 2xx.
  *
- * Register this URL in the Mayar dashboard (sandbox: web.mayar.club, production:
- * web.mayar.id). Mayar retries up to 5x on non-2xx responses.
- *
- * The payload is only used to locate the order — payment status and amount are
- * always re-read from the Mayar API before the order is settled.
+ * Alur: token → parse → idempotency `webhook_events` → cari payment →
+ * settlePayment (status & nominal ditanyakan ulang ke API Mayar, D-31).
  */
-
-const payloadSchema = z.object({
-  event: z.string(),
-  data: z.record(z.string(), z.unknown()).optional().nullable(),
-});
-
-const ID_PATTERN = /^[A-Za-z0-9-]{1,64}$/;
-
-function stringField(data: Record<string, unknown>, key: string): string | null {
-  const v = data[key];
-  return typeof v === "string" && ID_PATTERN.test(v) ? v : null;
-}
-
-function orderNumberFromExtraData(data: Record<string, unknown>): string | null {
-  let extra: unknown = data.extraData;
-  if (typeof extra === "string") {
-    try {
-      extra = JSON.parse(extra);
-    } catch {
-      return null;
-    }
-  }
-  if (extra && typeof extra === "object" && "orderNumber" in extra) {
-    const v = (extra as { orderNumber?: unknown }).orderNumber;
-    return typeof v === "string" && v.length <= 64 ? v : null;
-  }
-  return null;
-}
-
 export async function POST(req: Request) {
-  if (!verifyMayarWebhookToken(req.headers)) {
+  if (!verifyMayarCallbackToken(req.headers)) {
     return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const json: unknown = await req.json();
-    const parsed = payloadSchema.safeParse(json);
-    if (!parsed.success) {
-      return Response.json({ success: false, error: "Payload tidak valid." }, { status: 400 });
-    }
-
-    // Only incoming payments settle orders; reminders and other events are acknowledged.
-    if (parsed.data.event !== "payment.received" || !parsed.data.data) {
-      return Response.json({ success: true, data: { ignored: parsed.data.event } });
-    }
-
-    const data = parsed.data.data;
-    const candidateIds = [
-      ...new Set(
-        ["id", "transactionId", "productId", "paymentLinkId", "paymentId", "invoiceId"]
-          .map((k) => stringField(data, k))
-          .filter((v): v is string => !!v),
-      ),
-    ];
-
-    const svc = createServiceClient();
-    const paymentColumns = "order_id, mayar_payment_id, mayar_transaction_id, gross_amount";
-
-    let payment: {
-      order_id: string;
-      mayar_payment_id: string | null;
-      mayar_transaction_id: string | null;
-      gross_amount: number;
-    } | null = null;
-
-    if (candidateIds.length > 0) {
-      const list = candidateIds.join(",");
-      const { data: rows } = await svc
-        .from("payments")
-        .select(paymentColumns)
-        .or(`mayar_payment_id.in.(${list}),mayar_transaction_id.in.(${list})`)
-        .limit(1);
-      payment = rows?.[0] ?? null;
-    }
-
-    if (!payment) {
-      const orderNumber = orderNumberFromExtraData(data);
-      if (orderNumber) {
-        const { data: order } = await svc
-          .from("orders")
-          .select("id")
-          .eq("order_number", orderNumber)
-          .maybeSingle();
-        if (order) {
-          const { data: row } = await svc
-            .from("payments")
-            .select(paymentColumns)
-            .eq("order_id", order.id)
-            .not("mayar_payment_id", "is", null)
-            .order("created_at", { ascending: false })
-            .limit(1)
-            .maybeSingle();
-          payment = row ?? null;
-        }
-      }
-    }
-
-    if (!payment) {
-      // Not ours (e.g. a payment on another Mayar product) — acknowledge so Mayar stops retrying.
-      console.warn("[Mayar webhook] payment not matched", { candidateIds });
-      return Response.json({ success: true, data: { matched: false } });
-    }
-
-    const result = await reconcileMayarPayment(payment, json as Json);
-    if (result.status === "error" || result.status === "unpaid") {
-      // Non-2xx so Mayar retries: transient API failure, or the payment request
-      // not yet reflecting the payment this event reports.
-      const error =
-        result.status === "error" ? result.error : "Pembayaran belum tercatat di Mayar.";
-      return Response.json({ success: false, error }, { status: 502 });
-    }
-
-    return Response.json({ success: true, data: result });
-  } catch (err) {
-    console.error("[Mayar webhook] unexpected error", err);
-    return Response.json({ success: false, error: "Terjadi kesalahan server." }, { status: 500 });
+  const raw = await req.text();
+  if (raw.length > 64_000) {
+    return Response.json({ success: false, error: "Payload terlalu besar." }, { status: 413 });
   }
+  let json: unknown;
+  try {
+    json = JSON.parse(raw);
+  } catch {
+    return Response.json({ success: false, error: "Payload tidak valid." }, { status: 400 });
+  }
+  const hook = parseMayarWebhook(json);
+  if (!hook) {
+    return Response.json({ success: false, error: "Payload tidak valid." }, { status: 400 });
+  }
+  if (hook.event !== "payment.received") {
+    return Response.json({ success: true, ignored: hook.event });
+  }
+
+  const admin = createAdminClient();
+  const payloadHash = createHash("sha256").update(raw).digest("hex");
+  const eventId = hook.eventId ?? `hash:${payloadHash}`;
+
+  const { data: existing } = await admin
+    .from("webhook_events")
+    .select("id, processed_at")
+    .eq("provider", "mayar")
+    .eq("event_id", eventId)
+    .maybeSingle();
+  if (existing?.processed_at) return Response.json({ success: true, duplicate: true });
+
+  let eventRowId = existing?.id ?? null;
+  if (!eventRowId) {
+    const { data: inserted } = await admin
+      .from("webhook_events")
+      .insert({
+        provider: "mayar",
+        event_id: eventId,
+        event_type: hook.event,
+        payload_hash: payloadHash,
+      })
+      .select("id")
+      .maybeSingle();
+    eventRowId = inserted?.id ?? null;
+  }
+
+  const finish = async (error: string | null) => {
+    if (eventRowId === null) return;
+    await admin
+      .from("webhook_events")
+      .update(error ? { error } : { processed_at: new Date().toISOString(), error: null })
+      .eq("id", eventRowId);
+  };
+
+  // Cari payment: id payment request / transaksi, lalu nomor pesanan di extraData.
+  let paymentId: string | null = null;
+  if (hook.refs.length) {
+    const { data } = await admin
+      .from("payments")
+      .select("id")
+      .or(`provider_ref.in.(${hook.refs.join(",")}),transaction_ref.in.(${hook.refs.join(",")})`)
+      .order("created_at", { ascending: false })
+      .limit(1);
+    paymentId = data?.[0]?.id ?? null;
+  }
+  if (!paymentId && hook.orderNumber) {
+    const { data: order } = await admin
+      .from("orders")
+      .select("id")
+      .eq("order_number", hook.orderNumber)
+      .maybeSingle();
+    if (order) {
+      const { data } = await admin
+        .from("payments")
+        .select("id")
+        .eq("order_id", order.id)
+        .in("status", ["pending", "expired", "paid"])
+        .order("created_at", { ascending: false })
+        .limit(1);
+      paymentId = data?.[0]?.id ?? null;
+    }
+  }
+  if (!paymentId) {
+    // Bukan milik toko ini (produk Mayar lain): akui agar Mayar berhenti mengulang.
+    await finish(null);
+    return Response.json({ success: true, matched: false });
+  }
+
+  const outcome = await settlePayment(paymentId);
+  if (outcome === "error" || outcome === "unpaid") {
+    await finish(outcome === "error" ? "provider_error" : "not_paid_yet");
+    return Response.json({ success: false, retry: true }, { status: 502 });
+  }
+  await finish(null);
+  return Response.json({ success: true, outcome });
 }

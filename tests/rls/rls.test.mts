@@ -681,7 +681,7 @@ describe("checkout (Fase 5)", () => {
       p_address: address,
       p_shipping: { ...shipping, cost: 0 },
       p_voucher_code: "",
-      p_payment_provider: "manual_transfer" as const,
+      p_payment_provider: "mayar" as const,
     };
     for (const client of [anon(), customerA.client]) {
       const { error } = await client.rpc("place_order", args);
@@ -748,7 +748,7 @@ describe("checkout (Fase 5)", () => {
       p_address: address,
       p_shipping: shipping,
       p_voucher_code: voucherCode.toLowerCase(),
-      p_payment_provider: "manual_transfer" as const,
+      p_payment_provider: "mayar" as const,
     };
     const { data, error } = await admin.rpc("place_order", args);
     assert.ifError(error);
@@ -803,7 +803,7 @@ describe("checkout (Fase 5)", () => {
       .eq("id", created.order_id);
     const { data: expired, error: expErr } = await admin.rpc("release_expired_orders");
     assert.ifError(expErr);
-    assert.ok((expired ?? 0) >= 1);
+    assert.ok((expired ?? []).some((r) => r.order_id === created.order_id));
     const { data: afterExpire } = await admin
       .from("orders")
       .select("status")
@@ -828,5 +828,178 @@ describe("checkout (Fase 5)", () => {
       p_checkout_key: crypto.randomUUID(),
     });
     assert.match(limitErr?.message ?? "", /sudah memakai voucher/);
+  });
+});
+
+describe("pembayaran (Fase 6)", () => {
+  let buyer: TestUser;
+  let productId: string;
+
+  const placeOrder = async () => {
+    const { data, error } = await admin.rpc("place_order", {
+      p_user: buyer.id,
+      p_checkout_key: crypto.randomUUID(),
+      p_items: [{ product_id: productId, variant_id: null, quantity: 2 }],
+      p_address: { recipient: "Uji", phone: "081234567890" },
+      p_shipping: { courier_code: "uji", courier_service: "reg", cost: 10000 },
+      p_voucher_code: "",
+      p_payment_provider: "mayar",
+    });
+    if (error) throw new Error(`place_order: ${error.message}`);
+    const orderId = (data as { order_id: string }).order_id;
+    const { data: pay, error: payErr } = await admin
+      .from("payments")
+      .insert({
+        order_id: orderId,
+        provider: "mayar",
+        provider_ref: `TEST-${crypto.randomUUID()}`,
+        status: "pending",
+        amount: 110000,
+      })
+      .select("id")
+      .single();
+    if (payErr || !pay) throw new Error(`payment: ${payErr?.message}`);
+    return { orderId, paymentId: pay.id };
+  };
+
+  const stockOf = async () => {
+    const { data } = await admin
+      .from("products")
+      .select("stock, total_sold")
+      .eq("id", productId)
+      .single();
+    return data!;
+  };
+
+  before(async () => {
+    buyer = await createTestUser("customer");
+    const { data: product, error } = await admin
+      .from("products")
+      .insert({
+        name: `Produk bayar ${RUN_ID}`,
+        slug: `rls-pay-${RUN_ID}`,
+        sku: `RLS-PAY-${RUN_ID}`.toUpperCase(),
+        price: 50000,
+        status: "published",
+      })
+      .select("id")
+      .single();
+    if (error || !product) throw new Error(`produk bayar: ${error?.message}`);
+    productId = product.id;
+    await admin
+      .from("inventory_movements")
+      .insert({ product_id: productId, quantity: 10, type: "initial" });
+    await admin.from("store_settings").update({ mayar_enabled: true }).eq("id", true);
+  });
+
+  after(async () => {
+    await admin.from("orders").delete().eq("user_id", buyer.id);
+    await admin.from("products").update({ status: "archived" }).eq("id", productId);
+  });
+
+  test("mark_order_paid tidak bisa dipanggil anon/authenticated", async () => {
+    for (const client of [anon(), buyer.client]) {
+      const { error } = await client.rpc("mark_order_paid", {
+        p_payment_id: crypto.randomUUID(),
+        p_amount: 1,
+      });
+      assert.ok(error, "mark_order_paid wajib ditolak");
+    }
+  });
+
+  test("lunas: stok final, reservasi consumed, idempotent, nominal salah ditolak", async () => {
+    const { orderId, paymentId } = await placeOrder();
+    const before = await stockOf();
+
+    const { data: mismatch } = await admin.rpc("mark_order_paid", {
+      p_payment_id: paymentId,
+      p_amount: 1,
+    });
+    assert.equal(mismatch, "amount_mismatch");
+    const { data: stillPending } = await admin
+      .from("orders")
+      .select("status")
+      .eq("id", orderId)
+      .single();
+    assert.equal(stillPending!.status, "pending_payment");
+
+    const { data: settled, error } = await admin.rpc("mark_order_paid", {
+      p_payment_id: paymentId,
+      p_amount: 110000,
+      p_method: "qris",
+      p_transaction_ref: "tx-uji",
+    });
+    assert.ifError(error);
+    assert.equal(settled, "settled");
+
+    const { data: order } = await admin
+      .from("orders")
+      .select("status, paid_at")
+      .eq("id", orderId)
+      .single();
+    assert.equal(order!.status, "paid");
+    assert.ok(order!.paid_at);
+    const { data: res } = await admin
+      .from("stock_reservations")
+      .select("status")
+      .eq("order_id", orderId);
+    assert.ok((res ?? []).every((r) => r.status === "consumed"));
+    const after = await stockOf();
+    assert.equal(after.stock, before.stock - 2);
+    assert.equal(after.total_sold, before.total_sold + 2);
+    const { data: moves } = await admin
+      .from("inventory_movements")
+      .select("quantity, type")
+      .eq("reference_id", orderId);
+    assert.deepEqual(moves, [{ quantity: -2, type: "sale" }]);
+
+    const { data: again } = await admin.rpc("mark_order_paid", {
+      p_payment_id: paymentId,
+      p_amount: 110000,
+    });
+    assert.equal(again, "already_paid");
+    assert.equal((await stockOf()).stock, before.stock - 2, "tidak boleh mengurangi stok dua kali");
+
+    // pembeli bisa membaca payment & notifikasi miliknya, user lain tidak
+    const { data: own } = await buyer.client.from("payments").select("status").eq("id", paymentId);
+    assert.equal(own?.[0]?.status, "paid");
+    const { data: other } = await customerA.client
+      .from("payments")
+      .select("id")
+      .eq("id", paymentId);
+    assert.equal(other?.length ?? 0, 0);
+    const { data: notif } = await buyer.client
+      .from("notifications")
+      .select("type")
+      .eq("type", "payment_received");
+    assert.ok((notif?.length ?? 0) >= 1);
+  });
+
+  test("bayar setelah expired: paid_after_cancel, stok tidak berkurang", async () => {
+    const { orderId, paymentId } = await placeOrder();
+    await admin
+      .from("orders")
+      .update({ payment_due_at: new Date(Date.now() - 60_000).toISOString() })
+      .eq("id", orderId);
+    const { data: released } = await admin.rpc("release_expired_orders");
+    const row = (released ?? []).find((r) => r.order_id === orderId);
+    assert.ok(row, "pesanan ikut expired");
+    assert.ok(row.provider_ref?.startsWith("TEST-"));
+    const { data: pay } = await admin
+      .from("payments")
+      .select("status")
+      .eq("id", paymentId)
+      .single();
+    assert.equal(pay!.status, "expired");
+
+    const before = await stockOf();
+    const { data: late } = await admin.rpc("mark_order_paid", {
+      p_payment_id: paymentId,
+      p_amount: 110000,
+    });
+    assert.equal(late, "paid_after_cancel");
+    assert.equal((await stockOf()).stock, before.stock);
+    const { data: order } = await admin.from("orders").select("status").eq("id", orderId).single();
+    assert.equal(order!.status, "expired");
   });
 });

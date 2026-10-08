@@ -1,3 +1,4 @@
+/** @deprecated Jalur legacy (schema GeekyTech) untuk dashboard lama. Pelunasan NZO: `@/lib/payments/settle` (Fase 6). Ditulis ulang di Fase 7/8. */
 import "server-only";
 
 import { createServiceClient } from "@/lib/supabase/legacy/server";
