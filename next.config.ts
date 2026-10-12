@@ -36,6 +36,18 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/terms", destination: "/syarat-ketentuan", permanent: true },
+      // Dashboard legacy GeekyTech diganti /account (Fase 7).
+      { source: "/dashboard", destination: "/account", permanent: true },
+      { source: "/dashboard/orders/:path*", destination: "/account/orders", permanent: true },
+      { source: "/dashboard/profile", destination: "/account/profile", permanent: true },
+      { source: "/dashboard/change-password", destination: "/account/profile", permanent: true },
+      {
+        source: "/dashboard/:section(addresses|wishlist|vouchers|notifications)",
+        destination: "/account/:section",
+        permanent: true,
+      },
+      { source: "/dashboard/:path*", destination: "/account", permanent: true },
+      { source: "/wishlist", destination: "/account/wishlist", permanent: true },
       { source: "/privacy", destination: "/kebijakan-privasi", permanent: true },
     ];
   },

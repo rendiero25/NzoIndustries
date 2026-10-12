@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.11 (2026-10-08). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.12 (2026-10-12). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -177,20 +177,25 @@ Versi dokumen: 0.11 (2026-10-08). Aturan, keputusan (`D-xx`), dan pending klien 
 - Menunggu user: kunci Mayar sandbox/produksi + token webhook, daftarkan URL webhook di dashboard Mayar.
 
 ## Fase 7 — Dashboard user (`/account`)
-- [ ] Ringkasan akun
-- [ ] Profil dan keamanan (ganti password, sesi aktif, hapus akun sesuai UU PDP)
-- [ ] Buku alamat
-- [ ] Garasi Saya (tambah/hapus kendaraan, set default)
-- [ ] Pesanan: daftar dengan filter status, detail dengan timeline, lacak pengiriman
-- [ ] Bayar ulang pesanan pending dan upload bukti transfer
-- [ ] Unduh invoice PDF (D-09)
-- [ ] Wishlist
-- [ ] Ulasan produk (setelah pesanan selesai), dengan foto
-- [ ] Voucher saya
-- [ ] Pengajuan retur dan klaim garansi
-- [ ] Notifikasi
+- [x] Ringkasan akun
+- [x] Profil dan keamanan (ganti password, keluar dari semua perangkat, hapus akun = anonimisasi D-35)
+- [x] Buku alamat
+- [x] Garasi Saya (tambah/hapus kendaraan, set default)
+- [x] Pesanan: daftar dengan filter status, detail dengan timeline, lacak pengiriman (stub sampai Biteship & resi Fase 8), batalkan pesanan belum bayar, konfirmasi diterima
+- [x] Bayar ulang pesanan pending — ~~upload bukti transfer~~ dibatalkan (D-31)
+- [ ] Unduh invoice PDF (D-09) — dipindah ke Fase 9 (D-34); tombol nonaktif "segera" sudah ada
+- [x] Wishlist (`/account/wishlist`)
+- [x] Ulasan produk (setelah pesanan diterima), dengan foto (moderasi di Fase 8)
+- [x] Voucher saya (voucher publik + riwayat, D-33)
+- [x] Pengajuan retur (jendela 7 hari, D-36) dan klaim garansi, dengan foto/video
+- [x] Notifikasi (halaman + lonceng header membaca tabel NZO)
 
 **Catatan fase:**
+- Migration `20261012000100_account.sql` (`vouchers.is_public` + policy publik, `my_voucher_history`, `store_settings.return_window_days`, `private.can_request_return` + policy retur baru, `cancel_my_order`, `complete_my_order`, `anonymize_my_account`) dan `20261012000200_account_helpers.sql` (`store_return_window_days`).
+- Rute di `src/app/(public)/account/*` (shell storefront). DAL `src/server/queries/account.ts`, actions `src/server/actions/account/{profile,garage,orders,media,after-sales,notifications}.ts`, `setDefaultAddress` di `address.ts`. `ShippingProvider.track` ditambahkan (Biteship + stub).
+- Legacy dihapus: `src/app/(dashboard)/**`, `src/components/dashboard/**`, `lib/data/dashboard-user.ts` (profil auth store pindah ke `lib/data/user-profile.ts`), `api/{orders,addresses,wishlist,notifications,profile,complaint-upload,review-upload,upload}`, `components/layout/navbar.tsx`, `lib/payments/{reconcile-mayar,apply-paid-order,manual-refund}`, `store/notification-store`. Redirect permanen `/dashboard/*` dan `/wishlist` ke `/account`; default redirect auth jadi `/account`.
+- Diuji di browser (akun uji sementara, sudah dihapus beserta pesanan & file): ringkasan, detail pesanan, lacak (stub), ulasan (tersimpan menunggu moderasi), retur (dalam jendela), konfirmasi diterima, batalkan pesanan, voucher publik, notifikasi tandai dibaca, garasi, ubah profil, hapus akun (teranonim, pesanan tetap). Upload storage diuji via skrip: folder sendiri OK, folder orang lain & MIME salah ditolak. Cek lebar mobile otomatis tidak bisa (pane tersembunyi, iframe diblokir header keamanan); layout memakai grid/flex responsif dan nav scroll horizontal.
+- Cek: `pnpm test` 61/61, `pnpm test:rls` 34/34, typecheck, lint 0 error.
 
 ## Fase 8 — Dashboard admin (`/admin`)
 - [ ] Beranda: KPI (penjualan, pesanan, produk terlaris, stok menipis) + grafik
@@ -278,6 +283,7 @@ Versi dokumen: 0.11 (2026-10-08). Aturan, keputusan (`D-xx`), dan pending klien 
 - 0.6 (2026-10-02): D-20 (MFA staf lewat flag, default mati), fix reset password akun ber-TOTP, uji auth user.
 - 0.7 (2026-10-02): Fase 2 selesai (kecuali logo resmi), redesign shell, codemod palet GeekyTech.
 - 0.9 (2026-10-07): Fase 4 selesai (storefront NZO: beranda, PLP, PDP, Garasi, wishlist, halaman statis).
+- 0.12 (2026-10-12): Fase 7 selesai (dashboard user `/account`, D-33…D-36). Invoice dipindah ke Fase 9.
 - 0.11 (2026-10-08): Fase 6 selesai (Mayar saja, D-31; simulator dev, D-32). Transfer manual dibatalkan.
 - 0.10 (2026-10-08): Fase 5 selesai (keranjang, checkout, ongkir lewat ShippingProvider, reservasi stok, cron expired). Biteship asli menunggu env/P-11/P-12.
 - 0.8 (2026-10-06): Fase 3 (katalog, import export Jubelio, Cloudinary, kategori & kendaraan). Logo resmi dicentang. Script API Jubelio dan stok/foto nyata tetap menunggu P-04.

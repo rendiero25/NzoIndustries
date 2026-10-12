@@ -13,8 +13,8 @@ const SHOP: FooterLink[] = [
 ];
 
 const HELP: FooterLink[] = [
-  { label: "Lacak pesanan", href: "/dashboard/orders" },
-  { label: "Akun saya", href: "/dashboard" },
+  { label: "Lacak pesanan", href: "/account/orders" },
+  { label: "Akun saya", href: "/account" },
   { label: "Cara belanja", href: "/how-to-buy" },
   { label: "FAQ", href: "/faq" },
   { label: "Kontak", href: "/contact" },

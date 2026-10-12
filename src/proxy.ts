@@ -63,7 +63,8 @@ export async function proxy(request: NextRequest) {
     return res;
   }
 
-  if (pathname.startsWith("/dashboard") && !user) {
+  // Redirect UX saja; guard sebenarnya di layout & DAL /account (CLAUDE.md rule 3).
+  if ((pathname === "/account" || pathname.startsWith("/account/")) && !user) {
     return redirectWithCookies("/login", { redirectTo: pathname });
   }
 
@@ -112,5 +113,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/dashboard", "/dashboard/:path*", "/admin", "/admin/:path*"],
+  matcher: ["/", "/account", "/account/:path*", "/admin", "/admin/:path*"],
 };

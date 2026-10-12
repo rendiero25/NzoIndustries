@@ -1,18 +1,17 @@
 import { Heart } from "lucide-react";
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 
 import type { CatalogProductCard } from "@/components/catalog/product-card";
 import { EmptyState } from "@/components/shared/empty-state";
+import { PageHeader } from "@/components/shared/page-header";
 import { ProductGrid } from "@/components/storefront/product-grid";
-import { getCurrentUser } from "@/lib/auth/guards";
 import { createClient } from "@/lib/supabase/server";
+import { requireAccountUser } from "@/server/queries/account";
 
-export const metadata: Metadata = { title: "Wishlist", robots: { index: false } };
+export const metadata: Metadata = { title: "Wishlist" };
 
-export default async function WishlistPage() {
-  const user = await getCurrentUser();
-  if (!user) redirect("/login?redirectTo=/wishlist");
+export default async function AccountWishlistPage() {
+  const user = await requireAccountUser();
 
   const supabase = await createClient();
   const { data } = await supabase
@@ -47,13 +46,12 @@ export default async function WishlistPage() {
   });
 
   return (
-    <div className="nzo-container py-8 md:py-12">
-      <header className="mb-8 flex flex-col gap-1.5">
-        <h1 className="text-[1.75rem] leading-9 md:text-[2.25rem] md:leading-[2.75rem]">
-          Wishlist
-        </h1>
-        <p className="text-muted-foreground">{items.length} produk tersimpan</p>
-      </header>
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        title="Wishlist"
+        description={`${items.length} produk tersimpan`}
+        className="pb-0"
+      />
       {items.length ? (
         <ProductGrid items={items} wishlistIds={new Set(items.map((i) => i.id!))} />
       ) : (

@@ -269,10 +269,10 @@ export function StoreHeader({
   );
 
   const accountLinks = [
-    { href: "/dashboard", label: "Ringkasan akun", icon: LayoutDashboard },
-    { href: "/dashboard/orders", label: "Pesanan", icon: Package },
-    { href: "/wishlist", label: "Wishlist", icon: Heart },
-    { href: "/dashboard/profile", label: "Profil", icon: User },
+    { href: "/account", label: "Ringkasan akun", icon: LayoutDashboard },
+    { href: "/account/orders", label: "Pesanan", icon: Package },
+    { href: "/account/wishlist", label: "Wishlist", icon: Heart },
+    { href: "/account/profile", label: "Profil", icon: User },
   ];
 
   return (
@@ -322,7 +322,7 @@ export function StoreHeader({
                     className="hidden md:inline-flex"
                     aria-label="Wishlist"
                   >
-                    <Link href="/wishlist">
+                    <Link href="/account/wishlist">
                       <Heart className="size-5" strokeWidth={1.75} />
                     </Link>
                   </Button>
