@@ -1115,13 +1115,11 @@ describe("akun pelanggan (Fase 7)", () => {
       .update({ delivered_at: new Date().toISOString() })
       .eq("order_id", deliveredId);
 
-    const { error: strangerErr } = await stranger.client
-      .from("returns")
-      .insert({
-        order_id: deliveredId,
-        user_id: stranger.id,
-        reason: "Barang rusak saat diterima",
-      });
+    const { error: strangerErr } = await stranger.client.from("returns").insert({
+      order_id: deliveredId,
+      user_id: stranger.id,
+      reason: "Barang rusak saat diterima",
+    });
     assert.ok(strangerErr, "orang lain tidak boleh meretur");
 
     const { error } = await member.client
@@ -1194,5 +1192,247 @@ describe("akun pelanggan (Fase 7)", () => {
       "cancelled",
       "pesanan belum dibayar dibatalkan, tetapi tetap tersimpan",
     );
+  });
+});
+
+describe("admin operasional (Fase 8A)", () => {
+  let buyer: TestUser;
+  let productId: string;
+  const noCategory = null as unknown as string;
+
+  const order = async () => {
+    const { data, error } = await admin.rpc("place_order", {
+      p_user: buyer.id,
+      p_checkout_key: crypto.randomUUID(),
+      p_items: [{ product_id: productId, variant_id: null, quantity: 2 }],
+      p_address: { recipient: "Uji", phone: "081234567890" },
+      p_shipping: { courier_code: "jne", courier_service: "reg", cost: 10000 },
+      p_voucher_code: "",
+      p_payment_provider: "mayar",
+    });
+    if (error) throw new Error(`place_order: ${error.message}`);
+    return (data as { order_id: string }).order_id;
+  };
+
+  const paidOrder = async () => {
+    const orderId = await order();
+    const { data: pay } = await admin
+      .from("payments")
+      .insert({
+        order_id: orderId,
+        provider: "mayar",
+        provider_ref: `TEST-${crypto.randomUUID()}`,
+        status: "pending",
+        amount: 90000,
+      })
+      .select("id")
+      .single();
+    const { data: settled } = await admin.rpc("mark_order_paid", {
+      p_payment_id: pay!.id,
+      p_amount: 90000,
+    });
+    assert.equal(settled, "settled");
+    return orderId;
+  };
+
+  const stock = async () =>
+    (await admin.from("products").select("stock").eq("id", productId).single()).data!.stock;
+
+  before(async () => {
+    buyer = await createTestUser("customer");
+    const { data: product, error } = await admin
+      .from("products")
+      .insert({
+        name: `Produk admin ${RUN_ID}`,
+        slug: `rls-admin-${RUN_ID}`,
+        sku: `RLS-ADM-${RUN_ID}`.toUpperCase(),
+        price: 40000,
+        status: "published",
+      })
+      .select("id")
+      .single();
+    if (error || !product) throw new Error(`produk admin: ${error?.message}`);
+    productId = product.id;
+    await admin
+      .from("inventory_movements")
+      .insert({ product_id: productId, quantity: 30, type: "initial" });
+    await admin.from("store_settings").update({ mayar_enabled: true }).eq("id", true);
+  });
+
+  after(async () => {
+    await admin.from("orders").delete().eq("user_id", buyer.id);
+    await admin
+      .from("products")
+      .update({ status: "archived" })
+      .like("slug", `rls-admin-${RUN_ID}%`);
+  });
+
+  test("RPC admin ditolak untuk pelanggan", async () => {
+    const { error: e1 } = await buyer.client.rpc("admin_dashboard_stats", { p_days: 30 });
+    assert.ok(e1, "dashboard");
+    const { error: e2 } = await buyer.client.rpc("admin_set_order_status", {
+      p_order_id: crypto.randomUUID(),
+      p_to: "processing",
+    });
+    assert.ok(e2, "status");
+    const { error: e3 } = await buyer.client.rpc("admin_bulk_discount", {
+      p_product_ids: [productId],
+      p_category_id: noCategory,
+      p_mode: "percent",
+      p_value: 10,
+    });
+    assert.ok(e3, "diskon");
+    const { error: e4 } = await buyer.client.rpc("admin_duplicate_product", {
+      p_product_id: productId,
+    });
+    assert.ok(e4, "duplikat");
+  });
+
+  test("dashboard terbaca staf (termasuk cs)", async () => {
+    const { data, error } = await cs.client.rpc("admin_dashboard_stats", { p_days: 30 });
+    assert.ifError(error);
+    assert.ok("sales_30d" in (data as Record<string, unknown>));
+  });
+
+  test("alur status: proses, kirim (resi wajib), sampai, selesai; role dibatasi", async () => {
+    const orderId = await paidOrder();
+    const set = (client: typeof buyer.client, to: string, extra: Record<string, string> = {}) =>
+      client.rpc("admin_set_order_status", {
+        p_order_id: orderId,
+        p_to: to as "processing",
+        ...extra,
+      });
+
+    assert.ok((await set(cs.client, "processing")).error, "cs tidak boleh ubah status");
+    assert.ifError((await set(warehouse.client, "processing")).error);
+    const noWaybill = await set(warehouse.client, "shipped");
+    assert.match(noWaybill.error?.message ?? "", /resi/);
+    assert.ifError(
+      (await set(warehouse.client, "shipped", { p_courier_code: "jne", p_waybill: "JNE123456789" }))
+        .error,
+    );
+    const { data: ship } = await admin
+      .from("shipments")
+      .select("waybill_number, shipped_at")
+      .eq("order_id", orderId)
+      .single();
+    assert.equal(ship!.waybill_number, "JNE123456789");
+    assert.ok(ship!.shipped_at);
+
+    assert.ok((await set(warehouse.client, "completed")).error, "tidak boleh lompat ke completed");
+    assert.ifError((await set(warehouse.client, "delivered")).error);
+    assert.ifError((await set(warehouse.client, "completed")).error);
+
+    const { data: notifs } = await admin
+      .from("notifications")
+      .select("type")
+      .eq("user_id", buyer.id)
+      .eq("type", "order_status");
+    assert.ok((notifs?.length ?? 0) >= 4, "pelanggan dapat notifikasi tiap perubahan");
+  });
+
+  test("batal pesanan pending melepas stok; refund hanya manajer dan mengembalikan stok", async () => {
+    const pendingId = await order();
+    assert.ifError(
+      (
+        await warehouse.client.rpc("admin_set_order_status", {
+          p_order_id: pendingId,
+          p_to: "cancelled",
+          p_note: "Uji",
+        })
+      ).error,
+    );
+    const { data: res } = await admin
+      .from("stock_reservations")
+      .select("status")
+      .eq("order_id", pendingId);
+    assert.ok((res ?? []).every((r) => r.status === "released"));
+
+    const paidId = await paidOrder();
+    const before = await stock();
+    const whRefund = await warehouse.client.rpc("admin_set_order_status", {
+      p_order_id: paidId,
+      p_to: "refunded",
+      p_note: "Uji",
+    });
+    assert.ok(whRefund.error, "gudang tidak boleh refund");
+    assert.ifError(
+      (
+        await adminUser.client.rpc("admin_set_order_status", {
+          p_order_id: paidId,
+          p_to: "refunded",
+          p_note: "Uji refund",
+        })
+      ).error,
+    );
+    assert.equal(await stock(), before + 2, "stok kembali setelah refund");
+  });
+
+  test("diskon massal (D-38) dan duplikat produk", async () => {
+    const discount = (client: typeof buyer.client, mode: string, value: number) =>
+      client.rpc("admin_bulk_discount", {
+        p_product_ids: [productId],
+        p_category_id: noCategory,
+        p_mode: mode,
+        p_value: value,
+      });
+    const price = async () =>
+      (await admin.from("products").select("price, compare_at_price").eq("id", productId).single())
+        .data!;
+
+    assert.ok((await discount(warehouse.client, "percent", 10)).error, "gudang tidak boleh diskon");
+    assert.ifError((await discount(adminUser.client, "percent", 10)).error);
+    let p = await price();
+    assert.equal(Number(p.price), 36000);
+    assert.equal(Number(p.compare_at_price), 40000);
+    // diskon kedua dihitung dari harga normal (tidak bertumpuk)
+    assert.ifError((await discount(adminUser.client, "amount", 5000)).error);
+    p = await price();
+    assert.equal(Number(p.price), 35000);
+    assert.ifError((await discount(adminUser.client, "clear", 0)).error);
+    p = await price();
+    assert.equal(Number(p.price), 40000);
+    assert.equal(p.compare_at_price, null);
+
+    const { data: copyId, error } = await adminUser.client.rpc("admin_duplicate_product", {
+      p_product_id: productId,
+    });
+    assert.ifError(error);
+    const { data: copy } = await admin
+      .from("products")
+      .select("status, stock")
+      .eq("id", copyId!)
+      .single();
+    assert.equal(copy!.status, "draft");
+    assert.equal(copy!.stock, 0);
+  });
+
+  test("stok menipis memberi notifikasi admin", async () => {
+    const current = await stock();
+    const { data: settings } = await admin
+      .from("store_settings")
+      .select("low_stock_threshold")
+      .eq("id", true)
+      .single();
+    const drop = current - settings!.low_stock_threshold;
+    const { error } = await warehouse.client.from("inventory_movements").insert({
+      product_id: productId,
+      quantity: -drop,
+      type: "adjustment",
+      reason: "Uji stok menipis",
+      created_by: warehouse.id,
+    });
+    assert.ifError(error);
+    const { data: notes } = await admin
+      .from("notifications")
+      .select("id")
+      .eq("type", "low_stock")
+      .like("link", `%${productId}%`);
+    assert.ok((notes?.length ?? 0) >= 1);
+    await admin
+      .from("notifications")
+      .delete()
+      .eq("type", "low_stock")
+      .like("link", `%${productId}%`);
   });
 });

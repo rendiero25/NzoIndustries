@@ -2033,6 +2033,30 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      admin_bulk_discount: {
+        Args: {
+          p_category_id: string;
+          p_mode: string;
+          p_product_ids: string[];
+          p_value?: number;
+        };
+        Returns: number;
+      };
+      admin_dashboard_stats: { Args: { p_days?: number }; Returns: Json };
+      admin_duplicate_product: {
+        Args: { p_product_id: string };
+        Returns: string;
+      };
+      admin_set_order_status: {
+        Args: {
+          p_courier_code?: string;
+          p_note?: string;
+          p_order_id: string;
+          p_to: Database["public"]["Enums"]["order_status"];
+          p_waybill?: string;
+        };
+        Returns: undefined;
+      };
       anonymize_my_account: { Args: never; Returns: undefined };
       cancel_my_order: { Args: { p_order_id: string }; Returns: string };
       cart_lines: {

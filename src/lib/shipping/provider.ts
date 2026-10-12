@@ -53,7 +53,19 @@ export interface ShippingProvider {
   ): Promise<ShippingResult<ShippingRate[]>>;
   /** Riwayat pelacakan resi (terbaru dulu). */
   track(courierCode: string, waybill: string): Promise<ShippingResult<ShippingTracking>>;
+  /** Buat order kurir (D-40). Tidak ada = admin input resi manual. */
+  createShipment?(
+    input: CreateShipmentInput,
+  ): Promise<ShippingResult<{ waybill: string; externalId: string | null }>>;
 }
+
+export type CreateShipmentInput = {
+  reference: string;
+  courierCode: string;
+  courierService: string;
+  destination: Record<string, string | null>;
+  items: { name: string; quantity: number; value: number; weightGrams: number }[];
+};
 
 export type ShippingTrackingEvent = { at: string | null; note: string; status: string | null };
 export type ShippingTracking = { status: string | null; events: ShippingTrackingEvent[] };

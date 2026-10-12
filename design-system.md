@@ -1,6 +1,6 @@
 # design-system.md — NZO Industries
 
-Versi dokumen: 0.12 (2026-10-12). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
+Versi dokumen: 0.13 (2026-10-12). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
 
 ## 1. Arah desain
 
@@ -153,6 +153,7 @@ Mobile: bar beli sticky di bawah (harga + tombol).
 
 - **Layout:** shadcn Sidebar (collapsible) + header dengan breadcrumb dan menu akun. Konten maks 1440px.
 - **Admin:** Data Table (TanStack) dengan filter, pencarian, kolom yang bisa diatur, bulk action, dan export. Form panjang dibagi Card per bagian. Ringkasan di beranda admin: kartu KPI + Chart (shadcn Charts).
+- **Pola admin Fase 8:** tabel sederhana shadcn Table + filter lewat `searchParams` (paginasi server); pilih baris memunculkan bar aksi massal. Form produk dibagi Tabs (Data utama, Varian, Spesifikasi, Kecocokan) dan Card per bagian, tombol simpan sticky di bawah, aktif hanya bila ada perubahan. Aksi status pesanan dan penyesuaian stok memakai Dialog dengan alasan wajib; batal/refund memakai AlertDialog. KPI beranda: Card dengan ikon lucide, angka `tabular-nums`, kartu bisa diklik ke daftar terfilter.
 - **User (`/account`, Fase 7):** tetap di shell storefront (header/footer). Navigasi kiri 14rem (desktop, item aktif `bg-steel-50` tebal) / baris chip scroll horizontal (mobile, aktif = isi hitam). Konten berupa kartu `rounded-xl border` per bagian; tidak ada animasi selain transisi warna.
   - `StatusBadge` (`src/components/account/status-badge.tsx`): chip `radius-sm` berlatar warna semantik 10% + teks warna penuh. Pemetaan label di `src/lib/orders/status.ts` (Belum bayar = warning, Dibayar/Diproses/Dikirim = info, Diterima/Selesai = success, Dibatalkan = danger, Kedaluwarsa/Dikembalikan = neutral).
   - Timeline (riwayat status, pelacakan): garis kiri `border-l`, titik 10px; titik terbaru `primary`, sisanya `steel-200`; waktu `text-caption` WIB.
@@ -276,6 +277,7 @@ Hitam-putih, tanpa warna aksen, aman untuk printer thermal/laser. Cetak massal: 
 - 0.6 (2026-10-02): Sinkron versi (D-20).
 - 0.7 (2026-10-02): Fase 2 diimplementasikan. `success` jadi `#1C7F46` (kontras AA), daftar komponen NZO + varian tombol `signal`, implementasi dark mode admin, catatan paket `motion` untuk Magic UI. Logo & perisai masih sementara.
 - 0.9 (2026-10-07): Komponen storefront Fase 4 (VehicleSelector, GarageChip, CatalogPage, ProductView), aturan tampilan kecocokan dua tingkat (D-27), animasi bump/pop/tick. Header tetap tidak mengubah tinggi saat scroll (hanya bayangan) agar konten tidak melompat.
+- 0.13 (2026-10-12): Pola admin Fase 8A (tabel + bulk bar, form produk ber-tab, dialog status/stok, KPI).
 - 0.12 (2026-10-12): Pola dashboard user Fase 7 (navigasi akun, StatusBadge, timeline, daftar pesanan, zona bahaya, uploader media).
 - 0.11 (2026-10-08): Halaman status pembayaran (3 keadaan), checkout hanya Mayar, tampilan simulator dev.
 - 0.10 (2026-10-08): Pola keranjang & checkout Fase 5 (CartSheet, label status baris, CheckoutForm, AddressDialog, Badge "Tarif uji").

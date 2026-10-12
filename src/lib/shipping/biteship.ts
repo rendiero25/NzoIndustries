@@ -1,7 +1,9 @@
 import "server-only";
 
 import { getServerEnv } from "@/lib/env";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type {
+  CreateShipmentInput,
   ShippingTracking,
   ShippingArea,
   ShippingProvider,
@@ -172,6 +174,79 @@ export const biteshipProvider: ShippingProvider = {
       return { ok: true, data: { status: json.status ?? null, events } };
     } catch {
       return { ok: false, error: "Pelacakan belum tersedia. Coba lagi nanti." };
+    }
+  },
+
+  async createShipment(input: CreateShipmentInput) {
+    const env = getServerEnv();
+    const key = env.BITESHIP_API_KEY;
+    if (!key) return { ok: false, error: "Biteship belum dikonfigurasi." };
+    // Data gudang/pengirim dari pengaturan toko (P-11).
+    const { data: settings } = await createAdminClient()
+      .from("store_settings")
+      .select("store_name, shipper")
+      .eq("id", true)
+      .maybeSingle();
+    const shipper = (settings?.shipper ?? {}) as {
+      name?: string;
+      phone?: string;
+      address?: string;
+      postal_code?: string;
+      area_id?: string;
+    };
+    if (!shipper.phone || !shipper.address || !(shipper.area_id || shipper.postal_code)) {
+      return { ok: false, error: "Lengkapi data gudang di Pengaturan > Pengiriman dulu." };
+    }
+    const d = input.destination;
+    const body: Record<string, unknown> = {
+      reference_id: input.reference,
+      shipper_contact_name: settings?.store_name ?? "NZO Industries",
+      shipper_contact_phone: shipper.phone,
+      origin_contact_name: shipper.name ?? settings?.store_name ?? "NZO Industries",
+      origin_contact_phone: shipper.phone,
+      origin_address: shipper.address,
+      destination_contact_name: d.recipient ?? "Pelanggan",
+      destination_contact_phone: d.phone ?? "",
+      destination_address: [d.full_address, d.district, d.city, d.province]
+        .filter(Boolean)
+        .join(", "),
+      courier_company: input.courierCode,
+      courier_type: input.courierService,
+      delivery_type: "now",
+      items: input.items.map((i) => ({
+        name: i.name.slice(0, 100),
+        quantity: i.quantity,
+        value: Math.max(1000, Math.round(i.value)),
+        weight: Math.max(1, Math.round(i.weightGrams)),
+      })),
+    };
+    if (shipper.area_id) body.origin_area_id = shipper.area_id;
+    else body.origin_postal_code = Number(shipper.postal_code);
+    if (d.area_id) body.destination_area_id = d.area_id;
+    else body.destination_postal_code = Number(d.postal_code);
+    try {
+      const res = await fetch(`${BASE_URL}/v1/orders`, {
+        method: "POST",
+        headers: headers(key),
+        body: JSON.stringify(body),
+        cache: "no-store",
+      });
+      const json = (await res.json()) as {
+        success?: boolean;
+        id?: string;
+        courier?: { waybill_id?: string | null };
+        error?: string;
+      };
+      if (!res.ok || !json.success || !json.courier?.waybill_id) {
+        console.error("[biteship create order]", res.status, json.error ?? "");
+        return {
+          ok: false,
+          error: "Pengiriman gagal dibuat di Biteship. Isi resi manual atau coba lagi.",
+        };
+      }
+      return { ok: true, data: { waybill: json.courier.waybill_id, externalId: json.id ?? null } };
+    } catch {
+      return { ok: false, error: "Biteship tidak bisa dihubungi. Coba lagi nanti." };
     }
   },
 };

@@ -25,6 +25,9 @@ const nextConfig: NextConfig = {
   // nzo.local → alias hosts-file ke localhost, supaya Cloudflare Turnstile bisa
   // di-whitelist (widget butuh domain valid, bukan "localhost" polos).
   allowedDevOrigins: ["nzo.local"],
+  // Log dev Next 16 mencetak argumen server action (termasuk password/alamat).
+  // Dimatikan sesuai security rule 13.
+  logging: { serverFunctions: false },
   // Dev pakai `next dev --webpack` — Turbopack sering bentrok dengan lightningcss (Tailwind v4).
   webpack: (config) => {
     config.externals = [...(config.externals ?? []), "lightningcss"];

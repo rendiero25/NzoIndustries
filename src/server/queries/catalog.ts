@@ -138,6 +138,52 @@ export async function listProductCards(
   vehicle: ActiveVehicle | null,
 ): Promise<CatalogProductCard[]> {
   const limit = opts.limit ?? 10;
+
+  // Jalur cepat tanpa filter: query index langsung. catalog_search mengurutkan
+  // seluruh katalog (±1 dtk untuk terlaris) dan bisa kena batas 3 dtk role anon.
+  if (!vehicle && !opts.categorySlug) {
+    let q = createPublicClient()
+      .from("products")
+      .select(
+        "id, slug, name, price, compare_at_price, stock, average_rating, review_count, total_sold, brand:brands(name), images:product_images(public_id, sort_order, variant_id), variants:product_variants(id, is_active)",
+      )
+      .eq("status", "published")
+      .limit(limit + (opts.excludeId ? 1 : 0));
+    q =
+      opts.sort === "bestseller"
+        ? q.order("total_sold", { ascending: false }).order("published_at", { ascending: false })
+        : q.order("published_at", { ascending: false });
+    const { data, error } = await q;
+    if (error) throw new Error(`product cards: ${error.message}`);
+    return (data ?? [])
+      .filter((p) => p.id !== opts.excludeId)
+      .slice(0, limit)
+      .map((p) =>
+        toCard(
+          {
+            id: p.id,
+            slug: p.slug,
+            name: p.name,
+            price: p.price,
+            compare_at_price: p.compare_at_price,
+            stock: p.stock,
+            average_rating: p.average_rating,
+            review_count: p.review_count,
+            total_sold: p.total_sold,
+            brand_name: p.brand?.name ?? null,
+            primary_image:
+              [...(p.images ?? [])]
+                .filter((i) => !i.variant_id)
+                .sort((a, b) => a.sort_order - b.sort_order)[0]?.public_id ?? null,
+            has_variants: (p.variants ?? []).some((v) => v.is_active),
+            fit_level: null,
+            total_count: 0,
+          },
+          null,
+        ),
+      );
+  }
+
   const { data, error } = await createPublicClient().rpc("catalog_search", {
     p_category_slug: opts.categorySlug,
     p_model_id: vehicle?.modelId,

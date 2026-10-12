@@ -1,6 +1,6 @@
 # CLAUDE.md — NZO Industries E-commerce
 
-Versi dokumen: 0.12 (2026-10-12). Baca file ini di awal setiap sesi.
+Versi dokumen: 0.13 (2026-10-12). Baca file ini di awal setiap sesi.
 
 ## Proyek
 Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (plus sebagian produk non-otomotif yang masuk kategori sendiri). Ada tiga area: storefront publik, dashboard user (`/account`), dan dashboard admin/CMS (`/admin`). Prinsip utama: **security first**.
@@ -73,6 +73,7 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - Pembayaran (Fase 6): `placeOrder` → `startPayment` (link Mayar, reuse link pending) → redirect. Halaman status `/checkout/success?order=` (bayar ulang, cek status). Webhook `POST /api/webhooks/mayar` (header `x-callback-token` = `MAYAR_WEBHOOK_TOKEN`, idempotent di `webhook_events`); daftarkan `${NEXT_PUBLIC_APP_URL}/api/webhooks/mayar` di dashboard Mayar (sandbox web.mayar.club, produksi web.mayar.id). Simulator dev `/checkout/pay-test/[ref]` bila `MAYAR_API_KEY` kosong dan `PAYMENT_TEST_MODE=true` (D-32).
 - Dashboard user (Fase 7): `/account` (ringkasan), `/account/orders` (+ `/[number]`), `/addresses`, `/garage`, `/wishlist`, `/reviews`, `/vouchers`, `/returns`, `/notifications`, `/profile`. DAL `src/server/queries/account.ts` (`requireAccountUser` di layout + setiap query), actions `src/server/actions/account/*`. Upload media pelanggan lewat `requestUpload` (signed upload URL, path `{uid}/{uuid}.ext` ditentukan server; bucket `review-images` publik, `after-sales-media` privat). Label status pesanan/retur/klaim/ulasan: `src/lib/orders/status.ts`. Legacy `/dashboard/*` dan `/wishlist` di-redirect permanen di `next.config.ts`.
 - Rute yang bisa `notFound()` jangan diberi `loading.tsx` (streaming dimulai sebelum 404, status jadi 200); bungkus konten lambat dengan `Suspense` setelah validasi.
+- Admin (Fase 8): aksi di `src/server/actions/admin/*` memakai `adminGuard(ROLES.x)` (`_guard.ts`) lalu Zod lalu client user-scoped (RPC `admin_*` security definer cek `private.has_role`). DAL `src/server/queries/admin/*`. Status pesanan admin hanya lewat RPC `admin_set_order_status` (matriks transisi, notifikasi user, lepas reservasi saat batal). Rute: `/admin`, `/admin/orders[/number]`, `/admin/products[/new|/[id]|/export]`, `/admin/stock`.
 
 ## Konvensi kode
 - Identifier dalam bahasa Inggris; semua teks UI dalam Bahasa Indonesia (aturan copy di design-system.md).
@@ -148,6 +149,10 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - D-34 Invoice PDF dikerjakan di Fase 9 bersama resi (menunggu P-07); detail pesanan menampilkan tombol "Unduh invoice (segera)" nonaktif sampai saat itu.
 - D-35 Hapus akun (UU PDP) = anonimisasi lewat RPC `anonymize_my_account` + service role: nama/telepon dikosongkan, alamat/garasi/wishlist/keranjang/notifikasi dihapus, pesanan belum dibayar dibatalkan, email auth diganti alias `deleted-…@deleted.invalid`, akun diblokir, semua sesi diakhiri. Pesanan tetap disimpan untuk pembukuan. Ditolak bila masih ada pesanan `paid/processing/shipped` atau akun staf. Konfirmasi dengan mengetik ulang email.
 - D-36 Retur dalam `store_settings.return_window_days` (default 7) hari sejak diterima (`shipments.delivered_at`, fallback `orders.updated_at`), ditegakkan RLS (`private.can_request_return`). Klaim garansi untuk item pesanan `delivered/completed`. Angka final mengikuti P-08.
+- D-37 Fase 8 dikerjakan dalam 5 sub-batch (8A operasional, 8B struktur katalog, 8C promo & konten, 8D pelanggan & after-sales, 8E administrasi). Tiap sub-batch diuji, di-commit, di-push, lalu lanjut otomatis.
+- D-38 Diskon produk/kategori = bulk action harga coret (persen/nominal/hapus) lewat RPC `admin_bulk_discount`; dasar = `coalesce(compare_at_price, price)` supaya diskon tidak bertumpuk, kategori ikut subkategori. Bundling = change request (D-14).
+- D-39 Halaman statis (tentang, FAQ, cara beli, kontak, legal P-08) disimpan di tabel `content_pages` (Markdown, published) dengan editor admin; halaman publik memakai fallback copy bila kosong. Dikerjakan di 8C.
+- D-40 Resi: admin input kurir + nomor resi manual (status jadi Dikirim). Tombol "Buat pengiriman Biteship" (`ShippingProvider.createShipment`) aktif otomatis setelah `BITESHIP_API_KEY` dan data pengirim `store_settings.shipper` (P-11) terisi.
 - D-25 Logo resmi dari klien (`public/logo.png`) di-trace ke SVG (`public/brand/nzo-lockup.svg`, `nzo-mark.svg`); dirender sebagai CSS mask supaya mengikuti warna tema. Favicon = perisai.
 
 ## Pending info klien
@@ -180,6 +185,7 @@ Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - 0.6 (2026-10-02): Tambah D-20 (MFA staf lewat flag, default mati). Security rule 7 diperbarui.
 - 0.7 (2026-10-02): Fase 2 (design system + redesign shell). Sinkron versi, tanpa keputusan baru.
 - 0.9 (2026-10-07): Fase 4 (storefront di schema NZO). Tambah D-26 (publish dev), D-27 (fitment dua tingkat). Catatan rute storefront & DAL.
+- 0.13 (2026-10-12): Fase 8A (admin operasional). Tambah D-37 (sub-batch), D-38 (diskon = harga coret massal), D-39 (`content_pages`), D-40 (resi manual + Biteship). Catatan pola aksi/DAL admin.
 - 0.12 (2026-10-12): Fase 7 (dashboard user `/account`). Tambah D-33 (voucher publik), D-34 (invoice di Fase 9), D-35 (hapus akun = anonimisasi), D-36 (jendela retur). Rute & DAL akun, redirect legacy `/dashboard`.
 - 0.11 (2026-10-08): Fase 6 (pembayaran Mayar). P-02 terjawab → D-31 (Mayar saja), D-32 (simulator dev). Aturan bisnis pembayaran & tech stack diperbarui, catatan webhook/simulator.
 - 0.10 (2026-10-08): Fase 5 (keranjang & checkout). Tambah D-28 (checkout wajib login, merge cart), D-29 (pesanan via RPC `place_order` service role, reservasi stok), D-30 (ShippingProvider, tarif uji, berat default). Perintah/rute checkout, cron, env baru. Aturan bisnis harga dirujuk ke D-22.

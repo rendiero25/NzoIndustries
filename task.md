@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.12 (2026-10-12). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.13 (2026-10-12). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -199,13 +199,15 @@ Versi dokumen: 0.12 (2026-10-12). Aturan, keputusan (`D-xx`), dan pending klien 
 - Uji lanjutan (Claude in Chrome + Chrome headless CDP 390px): unggah foto ulasan dari form (tersimpan, 1 foto, menunggu moderasi), tambah kendaraan dari Garasi (jadi aktif), lonceng header langsung segar setelah "Tandai semua dibaca" (event `nzo:notifications-changed`). Ditemukan & diperbaiki: semua halaman `/account` melebar ke 1018px di HP (kolom grid terdorong baris chip menu, diperbaiki `grid-cols-[minmax(0,1fr)]`), header sempat tampil "Masuk/Daftar" saat sudah login (status login kini dikirim dari server ke `StoreHeader`), scrollbar chip menu, ukuran field kata sandi.
 
 ## Fase 8 — Dashboard admin (`/admin`)
-- [ ] Beranda: KPI (penjualan, pesanan, produk terlaris, stok menipis) + grafik
-- [ ] Produk: daftar, tambah/edit (semua field, varian, spesifikasi, fitment, gambar Cloudinary, SEO), draft/publish, duplikat, bulk action, import/export
+Dikerjakan dalam 5 sub-batch 8A–8E (D-37).
+
+- [x] Beranda: KPI (penjualan, pesanan, produk terlaris, stok menipis) + grafik — 8A
+- [x] Produk: daftar, tambah/edit (semua field, varian, spesifikasi, fitment, gambar Cloudinary, SEO), draft/publish, duplikat, bulk action, import/export — 8A
 - [ ] Kategori (drag urutan, parent–child) dan brand
 - [ ] Data kendaraan (merek, model, tahun)
-- [ ] Stok: mutasi, penyesuaian dengan alasan, riwayat ledger, notifikasi stok menipis
-- [ ] Pesanan: daftar dengan filter, detail, ubah status, verifikasi/tolak bukti transfer, input resi, batalkan/refund
-- [ ] Promo: voucher, diskon produk/kategori, flash sale, bundling
+- [x] Stok: mutasi, penyesuaian dengan alasan, riwayat ledger, notifikasi stok menipis — 8A
+- [x] Pesanan: daftar dengan filter, detail, ubah status, ~~verifikasi/tolak bukti transfer~~ (D-31), input resi (D-40), batalkan/refund — 8A
+- [ ] Promo: voucher, diskon produk/kategori (D-38, bulk harga coret sudah di 8A), flash sale — ~~bundling~~ change request (D-38)
 - [ ] Konten: banner, bar promo, konten beranda, halaman statis
 - [ ] Ulasan: moderasi (tampilkan/sembunyikan/balas)
 - [ ] Pelanggan: daftar, detail, riwayat belanja, segmentasi sederhana, blokir
@@ -217,6 +219,16 @@ Versi dokumen: 0.12 (2026-10-12). Aturan, keputusan (`D-xx`), dan pending klien 
 - [ ] Riwayat import Jubelio/CSV
 
 **Catatan fase:**
+- **8A (operasional):**
+  - Migration `20261012000300_admin_operations` (RPC `admin_dashboard_stats`, `admin_set_order_status` dengan matriks transisi, trigger notifikasi stok menipis), `…0400_admin_products` (`admin_bulk_discount`, `admin_duplicate_product`), `…0500` (stok menipis vs habis dipisah), `…0600` (index terlaris `total_sold, published_at`; beranda 1,8 dtk menjadi 1 ms).
+  - Guard aksi admin `src/server/actions/admin/_guard.ts` (`ROLES`, `adminGuard`). DAL `src/server/queries/admin/{dashboard,orders,products,stock}.ts`.
+  - Halaman `/admin`, `/admin/orders`, `/admin/orders/[number]`, `/admin/products` (+ `/new`, `/[id]` tab Data utama/Varian/Spesifikasi/Kecocokan, `/export` XLSX), `/admin/stock`. Halaman legacy pesanan/produk/stok dihapus (kecuali `/admin/products/[id]/images`).
+  - Edit nama/harga oleh admin mengunci produk dari import ulang (`import_locked`, D-24). Varian yang dihapus dinonaktifkan (riwayat pesanan tetap utuh).
+  - `ShippingProvider.createShipment` (opsional): Biteship `POST /v1/orders` memakai `store_settings.shipper`; tanpa key/P-11 hanya input resi manual (D-40).
+  - `next.config.ts` `logging.serverFunctions: false`: log dev Next 16 mencetak argumen server action (password/alamat), melanggar security rule 13.
+  - Diuji di browser (akun admin + pembeli uji, dev): dashboard, pesanan diproses lalu dikirim dengan resi (notifikasi user), simpan produk (audit + `import_locked`), penyesuaian stok (ledger `correction`, toast). Cek headless 1366 px: tanpa overlay error, tanpa scroll horizontal.
+  - Cek: `test:rls` 40/40 (6 tes baru 8A).
+  - Akun uji dipakai lagi di 8B–8E; dihapus di akhir Fase 8.
 
 ## Fase 9 — Dokumen cetak
 - [ ] Invoice PDF A4 sesuai design-system.md §12 [P-07]
