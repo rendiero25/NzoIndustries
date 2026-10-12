@@ -18,6 +18,9 @@ export const RATE_LIMITS = {
   voucher: { limit: 10, windowSeconds: 60 },
   address: { limit: 20, windowSeconds: 60 },
   paymentStatus: { limit: 12, windowSeconds: 60 },
+  account: { limit: 10, windowSeconds: 300 },
+  upload: { limit: 30, windowSeconds: 300 },
+  tracking: { limit: 20, windowSeconds: 60 },
 } satisfies Record<string, RateLimitRule>;
 
 export type RateLimitName = keyof typeof RATE_LIMITS;

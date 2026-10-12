@@ -76,4 +76,28 @@ export const testRatesProvider: ShippingProvider = {
     }));
     return { ok: true, data: rates };
   },
+
+  async track(_courierCode, waybill) {
+    const base = Date.now();
+    const at = (h: number) => new Date(base - h * 3_600_000).toISOString();
+    return {
+      ok: true,
+      data: {
+        status: "dropping_off",
+        events: [
+          {
+            at: at(2),
+            note: `Paket ${waybill} sedang diantar kurir (data uji)`,
+            status: "dropping_off",
+          },
+          { at: at(20), note: "Paket tiba di gudang kota tujuan (data uji)", status: "picked" },
+          {
+            at: at(30),
+            note: "Paket diambil kurir dari gudang NZO (data uji)",
+            status: "picking_up",
+          },
+        ],
+      },
+    };
+  },
 };

@@ -2,6 +2,7 @@ import "server-only";
 
 import { getServerEnv } from "@/lib/env";
 import type {
+  ShippingTracking,
   ShippingArea,
   ShippingProvider,
   ShippingRate,
@@ -143,6 +144,34 @@ export const biteshipProvider: ShippingProvider = {
       return { ok: true, data: rates };
     } catch {
       return { ok: false, error: "Ongkir tidak dapat dihitung saat ini. Coba lagi nanti." };
+    }
+  },
+
+  async track(courierCode, waybill): Promise<ShippingResult<ShippingTracking>> {
+    const key = getServerEnv().BITESHIP_API_KEY;
+    if (!key) return { ok: false, error: "Pelacakan belum dikonfigurasi." };
+    try {
+      const url = `${BASE_URL}/v1/trackings/${encodeURIComponent(waybill)}/couriers/${encodeURIComponent(courierCode)}`;
+      const res = await fetch(url, { headers: headers(key), next: { revalidate: 600 } });
+      const json = (await res.json()) as {
+        success?: boolean;
+        status?: string;
+        history?: { note?: string; status?: string; updated_at?: string }[];
+      };
+      if (!res.ok || !json.success) {
+        console.error("[biteship tracking]", res.status);
+        return { ok: false, error: "Pelacakan belum tersedia. Coba lagi nanti." };
+      }
+      const events = (json.history ?? [])
+        .map((h) => ({
+          at: h.updated_at ?? null,
+          note: String(h.note ?? ""),
+          status: h.status ?? null,
+        }))
+        .reverse();
+      return { ok: true, data: { status: json.status ?? null, events } };
+    } catch {
+      return { ok: false, error: "Pelacakan belum tersedia. Coba lagi nanti." };
     }
   },
 };

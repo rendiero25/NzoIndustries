@@ -1003,3 +1003,196 @@ describe("pembayaran (Fase 6)", () => {
     assert.equal(order!.status, "expired");
   });
 });
+
+describe("akun pelanggan (Fase 7)", () => {
+  let member: TestUser;
+  let stranger: TestUser;
+  let productId: string;
+  const publicCode = `PUB${RUN_ID}`.toUpperCase();
+  const privateCode = `PRV${RUN_ID}`.toUpperCase();
+
+  const newOrder = async (user: TestUser) => {
+    const { data, error } = await admin.rpc("place_order", {
+      p_user: user.id,
+      p_checkout_key: crypto.randomUUID(),
+      p_items: [{ product_id: productId, variant_id: null, quantity: 1 }],
+      p_address: { recipient: "Uji", phone: "081234567890" },
+      p_shipping: { courier_code: "uji", courier_service: "reg", cost: 10000 },
+      p_voucher_code: "",
+      p_payment_provider: "mayar",
+    });
+    if (error) throw new Error(`place_order: ${error.message}`);
+    return (data as { order_id: string }).order_id;
+  };
+
+  before(async () => {
+    member = await createTestUser("customer");
+    stranger = await createTestUser("customer");
+    const { data: product, error } = await admin
+      .from("products")
+      .insert({
+        name: `Produk akun ${RUN_ID}`,
+        slug: `rls-akun-${RUN_ID}`,
+        sku: `RLS-AKUN-${RUN_ID}`.toUpperCase(),
+        price: 40000,
+        status: "published",
+      })
+      .select("id")
+      .single();
+    if (error || !product) throw new Error(`produk akun: ${error?.message}`);
+    productId = product.id;
+    await admin
+      .from("inventory_movements")
+      .insert({ product_id: productId, quantity: 20, type: "initial" });
+    await admin.from("vouchers").insert([
+      { code: publicCode, discount_type: "fixed", discount_value: 5000, is_public: true },
+      { code: privateCode, discount_type: "fixed", discount_value: 5000, is_public: false },
+    ]);
+  });
+
+  after(async () => {
+    await admin.from("orders").delete().in("user_id", [member.id, stranger.id]);
+    await admin.from("vouchers").delete().in("code", [publicCode, privateCode]);
+    await admin.from("products").update({ status: "archived" }).eq("id", productId);
+  });
+
+  test("voucher publik terbaca, voucher biasa tidak", async () => {
+    for (const client of [anon(), member.client]) {
+      const { data } = await client
+        .from("vouchers")
+        .select("code")
+        .in("code", [publicCode, privateCode]);
+      assert.deepEqual(
+        (data ?? []).map((v) => v.code),
+        [publicCode],
+      );
+    }
+  });
+
+  test("batalkan & konfirmasi pesanan hanya milik sendiri dan status yang tepat", async () => {
+    const orderId = await newOrder(member);
+
+    const { error: strangerErr } = await stranger.client.rpc("cancel_my_order", {
+      p_order_id: orderId,
+    });
+    assert.ok(strangerErr, "orang lain tidak boleh membatalkan");
+    const { error: earlyComplete } = await member.client.rpc("complete_my_order", {
+      p_order_id: orderId,
+    });
+    assert.ok(earlyComplete, "pesanan belum dikirim tidak bisa diselesaikan");
+
+    const { error } = await member.client.rpc("cancel_my_order", { p_order_id: orderId });
+    assert.ifError(error);
+    const { data: order } = await admin.from("orders").select("status").eq("id", orderId).single();
+    assert.equal(order!.status, "cancelled");
+    const { data: res } = await admin
+      .from("stock_reservations")
+      .select("status")
+      .eq("order_id", orderId);
+    assert.ok((res ?? []).every((r) => r.status === "released"));
+
+    const shippedId = await newOrder(member);
+    await admin.from("orders").update({ status: "shipped" }).eq("id", shippedId);
+    const { error: completeErr } = await member.client.rpc("complete_my_order", {
+      p_order_id: shippedId,
+    });
+    assert.ifError(completeErr);
+    const { data: done } = await admin.from("orders").select("status").eq("id", shippedId).single();
+    assert.equal(done!.status, "completed");
+  });
+
+  test("retur hanya dalam jendela, untuk pesanan diterima milik sendiri", async () => {
+    const pendingId = await newOrder(member);
+    const { error: notYet } = await member.client
+      .from("returns")
+      .insert({ order_id: pendingId, user_id: member.id, reason: "Barang rusak saat diterima" });
+    assert.ok(notYet, "pesanan belum diterima tidak bisa diretur");
+
+    const deliveredId = await newOrder(member);
+    await admin.from("orders").update({ status: "delivered" }).eq("id", deliveredId);
+    await admin
+      .from("shipments")
+      .update({ delivered_at: new Date().toISOString() })
+      .eq("order_id", deliveredId);
+
+    const { error: strangerErr } = await stranger.client
+      .from("returns")
+      .insert({
+        order_id: deliveredId,
+        user_id: stranger.id,
+        reason: "Barang rusak saat diterima",
+      });
+    assert.ok(strangerErr, "orang lain tidak boleh meretur");
+
+    const { error } = await member.client
+      .from("returns")
+      .insert({ order_id: deliveredId, user_id: member.id, reason: "Barang rusak saat diterima" });
+    assert.ifError(error);
+
+    const lateId = await newOrder(member);
+    await admin.from("orders").update({ status: "delivered" }).eq("id", lateId);
+    await admin
+      .from("shipments")
+      .update({ delivered_at: new Date(Date.now() - 10 * 86_400_000).toISOString() })
+      .eq("order_id", lateId);
+    const { error: lateErr } = await member.client
+      .from("returns")
+      .insert({ order_id: lateId, user_id: member.id, reason: "Barang rusak saat diterima" });
+    assert.ok(lateErr, "lewat 7 hari ditolak");
+
+    const { data: days } = await member.client.rpc("store_return_window_days");
+    assert.equal(days, 7);
+  });
+
+  test("notifikasi user lain tidak terbaca", async () => {
+    await admin.from("notifications").insert({ user_id: member.id, type: "test", title: "Uji" });
+    const { data } = await stranger.client
+      .from("notifications")
+      .select("id")
+      .eq("user_id", member.id);
+    assert.equal(data?.length ?? 0, 0);
+  });
+
+  test("anonymize_my_account: data pribadi hilang, pesanan tetap, staf ditolak", async () => {
+    const { error: staffErr } = await adminUser.client.rpc("anonymize_my_account");
+    assert.ok(staffErr, "akun staf tidak bisa menghapus diri sendiri");
+
+    await admin
+      .from("profiles")
+      .update({ full_name: "Uji Hapus", phone: "081234567890" })
+      .eq("id", stranger.id);
+    await admin.from("addresses").insert({
+      user_id: stranger.id,
+      recipient: "Uji",
+      phone: "081234567890",
+      province: "x",
+      city: "x",
+      district: "x",
+      postal_code: "12345",
+      full_address: "Jl. Uji No. 1",
+    });
+    const orderId = await newOrder(stranger);
+
+    const { error } = await stranger.client.rpc("anonymize_my_account");
+    assert.ifError(error);
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("full_name, phone, deleted_at")
+      .eq("id", stranger.id)
+      .single();
+    assert.equal(profile!.full_name, null);
+    assert.equal(profile!.phone, null);
+    assert.ok(profile!.deleted_at);
+    const { data: addresses } = await admin
+      .from("addresses")
+      .select("id")
+      .eq("user_id", stranger.id);
+    assert.equal(addresses?.length ?? 0, 0);
+    const { data: order } = await admin.from("orders").select("status").eq("id", orderId).single();
+    assert.equal(
+      order!.status,
+      "cancelled",
+      "pesanan belum dibayar dibatalkan, tetapi tetap tersimpan",
+    );
+  });
+});

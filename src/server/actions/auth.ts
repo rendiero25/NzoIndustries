@@ -36,7 +36,7 @@ export async function signUpAction(input: unknown): Promise<ActionResult> {
     email: email.trim().toLowerCase(),
     password,
     options: {
-      emailRedirectTo: callbackUrl("/dashboard"),
+      emailRedirectTo: callbackUrl("/account"),
       data: {
         full_name: `${first_name.trim()} ${last_name.trim()}`.trim(),
         phone: phone.replace(/[^\d+]/g, ""),
@@ -66,7 +66,7 @@ export async function resendActivationAction(input: unknown): Promise<ActionResu
   const { error } = await supabase.auth.resend({
     type: "signup",
     email: parsed.data.email.trim().toLowerCase(),
-    options: { emailRedirectTo: callbackUrl("/dashboard") },
+    options: { emailRedirectTo: callbackUrl("/account") },
   });
   if (error && (error.status === 429 || error.message.toLowerCase().includes("rate limit"))) {
     return { ok: false, error: "Tunggu sebentar sebelum mengirim ulang." };

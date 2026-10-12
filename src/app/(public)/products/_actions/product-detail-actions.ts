@@ -124,7 +124,7 @@ export async function toggleWishlistProduct(productId: string): Promise<Wishlist
     if (row) {
       const { error } = await supabase.from("wishlists").delete().eq("id", row.id);
       if (error) return { success: false, error: error.message };
-      revalidatePath("/dashboard");
+      revalidatePath("/account", "layout");
       return { success: true, inWishlist: false };
     }
 
@@ -137,7 +137,7 @@ export async function toggleWishlistProduct(productId: string): Promise<Wishlist
       }
       return { success: false, error: error.message };
     }
-    revalidatePath("/dashboard");
+    revalidatePath("/account", "layout");
     return { success: true, inWishlist: true };
   } catch {
     return { success: false, error: "Terjadi kesalahan." };

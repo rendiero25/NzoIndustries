@@ -30,7 +30,7 @@ export async function toggleWishlist(input: z.infer<typeof schema>): Promise<Wis
   if (existing) {
     const { error } = await supabase.from("wishlists").delete().eq("id", existing.id);
     if (error) return { ok: false, error: "Gagal menghapus dari wishlist." };
-    revalidatePath("/wishlist");
+    revalidatePath("/account/wishlist");
     return { ok: true, saved: false };
   }
 
@@ -38,7 +38,7 @@ export async function toggleWishlist(input: z.infer<typeof schema>): Promise<Wis
     .from("wishlists")
     .insert({ user_id: user.id, product_id: parsed.data.productId });
   if (error) return { ok: false, error: "Gagal menyimpan ke wishlist." };
-  revalidatePath("/wishlist");
+  revalidatePath("/account/wishlist");
   return { ok: true, saved: true };
 }
 

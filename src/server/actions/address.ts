@@ -118,3 +118,28 @@ export async function searchShippingAreas(input: { query: string }): Promise<Are
   const result = await provider.searchAreas(parsed.data.query);
   return result.ok ? { ok: true, areas: result.data } : { ok: false, error: result.error };
 }
+
+/** Jadikan alamat utama (satu per user, unique index parsial). */
+export async function setDefaultAddress(input: {
+  id: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  const parsed = idSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "Alamat tidak valid." };
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, error: "Masuk dulu." };
+  const supabase = await createClient();
+  await supabase
+    .from("addresses")
+    .update({ is_default: false })
+    .eq("user_id", user.id)
+    .eq("is_default", true);
+  const { error } = await supabase
+    .from("addresses")
+    .update({ is_default: true })
+    .eq("id", parsed.data.id)
+    .eq("user_id", user.id);
+  if (error) return { ok: false, error: "Gagal menyimpan alamat utama." };
+  revalidatePath("/account/addresses");
+  revalidatePath("/checkout");
+  return { ok: true };
+}

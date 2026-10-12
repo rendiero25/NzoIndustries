@@ -28,7 +28,7 @@ function isOtpType(value: string | null): value is EmailOtpType {
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const origin = process.env.NEXT_PUBLIC_APP_URL ?? new URL(request.url).origin;
-  const next = safeRedirectPath(searchParams.get("next"), "/dashboard");
+  const next = safeRedirectPath(searchParams.get("next"), "/account");
 
   const fail = () => {
     const url = new URL("/login", origin);

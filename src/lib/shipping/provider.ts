@@ -51,7 +51,12 @@ export interface ShippingProvider {
     destination: ShippingDestination,
     items: ShippingParcelItem[],
   ): Promise<ShippingResult<ShippingRate[]>>;
+  /** Riwayat pelacakan resi (terbaru dulu). */
+  track(courierCode: string, waybill: string): Promise<ShippingResult<ShippingTracking>>;
 }
+
+export type ShippingTrackingEvent = { at: string | null; note: string; status: string | null };
+export type ShippingTracking = { status: string | null; events: ShippingTrackingEvent[] };
 
 /** null = ongkir belum dikonfigurasi (tanpa key dan tarif uji tidak diizinkan). */
 export function getShippingProvider(): ShippingProvider | null {

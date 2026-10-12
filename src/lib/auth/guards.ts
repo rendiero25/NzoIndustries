@@ -81,7 +81,7 @@ export async function checkRole(
 }
 
 /** Area pelanggan (dan staf yang juga belanja). */
-export async function requireUser(redirectTo = "/dashboard"): Promise<CurrentUser> {
+export async function requireUser(redirectTo = "/account"): Promise<CurrentUser> {
   const user = await getCurrentUser();
   if (!user) redirect(`/login?redirectTo=${encodeURIComponent(redirectTo)}`);
   if (user.isBlocked) redirect("/login?error=blocked");

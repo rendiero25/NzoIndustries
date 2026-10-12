@@ -1629,6 +1629,7 @@ export type Database = {
           mayar_enabled: boolean;
           payment_timeout_minutes: number;
           require_staff_mfa: boolean;
+          return_window_days: number;
           shipper: Json;
           store_name: string;
           support_email: string | null;
@@ -1643,6 +1644,7 @@ export type Database = {
           mayar_enabled?: boolean;
           payment_timeout_minutes?: number;
           require_staff_mfa?: boolean;
+          return_window_days?: number;
           shipper?: Json;
           store_name?: string;
           support_email?: string | null;
@@ -1657,6 +1659,7 @@ export type Database = {
           mayar_enabled?: boolean;
           payment_timeout_minutes?: number;
           require_staff_mfa?: boolean;
+          return_window_days?: number;
           shipper?: Json;
           store_name?: string;
           support_email?: string | null;
@@ -1855,6 +1858,7 @@ export type Database = {
           ends_at: string | null;
           id: string;
           is_active: boolean;
+          is_public: boolean;
           max_discount: number | null;
           min_subtotal: number;
           per_user_limit: number;
@@ -1872,6 +1876,7 @@ export type Database = {
           ends_at?: string | null;
           id?: string;
           is_active?: boolean;
+          is_public?: boolean;
           max_discount?: number | null;
           min_subtotal?: number;
           per_user_limit?: number;
@@ -1889,6 +1894,7 @@ export type Database = {
           ends_at?: string | null;
           id?: string;
           is_active?: boolean;
+          is_public?: boolean;
           max_discount?: number | null;
           min_subtotal?: number;
           per_user_limit?: number;
@@ -2027,6 +2033,8 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      anonymize_my_account: { Args: never; Returns: undefined };
+      cancel_my_order: { Args: { p_order_id: string }; Returns: string };
       cart_lines: {
         Args: { p_items: Json };
         Returns: {
@@ -2117,6 +2125,7 @@ export type Database = {
         Args: { p_items: Json; p_user: string; p_voucher_code?: string };
         Returns: Json;
       };
+      complete_my_order: { Args: { p_order_id: string }; Returns: undefined };
       import_commit_batch: {
         Args: { p_batch_id: string; p_limit?: number };
         Returns: Json;
@@ -2129,6 +2138,16 @@ export type Database = {
           p_transaction_ref?: string;
         };
         Returns: string;
+      };
+      my_voucher_history: {
+        Args: never;
+        Returns: {
+          code: string;
+          description: string;
+          discount_amount: number;
+          order_number: string;
+          used_at: string;
+        }[];
       };
       place_order: {
         Args: {
@@ -2176,6 +2195,7 @@ export type Database = {
         Returns: undefined;
       };
       staff_mfa_required: { Args: never; Returns: boolean };
+      store_return_window_days: { Args: never; Returns: number };
     };
     Enums: {
       app_role: "owner" | "admin" | "warehouse" | "cs" | "customer";
