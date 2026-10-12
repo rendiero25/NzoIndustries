@@ -15,8 +15,8 @@ export default async function AccountLayout({ children }: { children: React.Reac
 
   return (
     <div className="nzo-container py-6 md:py-10">
-      <div className="grid gap-6 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-10">
-        <aside className="lg:sticky lg:top-36 lg:self-start">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-10">
+        <aside className="min-w-0 lg:sticky lg:top-36 lg:self-start">
           <AccountNav unread={unread} />
         </aside>
         <div className="min-w-0">{children}</div>

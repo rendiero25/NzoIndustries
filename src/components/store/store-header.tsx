@@ -77,6 +77,8 @@ type StoreHeaderProps = {
   sticky?: boolean;
   showCategoryNav?: boolean;
   showBorder?: boolean;
+  /** Status login dari server: dipakai sebelum auth store client siap (tanpa kedip "Masuk"). */
+  viewer?: { authenticated: boolean; fullName: string | null; email: string | null };
   className?: string;
 };
 
@@ -105,12 +107,18 @@ export function StoreHeader({
   sticky = true,
   showCategoryNav = true,
   showBorder = true,
+  viewer,
   className,
 }: StoreHeaderProps) {
   const router = useRouter();
   const pathname = usePathname() ?? "/";
 
-  const { user, profile, isAuthenticated, isAdmin } = useAuth();
+  const auth = useAuth();
+  const { isAdmin } = auth;
+  // Sebelum store terisi (render server & hidrasi), ikuti status dari server.
+  const isAuthenticated = auth.isInitialized ? auth.isAuthenticated : !!viewer?.authenticated;
+  const user = auth.user ?? (viewer?.authenticated ? { email: viewer.email } : null);
+  const profile = auth.profile ?? (viewer?.authenticated ? { full_name: viewer.fullName } : null);
   const resetAuth = useAuthStore((s) => s.reset);
   const cartCount = useCartStore(selectCartCount);
   const bumpKey = useCartStore((s) => s.bumpKey);

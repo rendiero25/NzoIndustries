@@ -58,3 +58,4 @@ next-env.d.ts
 
 # git worktrees (local isolation, never commit)
 /.worktrees/
+.claude-tmp/

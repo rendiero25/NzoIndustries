@@ -71,7 +71,7 @@ export function AccountNav({ unread }: { unread: number }) {
         </ul>
       </nav>
 
-      <nav aria-label="Menu akun" className="-mx-4 overflow-x-auto px-4 lg:hidden">
+      <nav aria-label="Menu akun" className="scrollbar-none -mx-4 overflow-x-auto px-4 lg:hidden">
         <ul className="flex gap-2 pb-1">
           {NAV.map(({ href, label }) => {
             const active = isActive(pathname, href);

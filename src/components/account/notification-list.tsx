@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { NOTIFICATIONS_CHANGED } from "@/components/layout/notification-bell";
 import { markNotificationsRead } from "@/server/actions/account/notifications";
 import type { MyNotification } from "@/server/queries/account";
 
@@ -29,6 +30,7 @@ export function NotificationList({ items }: { items: MyNotification[] }) {
     start(async () => {
       const res = await markNotificationsRead({ id });
       if (!res.ok) toast.error(res.error);
+      window.dispatchEvent(new Event(NOTIFICATIONS_CHANGED));
       router.refresh();
     });
 
@@ -80,7 +82,12 @@ export function NotificationList({ items }: { items: MyNotification[] }) {
                 {n.link ? (
                   <Link
                     href={n.link}
-                    onClick={() => !n.readAt && void markNotificationsRead({ id: n.id })}
+                    onClick={() => {
+                      if (n.readAt) return;
+                      void markNotificationsRead({ id: n.id }).then(() =>
+                        window.dispatchEvent(new Event(NOTIFICATIONS_CHANGED)),
+                      );
+                    }}
                     className="hover:underline"
                   >
                     {body}

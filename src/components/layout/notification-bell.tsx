@@ -8,6 +8,9 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { getUnreadNotificationCount } from "@/server/actions/account/notifications";
 
+/** Event jendela: daftar notifikasi berubah (mis. ditandai dibaca). */
+export const NOTIFICATIONS_CHANGED = "nzo:notifications-changed";
+
 /**
  * Lonceng header: jumlah notifikasi belum dibaca (tabel `notifications`),
  * ke `/account/notifications`. Dimuat ulang saat pindah halaman.
@@ -18,11 +21,15 @@ export function NotificationBell() {
 
   useEffect(() => {
     let cancelled = false;
-    void getUnreadNotificationCount().then((n) => {
-      if (!cancelled) setCount(n);
-    });
+    const load = () =>
+      void getUnreadNotificationCount().then((n) => {
+        if (!cancelled) setCount(n);
+      });
+    load();
+    window.addEventListener(NOTIFICATIONS_CHANGED, load);
     return () => {
       cancelled = true;
+      window.removeEventListener(NOTIFICATIONS_CHANGED, load);
     };
   }, [pathname]);
 

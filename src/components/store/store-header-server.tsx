@@ -1,3 +1,4 @@
+import { getCurrentUser } from "@/lib/auth/guards";
 import { getCategoryTree, getVehicleCatalog } from "@/server/queries/reference";
 import { getActiveVehicle } from "@/server/queries/vehicle";
 
@@ -10,10 +11,11 @@ type Props = {
 
 /** Header storefront + data server (pohon kategori, kendaraan, Garasi aktif). */
 export async function StoreHeaderServer({ showCategoryNav, showBorder }: Props) {
-  const [tree, vehicles, active] = await Promise.all([
+  const [tree, vehicles, active, viewer] = await Promise.all([
     getCategoryTree().catch(() => []),
     getVehicleCatalog().catch(() => ({ makes: [], models: [] })),
     getActiveVehicle().catch(() => null),
+    getCurrentUser().catch(() => null),
   ]);
 
   const categories: HeaderCategory[] = tree
@@ -38,6 +40,11 @@ export async function StoreHeaderServer({ showCategoryNav, showBorder }: Props) 
               shortLabel: active.shortLabel,
             }
           : null,
+      }}
+      viewer={{
+        authenticated: !!viewer,
+        fullName: viewer?.fullName ?? null,
+        email: viewer?.email ?? null,
       }}
       showCategoryNav={showCategoryNav}
       showBorder={showBorder}

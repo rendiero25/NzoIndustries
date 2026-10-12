@@ -28,7 +28,7 @@ export default async function AccountOrdersPage({
     <div className="flex flex-col gap-6">
       <PageHeader title="Pesanan" className="pb-0" />
 
-      <nav aria-label="Filter status" className="-mx-4 overflow-x-auto px-4">
+      <nav aria-label="Filter status" className="scrollbar-none -mx-4 overflow-x-auto px-4">
         <ul className="flex gap-2 border-b border-border">
           {ORDER_TABS.map((t) => (
             <li key={t.key} className="shrink-0">

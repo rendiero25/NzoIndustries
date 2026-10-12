@@ -186,6 +186,7 @@ export function PasswordForm() {
           <div className="relative">
             <Input
               id="pw-current"
+              className="h-11 pr-12"
               type={type}
               autoComplete="current-password"
               aria-invalid={!!errors.currentPassword}
@@ -199,6 +200,7 @@ export function PasswordForm() {
           <Label htmlFor="pw-new">Kata sandi baru</Label>
           <Input
             id="pw-new"
+            className="h-11"
             type={type}
             autoComplete="new-password"
             aria-invalid={!!errors.newPassword}
@@ -210,6 +212,7 @@ export function PasswordForm() {
           <Label htmlFor="pw-confirm">Ulangi kata sandi baru</Label>
           <Input
             id="pw-confirm"
+            className="h-11"
             type={type}
             autoComplete="new-password"
             aria-invalid={!!errors.confirmPassword}
