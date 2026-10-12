@@ -1,81 +1,203 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
+import Link from "next/link";
 
-import { createClient } from "@/lib/supabase/legacy/server";
-import { OrderFilters } from "./_components/order-filters";
-import { OrderTable, type OrderRow } from "./_components/order-table";
+import { StatusBadge } from "@/components/account/status-badge";
+import { PageHeader } from "@/components/shared/page-header";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { requireStaff } from "@/lib/auth/guards";
+import { formatIDR } from "@/lib/money";
+import { ORDER_STATUS_META, orderStatusMeta } from "@/lib/orders/status";
+import { cn } from "@/lib/utils";
+import { ADMIN_ORDERS_PER_PAGE, listAdminOrders } from "@/server/queries/admin/orders";
 
-export const metadata: Metadata = { title: "Kelola Pesanan · Admin" };
+export const metadata: Metadata = { title: "Pesanan" };
 export const dynamic = "force-dynamic";
 
-const PER_PAGE = 20;
+const date = new Intl.DateTimeFormat("id-ID", {
+  timeZone: "Asia/Jakarta",
+  day: "numeric",
+  month: "short",
+  hour: "2-digit",
+  minute: "2-digit",
+});
 
-type SearchParams = Promise<{
-  q?: string;
-  status?: string;
-  sort?: string;
-  page?: string;
-}>;
+const FILTERS = [
+  "",
+  "pending_payment",
+  "paid",
+  "processing",
+  "shipped",
+  "delivered",
+  "completed",
+  "cancelled",
+  "expired",
+  "refunded",
+];
 
-export default async function AdminOrdersPage({ searchParams }: { searchParams: SearchParams }) {
-  const params = await searchParams;
-  const q = params.q ?? "";
-  const status = params.status ?? "";
-  const sort = params.sort ?? "newest";
-  const page = Math.max(1, parseInt(params.page ?? "1", 10));
-  const from = (page - 1) * PER_PAGE;
-  const to = from + PER_PAGE - 1;
-
-  const supabase = await createClient();
-
-  let query = supabase
-    .from("orders")
-    .select(
-      "id, order_number, status, total, created_at, recipient_name, courier_company, courier_service",
-      { count: "exact" },
-    )
-    .range(from, to);
-
-  if (q) query = query.or(`order_number.ilike.%${q}%,recipient_name.ilike.%${q}%`);
-  if (status) query = query.eq("status", status as "pending_payment");
-
-  switch (sort) {
-    case "oldest":
-      query = query.order("created_at", { ascending: true });
-      break;
-    case "total_desc":
-      query = query.order("total", { ascending: false });
-      break;
-    case "total_asc":
-      query = query.order("total", { ascending: true });
-      break;
-    default:
-      query = query.order("created_at", { ascending: false });
-  }
-
-  const { data: orders, count } = await query;
-  const totalPages = Math.ceil((count ?? 0) / PER_PAGE);
+export default async function AdminOrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string; q?: string; from?: string; to?: string; page?: string }>;
+}) {
+  await requireStaff();
+  const sp = await searchParams;
+  const { rows, total, page } = await listAdminOrders({ ...sp, page: Number(sp.page) || 1 });
+  const pages = Math.max(1, Math.ceil(total / ADMIN_ORDERS_PER_PAGE));
+  const qs = (patch: Record<string, string | number | undefined>) => {
+    const p = new URLSearchParams();
+    const merged = { status: sp.status, q: sp.q, from: sp.from, to: sp.to, ...patch };
+    for (const [k, v] of Object.entries(merged)) if (v) p.set(k, String(v));
+    return `/admin/orders${p.size ? `?${p}` : ""}`;
+  };
 
   return (
-    <div className="w-full space-y-8 p-6 lg:p-8">
-      <div>
-        <p className="text-swiss-eyebrow">Transaksi</p>
-        <h1 className="text-[34px] font-semibold text-foreground uppercase">Pesanan</h1>
-        <p className="mt-1 text-base leading-[1.47] text-foreground">
-          {count ?? 0} pesanan{q ? ` untuk "${q}"` : ""}
-          {status ? ` · filter: ${status.replace("_", " ")}` : ""}
-        </p>
-      </div>
+    <div className="flex flex-col gap-5">
+      <PageHeader title="Pesanan" description={`${total} pesanan`} />
 
-      {/* Filters */}
-      <Suspense>
-        <OrderFilters />
-      </Suspense>
+      <nav aria-label="Filter status" className="scrollbar-none -mx-1 overflow-x-auto px-1">
+        <ul className="flex gap-1.5">
+          {FILTERS.map((s) => {
+            const active = (sp.status ?? "") === s;
+            return (
+              <li key={s || "all"} className="shrink-0">
+                <Link
+                  href={qs({ status: s || undefined, page: undefined })}
+                  className={cn(
+                    "flex h-8 items-center rounded-full border px-3 text-sm whitespace-nowrap",
+                    active
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border text-steel-700 hover:bg-steel-50",
+                  )}
+                >
+                  {s ? ORDER_STATUS_META[s as keyof typeof ORDER_STATUS_META].label : "Semua"}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
 
-      {/* Table */}
-      <Suspense>
-        <OrderTable orders={(orders ?? []) as OrderRow[]} page={page} totalPages={totalPages} />
-      </Suspense>
+      <form className="flex flex-wrap items-end gap-2" action="/admin/orders">
+        {sp.status ? <input type="hidden" name="status" value={sp.status} /> : null}
+        <label className="flex flex-col gap-1 text-caption text-muted-foreground">
+          Cari
+          <Input
+            name="q"
+            defaultValue={sp.q}
+            placeholder="Nomor pesanan / nama penerima"
+            className="h-9 w-64"
+          />
+        </label>
+        <label className="flex flex-col gap-1 text-caption text-muted-foreground">
+          Dari
+          <Input type="date" name="from" defaultValue={sp.from} className="h-9" />
+        </label>
+        <label className="flex flex-col gap-1 text-caption text-muted-foreground">
+          Sampai
+          <Input type="date" name="to" defaultValue={sp.to} className="h-9" />
+        </label>
+        <Button type="submit" size="sm" variant="outline">
+          Terapkan
+        </Button>
+        {sp.q || sp.from || sp.to ? (
+          <Button asChild size="sm" variant="ghost">
+            <Link href={qs({ q: undefined, from: undefined, to: undefined, page: undefined })}>
+              Reset
+            </Link>
+          </Button>
+        ) : null}
+      </form>
+
+      <Card className="overflow-hidden p-0">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Pesanan</TableHead>
+              <TableHead>Pelanggan</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Total</TableHead>
+              <TableHead>Pengiriman</TableHead>
+              <TableHead>Dibuat</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
+                  Tidak ada pesanan.
+                </TableCell>
+              </TableRow>
+            ) : (
+              rows.map((o) => {
+                const m = orderStatusMeta(o.status);
+                return (
+                  <TableRow key={o.id}>
+                    <TableCell>
+                      <Link
+                        href={`/admin/orders/${o.orderNumber}`}
+                        className="font-mono font-semibold hover:underline"
+                      >
+                        {o.orderNumber}
+                      </Link>
+                      <div className="text-caption text-muted-foreground">{o.itemCount} barang</div>
+                    </TableCell>
+                    <TableCell>{o.customer}</TableCell>
+                    <TableCell>
+                      <StatusBadge label={m.label} tone={m.tone} />
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {formatIDR(o.grandTotal)}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {o.courier ?? "—"}
+                      {o.waybill ? (
+                        <div className="font-mono text-caption text-muted-foreground">
+                          {o.waybill}
+                        </div>
+                      ) : null}
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {date.format(new Date(o.createdAt))}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+      </Card>
+
+      {pages > 1 ? (
+        <nav aria-label="Halaman" className="flex items-center justify-between text-sm">
+          {page > 1 ? (
+            <Button asChild variant="outline" size="sm">
+              <Link href={qs({ page: page - 1 })}>Sebelumnya</Link>
+            </Button>
+          ) : (
+            <span />
+          )}
+          <span className="text-muted-foreground tabular-nums">
+            Halaman {page} dari {pages}
+          </span>
+          {page < pages ? (
+            <Button asChild variant="outline" size="sm">
+              <Link href={qs({ page: page + 1 })}>Berikutnya</Link>
+            </Button>
+          ) : (
+            <span />
+          )}
+        </nav>
+      ) : null}
     </div>
   );
 }

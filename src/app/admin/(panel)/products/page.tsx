@@ -1,134 +1,169 @@
-import { Suspense } from "react";
+import { Download, Plus } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Plus } from "lucide-react";
 
+import { ProductTable } from "@/components/admin/products/product-table";
+import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/legacy/server";
-import { ProductFilters } from "./_components/product-filters";
-import { ProductTable, type ProductRow } from "./_components/product-table";
+import { Input } from "@/components/ui/input";
+import { requireRole } from "@/lib/auth/guards";
+import {
+  ADMIN_PRODUCTS_PER_PAGE,
+  getLowStockThreshold,
+  getProductFormOptions,
+  listAdminProducts,
+} from "@/server/queries/admin/products";
 
-export const metadata: Metadata = { title: "Kelola Produk · Admin" };
+export const metadata: Metadata = { title: "Produk" };
 export const dynamic = "force-dynamic";
 
-const PER_PAGE = 20;
-
-type SearchParams = Promise<{
+type SP = {
   q?: string;
   status?: string;
-  condition?: string;
   brand?: string;
   category?: string;
-  sort?: string;
+  stock?: string;
+  photo?: string;
   page?: string;
-}>;
+};
 
-export default async function AdminProductsPage({ searchParams }: { searchParams: SearchParams }) {
-  const params = await searchParams;
-  const q = params.q ?? "";
-  const status = params.status ?? "all";
-  const conditionFilter = params.condition ?? "";
-  const brandId = params.brand ?? "";
-  const categoryId = params.category ?? "";
-  const sort = params.sort ?? "latest";
-  const page = Math.max(1, parseInt(params.page ?? "1", 10));
-  const from = (page - 1) * PER_PAGE;
-  const to = from + PER_PAGE - 1;
+const selectClass =
+  "h-9 rounded-lg border border-input bg-transparent px-2.5 text-sm focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 outline-none";
 
-  const supabase = await createClient();
-
-  const [{ data: categories }, { data: brands }, productsResult] = await Promise.all([
-    supabase.from("categories").select("id, name").eq("is_active", true).order("name"),
-
-    supabase
-      .from("brands")
-      .select("id, name")
-      .eq("is_active", true)
-      .order("sort_order")
-      .order("name"),
-
-    (() => {
-      let query = supabase
-        .from("products")
-        .select(
-          `id, name, slug, base_price, sale_price, condition, is_active, is_featured, created_at,
-           categories(id, name),
-           product_images(url, is_primary),
-           product_variants(id, stock, reserved, is_active)`,
-          { count: "exact" },
-        )
-        .is("deleted_at", null);
-
-      if (q) query = query.ilike("name", `%${q}%`);
-      if (status === "active") query = query.eq("is_active", true);
-      if (status === "inactive") query = query.eq("is_active", false);
-      if (conditionFilter === "new" || conditionFilter === "second")
-        query = query.eq("condition", conditionFilter);
-      if (brandId) query = query.eq("brand_id", brandId);
-      if (categoryId) query = query.eq("category_id", categoryId);
-
-      switch (sort) {
-        case "oldest":
-          query = query.order("created_at", { ascending: true });
-          break;
-        case "name-asc":
-          query = query.order("name", { ascending: true });
-          break;
-        case "name-desc":
-          query = query.order("name", { ascending: false });
-          break;
-        case "price-asc":
-          query = query.order("base_price", { ascending: true });
-          break;
-        case "price-desc":
-          query = query.order("base_price", { ascending: false });
-          break;
-        default:
-          query = query.order("created_at", { ascending: false });
-      }
-
-      return query.range(from, to);
-    })(),
-  ]);
-
-  const { data: products, count } = productsResult;
-  const totalPages = Math.ceil((count ?? 0) / PER_PAGE);
+export default async function AdminProductsPage({ searchParams }: { searchParams: Promise<SP> }) {
+  await requireRole(["owner", "admin"]);
+  const sp = await searchParams;
+  const [threshold, options] = await Promise.all([getLowStockThreshold(), getProductFormOptions()]);
+  const { rows, total, page } = await listAdminProducts(
+    { ...sp, page: Number(sp.page) || 1 },
+    threshold,
+  );
+  const pages = Math.max(1, Math.ceil(total / ADMIN_PRODUCTS_PER_PAGE));
+  const qs = (p: number) => {
+    const u = new URLSearchParams();
+    for (const [k, v] of Object.entries({ ...sp, page: p > 1 ? String(p) : undefined }))
+      if (v) u.set(k, v);
+    return `/admin/products${u.size ? `?${u}` : ""}`;
+  };
+  const exportQs = new URLSearchParams(
+    Object.entries(sp).filter(([k, v]) => v && k !== "page") as [string, string][],
+  );
 
   return (
-    <div className="w-full space-y-8 p-6 lg:p-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-swiss-eyebrow">Katalog</p>
-          <h1 className="text-[34px] font-semibold text-foreground uppercase">Produk</h1>
-          <p className="mt-1 text-base leading-[1.47] text-foreground">
-            {count ?? 0} produk{q ? ` untuk "${q}"` : ""}
-          </p>
-        </div>
-        <Button asChild variant="primary" size="sm" className="shrink-0 gap-2">
-          <Link href="/admin/products/new">
-            <Plus size={14} strokeWidth={2} />
-            Tambah Produk
-          </Link>
+    <div className="flex flex-col gap-5">
+      <PageHeader
+        title="Produk"
+        description={`${total.toLocaleString("id-ID")} produk`}
+        actions={
+          <>
+            <Button asChild variant="outline">
+              <a href={`/admin/products/export${exportQs.size ? `?${exportQs}` : ""}`}>
+                <Download className="size-4" /> Export XLSX
+              </a>
+            </Button>
+            <Button asChild>
+              <Link href="/admin/products/new">
+                <Plus className="size-4" /> Tambah produk
+              </Link>
+            </Button>
+          </>
+        }
+      />
+
+      <form action="/admin/products" className="flex flex-wrap items-end gap-2">
+        <label className="flex flex-col gap-1 text-caption text-muted-foreground">
+          Cari
+          <Input name="q" defaultValue={sp.q} placeholder="Nama / SKU" className="h-9 w-56" />
+        </label>
+        <label className="flex flex-col gap-1 text-caption text-muted-foreground">
+          Status
+          <select name="status" defaultValue={sp.status ?? ""} className={selectClass}>
+            <option value="">Semua</option>
+            <option value="published">Tayang</option>
+            <option value="draft">Draft</option>
+            <option value="archived">Arsip</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-caption text-muted-foreground">
+          Brand
+          <select name="brand" defaultValue={sp.brand ?? ""} className={`${selectClass} max-w-44`}>
+            <option value="">Semua</option>
+            {options.brands.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-caption text-muted-foreground">
+          Kategori
+          <select
+            name="category"
+            defaultValue={sp.category ?? ""}
+            className={`${selectClass} max-w-52`}
+          >
+            <option value="">Semua</option>
+            {options.categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {"— ".repeat(c.depth)}
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-caption text-muted-foreground">
+          Stok
+          <select name="stock" defaultValue={sp.stock ?? ""} className={selectClass}>
+            <option value="">Semua</option>
+            <option value="low">Menipis (≤ {threshold})</option>
+            <option value="out">Habis</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-caption text-muted-foreground">
+          Foto
+          <select name="photo" defaultValue={sp.photo ?? ""} className={selectClass}>
+            <option value="">Semua</option>
+            <option value="none">Belum ada foto</option>
+          </select>
+        </label>
+        <Button type="submit" size="sm" variant="outline">
+          Terapkan
         </Button>
-      </div>
+        {Object.values(sp).some(Boolean) ? (
+          <Button asChild size="sm" variant="ghost">
+            <Link href="/admin/products">Reset</Link>
+          </Button>
+        ) : null}
+      </form>
 
-      <Suspense>
-        <ProductFilters
-          categories={categories ?? []}
-          brands={(brands ?? []) as { id: string; name: string }[]}
-        />
-      </Suspense>
+      <ProductTable
+        rows={rows}
+        brands={options.brands}
+        categories={options.categories}
+        lowThreshold={threshold}
+      />
 
-      <Suspense>
-        <ProductTable
-          products={(products ?? []) as ProductRow[]}
-          page={page}
-          totalPages={totalPages}
-          totalCount={count ?? 0}
-          perPage={PER_PAGE}
-          brands={(brands ?? []) as { id: string; name: string }[]}
-        />
-      </Suspense>
+      {pages > 1 ? (
+        <nav aria-label="Halaman" className="flex items-center justify-between text-sm">
+          {page > 1 ? (
+            <Button asChild variant="outline" size="sm">
+              <Link href={qs(page - 1)}>Sebelumnya</Link>
+            </Button>
+          ) : (
+            <span />
+          )}
+          <span className="text-muted-foreground tabular-nums">
+            Halaman {page} dari {pages.toLocaleString("id-ID")}
+          </span>
+          {page < pages ? (
+            <Button asChild variant="outline" size="sm">
+              <Link href={qs(page + 1)}>Berikutnya</Link>
+            </Button>
+          ) : (
+            <span />
+          )}
+        </nav>
+      ) : null}
     </div>
   );
 }
