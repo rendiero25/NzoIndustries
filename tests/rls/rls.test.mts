@@ -1626,3 +1626,171 @@ describe("promo & konten admin (Fase 8C)", () => {
     bannerIds = bannerIds.concat((wh.data ?? []).map((r) => r.id));
   });
 });
+
+describe("pelanggan & after-sales admin (Fase 8D)", () => {
+  let itemId: string;
+  let reviewId: string;
+  let returnId: string;
+  let claimId: string;
+
+  before(async () => {
+    const { data: item, error } = await admin
+      .from("order_items")
+      .insert({
+        order_id: orderA,
+        product_id: publishedProductId,
+        product_name: "Produk uji 8D",
+        sku: "DEMO-OLI-001",
+        unit_price: 100000,
+        quantity: 1,
+        line_total: 100000,
+      })
+      .select("id")
+      .single();
+    if (error || !item) throw new Error(`order item: ${error?.message}`);
+    itemId = item.id;
+    const { data: review } = await admin
+      .from("reviews")
+      .insert({
+        product_id: publishedProductId,
+        user_id: customerA.id,
+        order_item_id: itemId,
+        rating: 5,
+        status: "pending",
+      })
+      .select("id")
+      .single();
+    reviewId = review!.id;
+    const { data: ret } = await admin
+      .from("returns")
+      .insert({
+        order_id: orderA,
+        order_item_id: itemId,
+        user_id: customerA.id,
+        reason: "Uji 8D",
+        status: "requested",
+      })
+      .select("id")
+      .single();
+    returnId = ret!.id;
+    const { data: claim } = await admin
+      .from("warranty_claims")
+      .insert({
+        order_item_id: itemId,
+        user_id: customerA.id,
+        description: "Uji klaim garansi 8D",
+        status: "submitted",
+      })
+      .select("id")
+      .single();
+    claimId = claim!.id;
+  });
+
+  after(async () => {
+    await admin.from("order_items").delete().eq("id", itemId);
+    await admin
+      .from("notifications")
+      .delete()
+      .eq("user_id", customerA.id)
+      .in("type", ["after_sales", "review_reply"]);
+  });
+
+  test("daftar pelanggan: cs/admin boleh, pelanggan & gudang ditolak", async () => {
+    for (const client of [customerA.client, warehouse.client]) {
+      assert.ok((await client.rpc("admin_customers", {})).error);
+    }
+    const { data, error } = await cs.client.rpc("admin_customers", { p_user: customerA.id });
+    assert.ifError(error);
+    assert.equal(data?.length, 1);
+    assert.ok(data![0]!.email.includes("@"), "email terbaca");
+    const { data: staffRows } = await adminUser.client.rpc("admin_customers", { p_user: cs.id });
+    assert.equal(staffRows?.length ?? 0, 0, "staf tidak masuk daftar pelanggan");
+    assert.ok(
+      (await cs.client.rpc("admin_customers", { p_segment: "x" })).error,
+      "segmen divalidasi",
+    );
+  });
+
+  test("moderasi ulasan: cs boleh, gudang ditolak; balasan memberi notifikasi", async () => {
+    assert.ok(
+      (
+        await warehouse.client.rpc("admin_moderate_review", {
+          p_id: reviewId,
+          p_status: "published",
+        })
+      ).error,
+    );
+    assert.ifError(
+      (
+        await cs.client.rpc("admin_moderate_review", {
+          p_id: reviewId,
+          p_status: "published",
+          p_reply: "Terima kasih",
+        })
+      ).error,
+    );
+    const { data: r } = await admin
+      .from("reviews")
+      .select("status, reply, replied_by")
+      .eq("id", reviewId)
+      .single();
+    assert.equal(r!.status, "published");
+    assert.equal(r!.replied_by, cs.id);
+    const { data: notes } = await admin
+      .from("notifications")
+      .select("id")
+      .eq("user_id", customerA.id)
+      .eq("type", "review_reply");
+    assert.equal(notes?.length, 1);
+  });
+
+  test("status retur/klaim mengikuti matriks, resolusi wajib di status akhir", async () => {
+    const set = (
+      client: typeof cs.client,
+      kind: string,
+      id: string,
+      status: string,
+      resolution?: string,
+    ) =>
+      client.rpc("admin_set_after_sales_status", {
+        p_kind: kind,
+        p_id: id,
+        p_status: status,
+        p_resolution: resolution,
+      });
+
+    assert.ok(
+      (await set(customerA.client, "return", returnId, "approved")).error,
+      "pelanggan ditolak",
+    );
+    assert.ok(
+      (await set(warehouse.client, "return", returnId, "approved")).error,
+      "gudang ditolak",
+    );
+    assert.ok(
+      (await set(cs.client, "return", returnId, "completed", "x")).error,
+      "tidak boleh lompat",
+    );
+    assert.ifError((await set(cs.client, "return", returnId, "approved")).error);
+    assert.match(
+      (await set(cs.client, "return", returnId, "refunded")).error?.message ?? "",
+      /resolusi/,
+    );
+    assert.ifError(
+      (await set(cs.client, "return", returnId, "refunded", "Dana dikembalikan")).error,
+    );
+
+    assert.ifError((await set(adminUser.client, "claim", claimId, "in_review")).error);
+    assert.ifError(
+      (await set(adminUser.client, "claim", claimId, "rejected", "Di luar garansi")).error,
+    );
+    assert.ok((await set(adminUser.client, "claim", claimId, "approved")).error, "status final");
+
+    const { data: notes } = await admin
+      .from("notifications")
+      .select("id")
+      .eq("user_id", customerA.id)
+      .eq("type", "after_sales");
+    assert.equal(notes?.length, 4);
+  });
+});

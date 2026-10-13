@@ -2087,6 +2087,28 @@ export type Database = {
         Returns: number;
       };
       admin_catalog_counts: { Args: never; Returns: Json };
+      admin_customers: {
+        Args: {
+          p_limit?: number;
+          p_offset?: number;
+          p_q?: string;
+          p_segment?: string;
+          p_user?: string;
+        };
+        Returns: {
+          created_at: string;
+          deleted_at: string;
+          email: string;
+          full_name: string;
+          id: string;
+          is_blocked: boolean;
+          last_order_at: string;
+          order_count: number;
+          phone: string;
+          total_count: number;
+          total_spent: number;
+        }[];
+      };
       admin_dashboard_stats: { Args: { p_days?: number }; Returns: Json };
       admin_delete_brand: { Args: { p_id: string }; Returns: undefined };
       admin_delete_category: { Args: { p_id: string }; Returns: undefined };
@@ -2095,8 +2117,26 @@ export type Database = {
         Args: { p_product_id: string };
         Returns: string;
       };
+      admin_moderate_review: {
+        Args: {
+          p_id: string;
+          p_reply?: string;
+          p_status: Database["public"]["Enums"]["review_status"];
+        };
+        Returns: undefined;
+      };
       admin_reorder_categories: {
         Args: { p_ids: string[] };
+        Returns: undefined;
+      };
+      admin_set_after_sales_status: {
+        Args: {
+          p_id: string;
+          p_kind: string;
+          p_note?: string;
+          p_resolution?: string;
+          p_status: string;
+        };
         Returns: undefined;
       };
       admin_set_order_status: {
