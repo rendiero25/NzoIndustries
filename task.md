@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.13 (2026-10-12). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.14 (2026-10-13). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -203,8 +203,8 @@ Dikerjakan dalam 5 sub-batch 8A–8E (D-37).
 
 - [x] Beranda: KPI (penjualan, pesanan, produk terlaris, stok menipis) + grafik — 8A
 - [x] Produk: daftar, tambah/edit (semua field, varian, spesifikasi, fitment, gambar Cloudinary, SEO), draft/publish, duplikat, bulk action, import/export — 8A
-- [ ] Kategori (drag urutan, parent–child) dan brand
-- [ ] Data kendaraan (merek, model, tahun)
+- [x] Kategori (drag urutan, parent–child) dan brand — 8B
+- [x] Data kendaraan (merek, model, tahun) — 8B
 - [x] Stok: mutasi, penyesuaian dengan alasan, riwayat ledger, notifikasi stok menipis — 8A
 - [x] Pesanan: daftar dengan filter, detail, ubah status, ~~verifikasi/tolak bukti transfer~~ (D-31), input resi (D-40), batalkan/refund — 8A
 - [ ] Promo: voucher, diskon produk/kategori (D-38, bulk harga coret sudah di 8A), flash sale — ~~bundling~~ change request (D-38)
@@ -216,7 +216,7 @@ Dikerjakan dalam 5 sub-batch 8A–8E (D-37).
 - [ ] Staf dan role (owner, admin, warehouse, cs)
 - [ ] Audit log (read-only, filter per user/aksi)
 - [ ] Pengaturan toko: info toko, rekening, provider pembayaran, kurir, batas waktu bayar, pajak [P-07] [P-11]
-- [ ] Riwayat import Jubelio/CSV
+- [x] Riwayat import Jubelio/CSV — 8B (log per batch)
 
 **Catatan fase:**
 - **8A (operasional):**
@@ -229,6 +229,15 @@ Dikerjakan dalam 5 sub-batch 8A–8E (D-37).
   - Diuji di browser (akun admin + pembeli uji, dev): dashboard, pesanan diproses lalu dikirim dengan resi (notifikasi user), simpan produk (audit + `import_locked`), penyesuaian stok (ledger `correction`, toast). Cek headless 1366 px: tanpa overlay error, tanpa scroll horizontal.
   - Cek: `test:rls` 40/40 (6 tes baru 8A).
   - Akun uji dipakai lagi di 8B–8E; dihapus di akhir Fase 8.
+- **8B (struktur katalog):**
+  - Migration `20261012000700_admin_catalog`: `admin_reorder_categories` (satu induk), `admin_delete_category` (tolak bila ada subkategori/produk, karena `product_categories` cascade), `admin_delete_brand` (tolak bila dipakai produk), `admin_delete_vehicle_model` (tolak bila ada kecocokan/garasi), `admin_catalog_counts`. Tulis biasa lewat RLS `*_write` + trigger audit.
+  - `/admin/categories`: pohon 3 tingkat, urutan seret `@dnd-kit/sortable` (mouse, sentuh, keyboard) per kelompok saudara, dialog tambah/ubah (cegah induk siklik), hapus lewat AlertDialog. `DndContext id` dari `useId` (tanpa itu hydration mismatch `aria-describedby`).
+  - `/admin/brands`: tabel + cari, dialog dengan logo Cloudinary `nzo/brands` (diverifikasi Admin API: JPG/PNG/WebP ≤ 2 MB).
+  - `/admin/vehicles` (menu baru "Kendaraan"): daftar merek per jenis + tabel model per merek, validasi rentang tahun; jenis merek terkunci bila sudah punya model.
+  - `/admin/import`: tombol Log per batch (Sheet, maks 200 baris `import_logs`).
+  - Legacy kategori/brand GeekyTech dihapus. Semua perubahan me-revalidate tag `catalog`.
+  - Diuji di browser: tambah subkategori, seret urutan (tersimpan di DB), hapus kategori berisi ditolak, hapus kategori kosong; tambah/hapus brand; tambah model (validasi tahun) lalu hapus. Headless 1366 px: tanpa error console/overlay.
+  - Cek: `test:rls` 43/43 (3 tes baru 8B), `test` 66/66, typecheck, lint 0 error.
 
 ## Fase 9 — Dokumen cetak
 - [ ] Invoice PDF A4 sesuai design-system.md §12 [P-07]

@@ -1,5 +1,6 @@
 import { FileUp } from "lucide-react";
 
+import { ImportLogButton } from "@/components/admin/import-log-button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -69,6 +70,7 @@ export function ImportHistory({ batches }: { batches: Batch[] }) {
             <TableHead className="text-right">Baris</TableHead>
             <TableHead className="text-right">Berhasil</TableHead>
             <TableHead className="text-right">Gagal</TableHead>
+            <TableHead className="w-20" />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -94,6 +96,9 @@ export function ImportHistory({ batches }: { batches: Batch[] }) {
                 </TableCell>
                 <TableCell className="text-right tabular-nums">
                   {num.format(b.failed_rows)}
+                </TableCell>
+                <TableCell>
+                  <ImportLogButton batchId={b.id} fileName={b.file_name} />
                 </TableCell>
               </TableRow>
             );

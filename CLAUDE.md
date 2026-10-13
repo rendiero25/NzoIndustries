@@ -1,6 +1,6 @@
 # CLAUDE.md — NZO Industries E-commerce
 
-Versi dokumen: 0.13 (2026-10-12). Baca file ini di awal setiap sesi.
+Versi dokumen: 0.14 (2026-10-13). Baca file ini di awal setiap sesi.
 
 ## Proyek
 Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (plus sebagian produk non-otomotif yang masuk kategori sendiri). Ada tiga area: storefront publik, dashboard user (`/account`), dan dashboard admin/CMS (`/admin`). Prinsip utama: **security first**.
@@ -73,7 +73,7 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - Pembayaran (Fase 6): `placeOrder` → `startPayment` (link Mayar, reuse link pending) → redirect. Halaman status `/checkout/success?order=` (bayar ulang, cek status). Webhook `POST /api/webhooks/mayar` (header `x-callback-token` = `MAYAR_WEBHOOK_TOKEN`, idempotent di `webhook_events`); daftarkan `${NEXT_PUBLIC_APP_URL}/api/webhooks/mayar` di dashboard Mayar (sandbox web.mayar.club, produksi web.mayar.id). Simulator dev `/checkout/pay-test/[ref]` bila `MAYAR_API_KEY` kosong dan `PAYMENT_TEST_MODE=true` (D-32).
 - Dashboard user (Fase 7): `/account` (ringkasan), `/account/orders` (+ `/[number]`), `/addresses`, `/garage`, `/wishlist`, `/reviews`, `/vouchers`, `/returns`, `/notifications`, `/profile`. DAL `src/server/queries/account.ts` (`requireAccountUser` di layout + setiap query), actions `src/server/actions/account/*`. Upload media pelanggan lewat `requestUpload` (signed upload URL, path `{uid}/{uuid}.ext` ditentukan server; bucket `review-images` publik, `after-sales-media` privat). Label status pesanan/retur/klaim/ulasan: `src/lib/orders/status.ts`. Legacy `/dashboard/*` dan `/wishlist` di-redirect permanen di `next.config.ts`.
 - Rute yang bisa `notFound()` jangan diberi `loading.tsx` (streaming dimulai sebelum 404, status jadi 200); bungkus konten lambat dengan `Suspense` setelah validasi.
-- Admin (Fase 8): aksi di `src/server/actions/admin/*` memakai `adminGuard(ROLES.x)` (`_guard.ts`) lalu Zod lalu client user-scoped (RPC `admin_*` security definer cek `private.has_role`). DAL `src/server/queries/admin/*`. Status pesanan admin hanya lewat RPC `admin_set_order_status` (matriks transisi, notifikasi user, lepas reservasi saat batal). Rute: `/admin`, `/admin/orders[/number]`, `/admin/products[/new|/[id]|/export]`, `/admin/stock`.
+- Admin (Fase 8): aksi di `src/server/actions/admin/*` memakai `adminGuard(ROLES.x)` (`_guard.ts`) lalu Zod lalu client user-scoped (RPC `admin_*` security definer cek `private.has_role`). DAL `src/server/queries/admin/*`. Status pesanan admin hanya lewat RPC `admin_set_order_status` (matriks transisi, notifikasi user, lepas reservasi saat batal). Rute: `/admin`, `/admin/orders[/number]`, `/admin/products[/new|/[id]|/export]`, `/admin/stock`, `/admin/categories`, `/admin/brands`, `/admin/vehicles`, `/admin/import`. Hapus kategori/brand/model kendaraan hanya lewat RPC `admin_delete_*` (menolak bila masih dipakai).
 
 ## Konvensi kode
 - Identifier dalam bahasa Inggris; semua teks UI dalam Bahasa Indonesia (aturan copy di design-system.md).
@@ -185,6 +185,7 @@ Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - 0.6 (2026-10-02): Tambah D-20 (MFA staf lewat flag, default mati). Security rule 7 diperbarui.
 - 0.7 (2026-10-02): Fase 2 (design system + redesign shell). Sinkron versi, tanpa keputusan baru.
 - 0.9 (2026-10-07): Fase 4 (storefront di schema NZO). Tambah D-26 (publish dev), D-27 (fitment dua tingkat). Catatan rute storefront & DAL.
+- 0.14 (2026-10-13): Fase 8B (struktur katalog). Rute admin kategori/brand/kendaraan, aturan hapus lewat RPC. Tanpa keputusan baru.
 - 0.13 (2026-10-12): Fase 8A (admin operasional). Tambah D-37 (sub-batch), D-38 (diskon = harga coret massal), D-39 (`content_pages`), D-40 (resi manual + Biteship). Catatan pola aksi/DAL admin.
 - 0.12 (2026-10-12): Fase 7 (dashboard user `/account`). Tambah D-33 (voucher publik), D-34 (invoice di Fase 9), D-35 (hapus akun = anonimisasi), D-36 (jendela retur). Rute & DAL akun, redirect legacy `/dashboard`.
 - 0.11 (2026-10-08): Fase 6 (pembayaran Mayar). P-02 terjawab → D-31 (Mayar saja), D-32 (simulator dev). Aturan bisnis pembayaran & tech stack diperbarui, catatan webhook/simulator.

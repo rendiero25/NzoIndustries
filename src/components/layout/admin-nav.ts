@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  Bike,
   Boxes,
   FileBarChart,
   FileUp,
@@ -67,6 +68,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
       { label: "Produk", href: "/admin/products", icon: Package, roles: MANAGERS },
       { label: "Kategori", href: "/admin/categories", icon: LayoutList, roles: MANAGERS },
       { label: "Brand", href: "/admin/brands", icon: Tags, roles: MANAGERS },
+      { label: "Kendaraan", href: "/admin/vehicles", icon: Bike, roles: MANAGERS },
       { label: "Stok", href: "/admin/stock", icon: Boxes, roles: ["owner", "admin", "warehouse"] },
       { label: "Import produk", href: "/admin/import", icon: FileUp, roles: MANAGERS },
     ],
@@ -109,6 +111,7 @@ export const SEGMENT_LABELS: Record<string, string> = {
   images: "Foto",
   products: "Produk",
   brands: "Brand",
+  vehicles: "Kendaraan",
   categories: "Kategori",
   orders: "Pesanan",
   customers: "Pelanggan",
