@@ -3,9 +3,7 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 
-import { buildCloudinaryFolder } from "@/lib/cloudinary/folders";
-import { destroyAsset, getAsset, getCloudinaryConfig } from "@/lib/cloudinary/server";
-import { ALLOWED_IMAGE_FORMATS } from "@/lib/cloudinary/signature";
+import { verifyUploadedImage } from "@/lib/cloudinary/verify";
 import { createClient } from "@/lib/supabase/server";
 import {
   brandSchema,
@@ -128,25 +126,6 @@ export async function deleteCategory(id: string): Promise<Result> {
 
 const MAX_LOGO_BYTES = 2 * 1024 * 1024;
 
-async function verifyBrandLogo(publicId: string): Promise<Result> {
-  const folder = buildCloudinaryFolder("brands");
-  if (!publicId.startsWith(`${folder}/`) || publicId.includes("..")) {
-    return { ok: false, error: "Logo harus diunggah ke folder brand." };
-  }
-  const config = getCloudinaryConfig();
-  if (!config) return { ok: false, error: "Cloudinary belum dikonfigurasi." };
-  const asset = await getAsset(config, publicId).catch(() => null);
-  if (!asset) return { ok: false, error: "Logo tidak ditemukan di Cloudinary." };
-  if (
-    !(ALLOWED_IMAGE_FORMATS as readonly string[]).includes(asset.format) ||
-    asset.bytes > MAX_LOGO_BYTES
-  ) {
-    await destroyAsset(config, publicId).catch(() => false);
-    return { ok: false, error: "Logo harus JPG, PNG, atau WebP maksimal 2 MB." };
-  }
-  return { ok: true };
-}
-
 export async function saveBrand(id: string | null, input: BrandValues): Promise<Result> {
   const guard = await adminGuard(ROLES.managers);
   if (!guard.ok) return guard;
@@ -164,7 +143,7 @@ export async function saveBrand(id: string | null, input: BrandValues): Promise<
       ? await supabase.from("brands").select("logo_public_id").eq("id", id).maybeSingle()
       : { data: null };
     if (cur?.logo_public_id !== logo) {
-      const check = await verifyBrandLogo(logo);
+      const check = await verifyUploadedImage(logo, "brands", MAX_LOGO_BYTES);
       if (!check.ok) return check;
     }
   }

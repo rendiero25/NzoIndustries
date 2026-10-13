@@ -1542,14 +1542,12 @@ describe("struktur katalog admin (Fase 8B)", () => {
     );
     assert.ifError((await adminUser.client.rpc("admin_delete_category", { p_id: ids.b! })).error);
 
-    await admin
-      .from("product_fitments")
-      .insert({
-        product_id: publishedProductId,
-        model_id: ids.model!,
-        year_start: 2020,
-        is_verified: false,
-      });
+    await admin.from("product_fitments").insert({
+      product_id: publishedProductId,
+      model_id: ids.model!,
+      year_start: 2020,
+      is_verified: false,
+    });
     assert.match(
       (await adminUser.client.rpc("admin_delete_vehicle_model", { p_id: ids.model! })).error
         ?.message ?? "",
@@ -1557,5 +1555,74 @@ describe("struktur katalog admin (Fase 8B)", () => {
     );
     const { data: counts } = await adminUser.client.rpc("admin_catalog_counts");
     assert.equal((counts as { models: Record<string, number> }).models[ids.model!], 1);
+  });
+});
+
+describe("promo & konten admin (Fase 8C)", () => {
+  let bannerIds: string[] = [];
+
+  after(async () => {
+    if (bannerIds.length) await admin.from("banners").delete().in("id", bannerIds);
+    await admin.from("content_pages").update({ is_published: false, body: "" }).eq("slug", "terms");
+  });
+
+  test("halaman statis: publik hanya yang tayang, hanya owner/admin yang ubah", async () => {
+    await admin.from("content_pages").update({ is_published: false, body: "" }).eq("slug", "terms");
+    const { data: hidden } = await anon().from("content_pages").select("slug").eq("slug", "terms");
+    assert.equal(hidden?.length ?? 0, 0, "draf tidak terbaca anon");
+
+    for (const client of [customerA.client, warehouse.client, cs.client]) {
+      await client.from("content_pages").update({ title: "Diretas" }).eq("slug", "terms");
+    }
+    const { data: still } = await admin
+      .from("content_pages")
+      .select("title")
+      .eq("slug", "terms")
+      .single();
+    assert.notEqual(still!.title, "Diretas");
+
+    const publishEmpty = await adminUser.client
+      .from("content_pages")
+      .update({ is_published: true, body: " " })
+      .eq("slug", "terms");
+    assert.ok(publishEmpty.error, "tidak boleh tayang dengan isi kosong");
+
+    const { error } = await adminUser.client
+      .from("content_pages")
+      .update({ is_published: true, body: "## Syarat\n\nUji." })
+      .eq("slug", "terms");
+    assert.ifError(error);
+    const { data: shown } = await anon().from("content_pages").select("body").eq("slug", "terms");
+    assert.equal(shown?.length, 1);
+
+    const ins = await adminUser.client
+      .from("content_pages")
+      .insert({ slug: `rls-${RUN_ID}`.toLowerCase(), title: "X" });
+    assert.ok(ins.error, "tidak ada insert dari aplikasi");
+    await adminUser.client.from("content_pages").delete().eq("slug", "terms");
+    const { data: kept } = await admin.from("content_pages").select("id").eq("slug", "terms");
+    assert.equal(kept?.length, 1, "tidak ada delete dari aplikasi");
+  });
+
+  test("banner: bar promo tanpa gambar boleh, banner lain wajib gambar; gudang tidak bisa tulis", async () => {
+    const bar = await adminUser.client
+      .from("banners")
+      .insert({ placement: "promo_bar", title: `RLS ${RUN_ID}`, is_active: false })
+      .select("id")
+      .single();
+    assert.ifError(bar.error);
+    bannerIds.push(bar.data!.id);
+
+    const hero = await adminUser.client
+      .from("banners")
+      .insert({ placement: "hero", title: "X", is_active: false });
+    assert.ok(hero.error, "hero tanpa gambar ditolak");
+
+    const wh = await warehouse.client
+      .from("banners")
+      .insert({ placement: "promo_bar", title: "X", is_active: false })
+      .select("id");
+    assert.ok(wh.error || !wh.data?.length, "gudang tidak bisa menambah banner");
+    bannerIds = bannerIds.concat((wh.data ?? []).map((r) => r.id));
   });
 });

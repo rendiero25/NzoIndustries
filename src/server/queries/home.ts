@@ -21,7 +21,9 @@ export async function getBanners(placement: "hero" | "promo"): Promise<Banner[]>
     .limit(8);
   if (error) throw new Error(`banners: ${error.message}`);
   return (data ?? [])
-    .filter((b) => b.image_public_id.startsWith("nzo/"))
+    .filter(
+      (b): b is typeof b & { image_public_id: string } => !!b.image_public_id?.startsWith("nzo/"),
+    )
     .map((b) => ({
       id: b.id,
       title: b.title,

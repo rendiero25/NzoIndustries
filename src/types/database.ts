@@ -114,7 +114,7 @@ export type Database = {
           created_at: string;
           ends_at: string | null;
           id: string;
-          image_public_id: string;
+          image_public_id: string | null;
           is_active: boolean;
           link_url: string | null;
           mobile_image_public_id: string | null;
@@ -129,7 +129,7 @@ export type Database = {
           created_at?: string;
           ends_at?: string | null;
           id?: string;
-          image_public_id: string;
+          image_public_id?: string | null;
           is_active?: boolean;
           link_url?: string | null;
           mobile_image_public_id?: string | null;
@@ -144,7 +144,7 @@ export type Database = {
           created_at?: string;
           ends_at?: string | null;
           id?: string;
-          image_public_id?: string;
+          image_public_id?: string | null;
           is_active?: boolean;
           link_url?: string | null;
           mobile_image_public_id?: string | null;
@@ -320,6 +320,50 @@ export type Database = {
             columns: ["parent_id"];
             isOneToOne: false;
             referencedRelation: "categories";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      content_pages: {
+        Row: {
+          body: string;
+          created_at: string;
+          id: string;
+          is_published: boolean;
+          meta_description: string | null;
+          slug: string;
+          title: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          body?: string;
+          created_at?: string;
+          id?: string;
+          is_published?: boolean;
+          meta_description?: string | null;
+          slug: string;
+          title: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          id?: string;
+          is_published?: boolean;
+          meta_description?: string | null;
+          slug?: string;
+          title?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "content_pages_updated_by_fkey";
+            columns: ["updated_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
         ];
