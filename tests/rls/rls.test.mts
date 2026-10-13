@@ -1436,3 +1436,126 @@ describe("admin operasional (Fase 8A)", () => {
       .like("link", `%${productId}%`);
   });
 });
+
+describe("struktur katalog admin (Fase 8B)", () => {
+  const ids: { parent?: string; a?: string; b?: string; make?: string; model?: string } = {};
+
+  before(async () => {
+    const { data: parent } = await admin
+      .from("categories")
+      .insert({
+        name: `RLS induk ${RUN_ID}`,
+        slug: `rls-induk-${RUN_ID}`.toLowerCase(),
+        is_active: false,
+      })
+      .select("id")
+      .single();
+    ids.parent = parent!.id;
+    const { data: kids } = await admin
+      .from("categories")
+      .insert([
+        { name: "A", slug: `rls-a-${RUN_ID}`.toLowerCase(), parent_id: ids.parent, sort_order: 1 },
+        { name: "B", slug: `rls-b-${RUN_ID}`.toLowerCase(), parent_id: ids.parent, sort_order: 2 },
+      ])
+      .select("id, name");
+    ids.a = kids!.find((k) => k.name === "A")!.id;
+    ids.b = kids!.find((k) => k.name === "B")!.id;
+    const { data: make } = await admin
+      .from("vehicle_makes")
+      .insert({
+        name: `RLS ${RUN_ID}`,
+        slug: `rls-${RUN_ID}`.toLowerCase(),
+        vehicle_type: "motorcycle",
+        is_active: false,
+      })
+      .select("id")
+      .single();
+    ids.make = make!.id;
+    const { data: model } = await admin
+      .from("vehicle_models")
+      .insert({
+        make_id: ids.make,
+        name: "Uji",
+        slug: "uji",
+        vehicle_type: "motorcycle",
+        year_start: 2020,
+        is_active: false,
+      })
+      .select("id")
+      .single();
+    ids.model = model!.id;
+  });
+
+  after(async () => {
+    await admin.from("product_fitments").delete().eq("model_id", ids.model!);
+    await admin.from("product_categories").delete().in("category_id", [ids.a!, ids.b!]);
+    await admin.from("vehicle_models").delete().eq("make_id", ids.make!);
+    await admin.from("vehicle_makes").delete().eq("id", ids.make!);
+    await admin.from("categories").delete().eq("parent_id", ids.parent!);
+    await admin.from("categories").delete().eq("id", ids.parent!);
+  });
+
+  test("RPC katalog ditolak untuk pelanggan dan gudang", async () => {
+    for (const client of [customerA.client, warehouse.client]) {
+      assert.ok((await client.rpc("admin_reorder_categories", { p_ids: [ids.b!, ids.a!] })).error);
+      assert.ok((await client.rpc("admin_delete_category", { p_id: ids.a! })).error);
+      assert.ok((await client.rpc("admin_delete_vehicle_model", { p_id: ids.model! })).error);
+      const { data } = await client.rpc("admin_catalog_counts");
+      assert.equal(data, null, "hitungan tidak terbaca");
+    }
+    const { error } = await warehouse.client
+      .from("categories")
+      .update({ name: "X" })
+      .eq("id", ids.a!);
+    const { data: still } = await admin.from("categories").select("name").eq("id", ids.a!).single();
+    assert.ok(error || still!.name === "A", "gudang tidak bisa ubah kategori");
+  });
+
+  test("urutan kategori: satu induk saja, tersimpan", async () => {
+    assert.ifError(
+      (await adminUser.client.rpc("admin_reorder_categories", { p_ids: [ids.b!, ids.a!] })).error,
+    );
+    const { data } = await admin
+      .from("categories")
+      .select("id, sort_order")
+      .in("id", [ids.a!, ids.b!]);
+    const order = Object.fromEntries((data ?? []).map((r) => [r.id, r.sort_order]));
+    assert.ok(order[ids.b!]! < order[ids.a!]!);
+    const mixed = await adminUser.client.rpc("admin_reorder_categories", {
+      p_ids: [ids.a!, ids.parent!],
+    });
+    assert.match(mixed.error?.message ?? "", /satu induk/);
+  });
+
+  test("hapus kategori/model yang masih dipakai ditolak", async () => {
+    assert.match(
+      (await adminUser.client.rpc("admin_delete_category", { p_id: ids.parent! })).error?.message ??
+        "",
+      /subkategori/,
+    );
+    await admin
+      .from("product_categories")
+      .insert({ product_id: publishedProductId, category_id: ids.a! });
+    assert.match(
+      (await adminUser.client.rpc("admin_delete_category", { p_id: ids.a! })).error?.message ?? "",
+      /produk/,
+    );
+    assert.ifError((await adminUser.client.rpc("admin_delete_category", { p_id: ids.b! })).error);
+
+    await admin
+      .from("product_fitments")
+      .insert({
+        product_id: publishedProductId,
+        model_id: ids.model!,
+        year_start: 2020,
+        is_verified: false,
+      });
+    assert.match(
+      (await adminUser.client.rpc("admin_delete_vehicle_model", { p_id: ids.model! })).error
+        ?.message ?? "",
+      /Nonaktifkan/,
+    );
+    const { data: counts } = await adminUser.client.rpc("admin_catalog_counts");
+    assert.equal((counts as { models: Record<string, number> }).models[ids.model!], 1);
+  });
+});

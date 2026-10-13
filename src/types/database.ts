@@ -2042,10 +2042,18 @@ export type Database = {
         };
         Returns: number;
       };
+      admin_catalog_counts: { Args: never; Returns: Json };
       admin_dashboard_stats: { Args: { p_days?: number }; Returns: Json };
+      admin_delete_brand: { Args: { p_id: string }; Returns: undefined };
+      admin_delete_category: { Args: { p_id: string }; Returns: undefined };
+      admin_delete_vehicle_model: { Args: { p_id: string }; Returns: undefined };
       admin_duplicate_product: {
         Args: { p_product_id: string };
         Returns: string;
+      };
+      admin_reorder_categories: {
+        Args: { p_ids: string[] };
+        Returns: undefined;
       };
       admin_set_order_status: {
         Args: {
