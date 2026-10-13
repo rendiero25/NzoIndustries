@@ -8,8 +8,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { ContentPageView } from "@/components/storefront/content-page-view";
+import { getContentPage } from "@/server/queries/content";
 
-export const metadata: Metadata = {
+const fallbackMetadata: Metadata = {
   title: "FAQ",
   description:
     "Pertanyaan yang sering diajukan tentang kecocokan part, pembayaran, pengiriman, dan retur di NZO Industries.",
@@ -58,7 +60,7 @@ const FAQ: { q: string; a: React.ReactNode }[] = [
   },
 ];
 
-export default function FaqPage() {
+function FallbackFaqPage() {
   return (
     <StaticPage
       title="Pertanyaan yang sering diajukan"
@@ -76,4 +78,22 @@ export default function FaqPage() {
       </Accordion>
     </StaticPage>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getContentPage("faq");
+  if (!page) return fallbackMetadata;
+  return {
+    ...fallbackMetadata,
+    title: page.title,
+    description: page.metaDescription ?? fallbackMetadata.description,
+    robots: undefined,
+  };
+}
+
+/** Konten dari admin bila sudah tayang (D-39), selain itu teks bawaan. */
+export default async function FaqPage() {
+  const page = await getContentPage("faq");
+  if (page) return <ContentPageView page={page} />;
+  return <FallbackFaqPage />;
 }

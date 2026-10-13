@@ -3,6 +3,7 @@ import {
   Bike,
   Boxes,
   FileBarChart,
+  FileText,
   FileUp,
   Image as ImageIcon,
   LayoutList,
@@ -76,9 +77,10 @@ export const ADMIN_NAV: AdminNavGroup[] = [
   {
     label: "Promo & konten",
     items: [
-      { label: "Voucher", href: "/admin/coupons", icon: Ticket, roles: MANAGERS },
-      { label: "Flash sale", href: "/admin/promotions/flash-sale", icon: Zap, roles: MANAGERS },
+      { label: "Voucher", href: "/admin/vouchers", icon: Ticket, roles: MANAGERS },
+      { label: "Flash sale", href: "/admin/flash-sales", icon: Zap, roles: MANAGERS },
       { label: "Banner", href: "/admin/banners", icon: ImageIcon, roles: MANAGERS },
+      { label: "Halaman", href: "/admin/pages", icon: FileText, roles: MANAGERS },
     ],
   },
   {
@@ -119,6 +121,9 @@ export const SEGMENT_LABELS: Record<string, string> = {
   complaints: "Komplain",
   returns: "Retur & garansi",
   coupons: "Voucher",
+  vouchers: "Voucher",
+  "flash-sales": "Flash sale",
+  pages: "Halaman",
   promotions: "Promo",
   banners: "Banner",
   "main-banner": "Banner utama",

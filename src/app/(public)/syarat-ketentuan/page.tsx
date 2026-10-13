@@ -2,14 +2,16 @@ import { FileText } from "lucide-react";
 import type { Metadata } from "next";
 
 import { EmptyState } from "@/components/shared/empty-state";
+import { ContentPageView } from "@/components/storefront/content-page-view";
+import { getContentPage } from "@/server/queries/content";
 
 // TODO [P-08]: isi konten legal resmi dari klien (UU PDP, syarat & ketentuan, retur/garansi).
-export const metadata: Metadata = {
+const fallbackMetadata: Metadata = {
   title: "Syarat & Ketentuan",
   robots: { index: false, follow: false },
 };
 
-export default function SyaratKetentuanPage() {
+function FallbackSyaratKetentuanPage() {
   return (
     <div className="nzo-container py-16 md:py-24">
       <h1 className="mb-2">Syarat & Ketentuan</h1>
@@ -22,4 +24,22 @@ export default function SyaratKetentuanPage() {
       />
     </div>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getContentPage("terms");
+  if (!page) return fallbackMetadata;
+  return {
+    ...fallbackMetadata,
+    title: page.title,
+    description: page.metaDescription ?? fallbackMetadata.description,
+    robots: undefined,
+  };
+}
+
+/** Konten dari admin bila sudah tayang (D-39), selain itu teks bawaan. */
+export default async function SyaratKetentuanPage() {
+  const page = await getContentPage("terms");
+  if (page) return <ContentPageView page={page} />;
+  return <FallbackSyaratKetentuanPage />;
 }

@@ -3,8 +3,10 @@ import Link from "next/link";
 
 import { StaticPage } from "@/components/storefront/static-page";
 import { Button } from "@/components/ui/button";
+import { ContentPageView } from "@/components/storefront/content-page-view";
+import { getContentPage } from "@/server/queries/content";
 
-export const metadata: Metadata = {
+const fallbackMetadata: Metadata = {
   title: "Cara belanja",
   description:
     "Langkah belanja sparepart di NZO Industries: pilih kendaraan, cek kecocokan, checkout, dan lacak pesanan.",
@@ -38,7 +40,7 @@ const STEPS = [
   },
 ];
 
-export default function HowToBuyPage() {
+function FallbackHowToBuyPage() {
   return (
     <StaticPage
       title="Cara belanja"
@@ -62,4 +64,22 @@ export default function HowToBuyPage() {
       </Button>
     </StaticPage>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getContentPage("how-to-buy");
+  if (!page) return fallbackMetadata;
+  return {
+    ...fallbackMetadata,
+    title: page.title,
+    description: page.metaDescription ?? fallbackMetadata.description,
+    robots: undefined,
+  };
+}
+
+/** Konten dari admin bila sudah tayang (D-39), selain itu teks bawaan. */
+export default async function HowToBuyPage() {
+  const page = await getContentPage("how-to-buy");
+  if (page) return <ContentPageView page={page} />;
+  return <FallbackHowToBuyPage />;
 }

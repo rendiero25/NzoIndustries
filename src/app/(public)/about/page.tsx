@@ -5,8 +5,10 @@ import Link from "next/link";
 import { StaticPage } from "@/components/storefront/static-page";
 import { Button } from "@/components/ui/button";
 import { getStoreStats } from "@/server/queries/reference";
+import { ContentPageView } from "@/components/storefront/content-page-view";
+import { getContentPage } from "@/server/queries/content";
 
-export const metadata: Metadata = {
+const fallbackMetadata: Metadata = {
   title: "Tentang NZO Industries",
   description:
     "NZO Industries menjual sparepart dan aksesoris motor & mobil, dengan cek kecocokan kendaraan sebelum membeli.",
@@ -38,7 +40,7 @@ const VALUES = [
   },
 ];
 
-export default async function AboutPage() {
+async function FallbackAboutPage() {
   const stats = await getStoreStats().catch(() => null);
   return (
     <StaticPage
@@ -70,4 +72,22 @@ export default async function AboutPage() {
       </div>
     </StaticPage>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getContentPage("about");
+  if (!page) return fallbackMetadata;
+  return {
+    ...fallbackMetadata,
+    title: page.title,
+    description: page.metaDescription ?? fallbackMetadata.description,
+    robots: undefined,
+  };
+}
+
+/** Konten dari admin bila sudah tayang (D-39), selain itu teks bawaan. */
+export default async function AboutPage() {
+  const page = await getContentPage("about");
+  if (page) return <ContentPageView page={page} />;
+  return <FallbackAboutPage />;
 }

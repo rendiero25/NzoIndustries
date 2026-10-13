@@ -3,15 +3,17 @@ import type { Metadata } from "next";
 
 import { StaticPage, whatsappHref } from "@/components/storefront/static-page";
 import { Button } from "@/components/ui/button";
+import { ContentPageView } from "@/components/storefront/content-page-view";
+import { getContentPage } from "@/server/queries/content";
 
-export const metadata: Metadata = {
+const fallbackMetadata: Metadata = {
   title: "Kontak",
   description:
     "Hubungi CS NZO Industries lewat WhatsApp atau email untuk tanya kecocokan part, stok, dan pesanan.",
   alternates: { canonical: "/contact" },
 };
 
-export default function ContactPage() {
+function FallbackContactPage() {
   const wa = whatsappHref("Halo NZO, saya mau tanya part:");
   // TODO [P-09]: email CS resmi setelah domain tersedia (store_settings tidak publik).
   const email: string | null = null;
@@ -69,4 +71,22 @@ export default function ContactPage() {
       </ul>
     </StaticPage>
   );
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getContentPage("contact");
+  if (!page) return fallbackMetadata;
+  return {
+    ...fallbackMetadata,
+    title: page.title,
+    description: page.metaDescription ?? fallbackMetadata.description,
+    robots: undefined,
+  };
+}
+
+/** Konten dari admin bila sudah tayang (D-39), selain itu teks bawaan. */
+export default async function ContactPage() {
+  const page = await getContentPage("contact");
+  if (page) return <ContentPageView page={page} />;
+  return <FallbackContactPage />;
 }

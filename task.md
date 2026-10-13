@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.14 (2026-10-13). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.15 (2026-10-13). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -207,8 +207,8 @@ Dikerjakan dalam 5 sub-batch 8A–8E (D-37).
 - [x] Data kendaraan (merek, model, tahun) — 8B
 - [x] Stok: mutasi, penyesuaian dengan alasan, riwayat ledger, notifikasi stok menipis — 8A
 - [x] Pesanan: daftar dengan filter, detail, ubah status, ~~verifikasi/tolak bukti transfer~~ (D-31), input resi (D-40), batalkan/refund — 8A
-- [ ] Promo: voucher, diskon produk/kategori (D-38, bulk harga coret sudah di 8A), flash sale — ~~bundling~~ change request (D-38)
-- [ ] Konten: banner, bar promo, konten beranda, halaman statis
+- [x] Promo: voucher, diskon produk/kategori (D-38, bulk harga coret di 8A), flash sale — 8C; ~~bundling~~ change request (D-38)
+- [x] Konten: banner, bar promo, halaman statis (D-39) — 8C; urutan section beranda tetap di kode (section tanpa data tidak dirender)
 - [ ] Ulasan: moderasi (tampilkan/sembunyikan/balas)
 - [ ] Pelanggan: daftar, detail, riwayat belanja, segmentasi sederhana, blokir
 - [ ] Retur dan klaim garansi
@@ -238,6 +238,17 @@ Dikerjakan dalam 5 sub-batch 8A–8E (D-37).
   - Legacy kategori/brand GeekyTech dihapus. Semua perubahan me-revalidate tag `catalog`.
   - Diuji di browser: tambah subkategori, seret urutan (tersimpan di DB), hapus kategori berisi ditolak, hapus kategori kosong; tambah/hapus brand; tambah model (validasi tahun) lalu hapus. Headless 1366 px: tanpa error console/overlay.
   - Cek: `test:rls` 43/43 (3 tes baru 8B), `test` 66/66, typecheck, lint 0 error.
+- **8C (promo & konten):**
+  - Migration `20261013000100_admin_promo_content`: `banners.image_public_id` boleh kosong khusus `promo_bar` (check `banners_image_required`), batas panjang teks banner; tabel `content_pages` (slug tetap 7 halaman, Markdown, `is_published`, tidak boleh tayang dengan isi kosong) + RLS (publik baca yang tayang, owner/admin ubah, tanpa insert/delete dari aplikasi) + audit.
+  - `/admin/vouchers` (tabel + dialog: persen/nominal, maks potongan, min belanja, kuota, per pelanggan, periode WIB, aktif, publik D-33; total potongan dari `voucher_redemptions`; voucher terpakai tidak bisa dihapus).
+  - `/admin/flash-sales` + `/[id]`: event (periode wajib) dan item (cari produk/varian, harga flash sale wajib di bawah harga normal dari DB, kuota ≥ terjual). Event yang sudah ada penjualan tidak bisa dihapus.
+  - `/admin/banners`: dikelompokkan per posisi (bar promo, utama, promo, kategori), gambar desktop/mobile Cloudinary `nzo/banners` diverifikasi Admin API (helper bersama `src/lib/cloudinary/verify.ts`), urutan naik/turun, link hanya `/…` atau `https://`.
+  - `/admin/pages` + `/[slug]`: editor Markdown (Tulis/Pratinjau). Halaman publik (`/about`, `/faq`, `/how-to-buy`, `/contact`, `/kebijakan-privasi`, `/syarat-ketentuan`, `/kebijakan-pengembalian`) memakai konten DB bila tayang, selain itu teks bawaan. Render lewat `react-markdown` tanpa HTML mentah/gambar, link `javascript:` dinetralkan.
+  - Rute legacy `/admin/coupons`, `/admin/promotions/*` dihapus (redirect permanen). File storefront legacy yang mati ikut dihapus (`lib/data/home-storefront`, `product-detail-page`, `home-product-tile`, `banner-template-utils`).
+  - Bug ditemukan & diperbaiki: `zodResolver` mengirim nilai hasil transform (ISO UTC) ke server action yang mem-parse ulang dengan regex waktu lokal, jadi simpan gagal. `wibDateTime` kini menerima keduanya + unit test parse ganda. `saleState()` dari file client dipanggil server component, dipindah ke `src/lib/promo/status.ts`.
+  - Diuji di browser: tayangkan FAQ dari editor, tampil di `/faq` (link `javascript:` dan `<script>` tidak dirender), lalu kembali ke teks bawaan; bar promo tampil di storefront dengan link `/promo` (link `//…` ditolak) lalu dihapus; flash sale dibuat, harga ≥ normal ditolak, item 49.000 tampil di beranda, lalu dihapus; voucher dibuat dan dihapus.
+  - Cek: `test:rls` 45/45 (2 tes baru 8C), `test` 71/71, typecheck, lint 0 error.
+  - Catatan dev: overlay dev menampilkan "Encountered a script tag" dari `ThemeProvider` (next-themes + React 19) saat navigasi client; bawaan lama, hanya dev.
 
 ## Fase 9 — Dokumen cetak
 - [ ] Invoice PDF A4 sesuai design-system.md §12 [P-07]
