@@ -52,6 +52,14 @@ const nextConfig: NextConfig = {
       { source: "/dashboard/:path*", destination: "/account", permanent: true },
       { source: "/wishlist", destination: "/account/wishlist", permanent: true },
       { source: "/privacy", destination: "/kebijakan-privasi", permanent: true },
+      // Rute admin legacy GeekyTech (Fase 8C).
+      { source: "/admin/coupons/:path*", destination: "/admin/vouchers", permanent: true },
+      {
+        source: "/admin/promotions/flash-sale/:path*",
+        destination: "/admin/flash-sales",
+        permanent: true,
+      },
+      { source: "/admin/promotions/:path*", destination: "/admin/banners", permanent: true },
     ];
   },
   images: {
