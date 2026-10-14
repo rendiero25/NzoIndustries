@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.16 (2026-10-13). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.17 (2026-10-14). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -212,10 +212,10 @@ Dikerjakan dalam 5 sub-batch 8A–8E (D-37).
 - [x] Ulasan: moderasi (tampilkan/sembunyikan/balas) — 8D
 - [x] Pelanggan: daftar, detail, riwayat belanja, segmentasi sederhana, blokir — 8D
 - [x] Retur dan klaim garansi — 8D
-- [ ] Laporan: penjualan per periode, produk, kategori, pembayaran; export CSV/Excel
-- [ ] Staf dan role (owner, admin, warehouse, cs)
-- [ ] Audit log (read-only, filter per user/aksi)
-- [ ] Pengaturan toko: info toko, rekening, provider pembayaran, kurir, batas waktu bayar, pajak [P-07] [P-11]
+- [x] Laporan: penjualan per periode, produk, kategori, pembayaran; export Excel — 8E
+- [x] Staf dan role (owner, admin, warehouse, cs) — 8E
+- [x] Audit log (read-only, filter data/aksi/tanggal) — 8E
+- [x] Pengaturan toko: info toko, provider pembayaran, kurir (env), batas waktu bayar, data pengirim, MFA staf — 8E; rekening transfer manual disembunyikan (D-31), pajak menunggu [P-07], data gudang [P-11]
 - [x] Riwayat import Jubelio/CSV — 8B (log per batch)
 
 **Catatan fase:**
@@ -259,6 +259,14 @@ Dikerjakan dalam 5 sub-batch 8A–8E (D-37).
   - Catatan dev: menghapus lalu membuat ulang folder rute saat `next dev` berjalan bisa membuat rute baru 404 sampai dev server di-restart; file `.next/dev/types/validator.ts` bisa terpotong (hapus, dibuat ulang).
   - Diuji di browser (data uji dibuat lewat SQL lalu dihapus): balas ulasan (tayang + notifikasi), setujui retur dengan catatan (notifikasi), tolak klaim (tombol simpan nonaktif tanpa resolusi, lalu status final). Headless: daftar/segmen/detail pelanggan, daftar retur.
   - Cek: `test:rls` 48/48 (3 tes baru 8D).
+- **8E (administrasi):**
+  - Migration `20261014000100_admin_administration`: RPC `admin_sales_report` (owner/admin; periode WIB maks 1 tahun, per hari/bulan, total, produk, kategori induk, metode bayar), `admin_staff_list` (owner/admin, email + masuk terakhir), `admin_find_user` (owner, email persis). `20261014000200_shipment_system_rpcs`: `system_apply_shipment_update` dan `system_complete_delivered_orders` (service role saja).
+  - `/admin/reports` (+ `/export` XLSX 5 sheet), `/admin/staff` (ubah role & tambah staf dari akun terdaftar, owner saja; konfirmasi AlertDialog), `/admin/audit` (filter data/aksi/tanggal, diff field before→after, data lengkap), `/admin/settings` (owner ubah, admin lihat; menyalakan MFA staf ditolak bila sesi owner belum aal2 supaya tidak terkunci), `/admin/notifications` (notifikasi staf: stok menipis, bayar setelah batal).
+  - Webhook Biteship ditulis ulang di schema NZO: token `?token=` wajib (`BITESHIP_WEBHOOK_SECRET`, banding waktu-konstan), idempoten lewat `webhook_events`, status lewat RPC. Cron `/api/cron/complete-delivered-orders` pakai Bearer `CRON_SECRET` (sebelumnya query `?secret=`). Helper `src/lib/security/secret.ts`.
+  - Legacy GeekyTech dihapus total: modul admin notifications/reports/settings/print label, `/api/admin/*`, komponen bell/panel lama, `src/lib/supabase/legacy`, `src/types/legacy-supabase.ts`, dan helper mati (biteship lama, notifikasi lama, cancel-expired, close-pending, dll). Auth store/provider, profil header, logout, 404 pindah ke client & tipe NZO. Cache geocode kode pos jadi memori proses (tabel `geocode_cache` tidak ada di schema NZO). Aturan ESLint pelarang import legacy dipertahankan.
+  - Nav admin: tambah Notifikasi, Staf & role, Audit log.
+  - Cek: `test:rls` 52/52 (4 tes baru 8E), `test` 71/71, typecheck, lint 0 error, `build` ✓. Headless 1366 px: semua halaman admin 8E + beranda, PDP, 404, `/account` tanpa error console. Export laporan XLSX valid; webhook Biteship & cron menolak tanpa kredensial (401).
+  - Akun uji admin & pembeli (dipakai 8A–8E) beserta pesanannya dihapus; stok DEMO-OLI-001 kembali 120.
 
 ## Fase 9 — Dokumen cetak
 - [ ] Invoice PDF A4 sesuai design-system.md §12 [P-07]

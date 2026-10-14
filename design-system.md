@@ -1,6 +1,6 @@
 # design-system.md — NZO Industries
 
-Versi dokumen: 0.16 (2026-10-13). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
+Versi dokumen: 0.17 (2026-10-14). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
 
 ## 1. Arah desain
 
@@ -156,6 +156,7 @@ Mobile: bar beli sticky di bawah (harga + tombol).
 - **Pola admin Fase 8:** tabel sederhana shadcn Table + filter lewat `searchParams` (paginasi server); pilih baris memunculkan bar aksi massal. Form produk dibagi Tabs (Data utama, Varian, Spesifikasi, Kecocokan) dan Card per bagian, tombol simpan sticky di bawah, aktif hanya bila ada perubahan. Aksi status pesanan dan penyesuaian stok memakai Dialog dengan alasan wajib; batal/refund memakai AlertDialog. KPI beranda: Card dengan ikon lucide, angka `tabular-nums`, kartu bisa diklik ke daftar terfilter.
 - **Pohon & urutan (8B):** daftar bertingkat (indentasi 1,5 rem per tingkat) dengan pegangan seret `GripVertical` di kiri; urutan hanya di antara saudara, simpan otomatis + toast "Urutan disimpan". Form master data kecil (kategori, brand, kendaraan) memakai Dialog, slug terisi otomatis dari nama saat membuat. Daftar dua panel (merek kiri, model kanan) untuk data induk–anak.
 - **Promo & konten (8C):** status periode memakai Badge (Berjalan/Tayang = secondary; Terjadwal/Selesai/Nonaktif = outline; Kuota habis = destructive). Input waktu `datetime-local` selalu berlabel WIB. Banner dikelompokkan per posisi dalam Card dengan pratinjau 3:1 dan tombol naik/turun. Editor Markdown: Tabs Tulis/Pratinjau, contekan sintaks di bawah textarea, bar simpan sticky dengan Switch "Tayang". Konten Markdown publik memakai tipografi `StaticPage` (h2 2xl, paragraf leading-7 steel-700, link bergaris bawah) dan baris "Terakhir diperbarui".
+- **Administrasi (8E):** laporan = baris filter (tanggal, per hari/bulan, preset 7/30/90 hari, Export XLSX di kanan) + 4 KPI + dua chart + tabel ringkas. Audit log = daftar baris dengan Badge aksi (Tambah secondary, Ubah outline, Hapus destructive), diff field `lama → baru` (nilai lama dicoret), dan `details` untuk JSON lengkap. Pengaturan = Card per bagian, field dinonaktifkan untuk non-owner disertai Alert, peringatan MFA mati memakai Alert. Ubah role selalu lewat AlertDialog.
 - **Pelanggan & after-sales (8D):** filter cepat memakai baris Button kecil (aktif = primary, lainnya outline) di atas tabel. Status retur/klaim/ulasan memakai `StatusBadge` dengan `RETURN/CLAIM/REVIEW_STATUS_META`. Ulasan ditampilkan sebagai Card (bintang `signal`, foto 80 px, balasan toko di blok `muted`). Detail after-sales dua kolom: pengajuan + lampiran (thumbnail 112 px, video sebagai ikon) di kiri, form status di kanan; status final menampilkan teks, bukan form. Aksi blokir pelanggan = tombol destructive + AlertDialog.
 - **User (`/account`, Fase 7):** tetap di shell storefront (header/footer). Navigasi kiri 14rem (desktop, item aktif `bg-steel-50` tebal) / baris chip scroll horizontal (mobile, aktif = isi hitam). Konten berupa kartu `rounded-xl border` per bagian; tidak ada animasi selain transisi warna.
   - `StatusBadge` (`src/components/account/status-badge.tsx`): chip `radius-sm` berlatar warna semantik 10% + teks warna penuh. Pemetaan label di `src/lib/orders/status.ts` (Belum bayar = warning, Dibayar/Diproses/Dikirim = info, Diterima/Selesai = success, Dibatalkan = danger, Kedaluwarsa/Dikembalikan = neutral).
@@ -280,6 +281,7 @@ Hitam-putih, tanpa warna aksen, aman untuk printer thermal/laser. Cetak massal: 
 - 0.6 (2026-10-02): Sinkron versi (D-20).
 - 0.7 (2026-10-02): Fase 2 diimplementasikan. `success` jadi `#1C7F46` (kontras AA), daftar komponen NZO + varian tombol `signal`, implementasi dark mode admin, catatan paket `motion` untuk Magic UI. Logo & perisai masih sementara.
 - 0.9 (2026-10-07): Komponen storefront Fase 4 (VehicleSelector, GarageChip, CatalogPage, ProductView), aturan tampilan kecocokan dua tingkat (D-27), animasi bump/pop/tick. Header tetap tidak mengubah tinggi saat scroll (hanya bayangan) agar konten tidak melompat.
+- 0.17 (2026-10-14): Pola laporan, audit log, pengaturan, dan staf admin (Fase 8E).
 - 0.16 (2026-10-13): Pola pelanggan, moderasi ulasan, dan retur/klaim admin (Fase 8D).
 - 0.15 (2026-10-13): Pola promo & konten admin, tampilan Markdown halaman statis (Fase 8C).
 - 0.14 (2026-10-13): Pola pohon seret & dialog master data admin (Fase 8B).
