@@ -4,7 +4,7 @@ import { useLayoutEffect } from "react";
 import type { User } from "@supabase/supabase-js";
 
 import { useAuthStore } from "@/store/auth-store";
-import type { Tables } from "@/types/legacy-supabase";
+import type { Tables } from "@/types/database";
 
 type Props = {
   user: User | null;

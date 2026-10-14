@@ -1,7 +1,6 @@
-import { timingSafeEqual } from "node:crypto";
-
 import { getServerEnv } from "@/lib/env";
 import { providerForRef } from "@/lib/payments/provider";
+import { isCronAuthorized } from "@/lib/security/secret";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export const dynamic = "force-dynamic";
@@ -14,16 +13,8 @@ export const dynamic = "force-dynamic";
  * Dijadwalkan tiap 10 menit (cron-job.org). Stok tetap aman bila cron telat:
  * reservasi kedaluwarsa tidak dihitung di `available_stock`.
  */
-function authorized(req: Request): boolean {
-  const secret = getServerEnv().CRON_SECRET;
-  if (!secret) return false;
-  const given = Buffer.from(req.headers.get("authorization") ?? "");
-  const expected = Buffer.from(`Bearer ${secret}`);
-  return given.length === expected.length && timingSafeEqual(given, expected);
-}
-
 export async function GET(req: Request) {
-  if (!authorized(req)) {
+  if (!isCronAuthorized(req, getServerEnv().CRON_SECRET)) {
     return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 

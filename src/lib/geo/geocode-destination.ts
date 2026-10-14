@@ -1,7 +1,5 @@
 import "server-only";
 
-import { createServiceClient } from "@/lib/supabase/legacy/server";
-
 /**
  * Resolusi koordinat (lat/lng) tujuan dari kode pos Indonesia, untuk kurir
  * on-demand/instant (GoSend/Gojek, GrabExpress, dll) yang WAJIB punya koordinat.
@@ -24,8 +22,6 @@ import { createServiceClient } from "@/lib/supabase/legacy/server";
 
 export type LatLng = { lat: number; lng: number };
 
-const CACHE_TABLE = "geocode_cache";
-
 function isValidCoord(lat: number, lng: number): boolean {
   return (
     Number.isFinite(lat) &&
@@ -45,40 +41,22 @@ function normalizePostal(postalCode: string): string | null {
 }
 
 // ---------------------------------------------------------------------------
-// Cache (Supabase, tabel geocode_cache) — best-effort. Error → di-skip diam-diam.
+// Cache memori per instance server (schema NZO tidak punya tabel geocode_cache).
 // ---------------------------------------------------------------------------
 
+const memoryCache = new Map<string, LatLng>();
+const MAX_CACHE = 2000;
+
 async function readCache(postal: string): Promise<LatLng | null> {
-  try {
-    const { data } = await createServiceClient()
-      .from(CACHE_TABLE)
-      .select("lat, lng")
-      .eq("postal_code", postal)
-      .maybeSingle();
-    if (!data) return null;
-    const lat = Number(data.lat);
-    const lng = Number(data.lng);
-    return isValidCoord(lat, lng) ? { lat, lng } : null;
-  } catch {
-    return null;
-  }
+  return memoryCache.get(postal) ?? null;
 }
 
-async function writeCache(postal: string, coord: LatLng, source: string): Promise<void> {
-  try {
-    await createServiceClient().from(CACHE_TABLE).upsert(
-      {
-        postal_code: postal,
-        lat: coord.lat,
-        lng: coord.lng,
-        source,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "postal_code" },
-    );
-  } catch {
-    // best-effort: jangan gagalkan resolusi koordinat kalau penulisan cache gagal.
+async function writeCache(postal: string, coord: LatLng): Promise<void> {
+  if (memoryCache.size >= MAX_CACHE) {
+    const oldest = memoryCache.keys().next().value;
+    if (oldest !== undefined) memoryCache.delete(oldest);
   }
+  memoryCache.set(postal, coord);
 }
 
 // ---------------------------------------------------------------------------
@@ -184,13 +162,13 @@ export async function fetchCoordinatesFromPostal(postalCode: string): Promise<La
 
   const provider = await fetchFromProvider(postal);
   if (provider) {
-    await writeCache(postal, provider.coord, provider.source);
+    await writeCache(postal, provider.coord);
     return provider.coord;
   }
 
   const nominatim = await fetchFromNominatim(postal);
   if (nominatim) {
-    await writeCache(postal, nominatim, "nominatim");
+    await writeCache(postal, nominatim);
     return nominatim;
   }
 

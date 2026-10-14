@@ -8,8 +8,8 @@ import { StoreFooter } from "@/components/store/store-footer";
 import { StoreHeaderServer } from "@/components/store/store-header-server";
 import { Button } from "@/components/ui/button";
 import { fetchUserProfile } from "@/lib/data/user-profile";
-import { createClient } from "@/lib/supabase/legacy/server";
-import type { Tables } from "@/types/legacy-supabase";
+import { createClient } from "@/lib/supabase/server";
+import type { Tables } from "@/types/database";
 
 // /_not-found diprerender statis; header (data server) dibungkus Suspense.
 function StoreHeaderFallback() {

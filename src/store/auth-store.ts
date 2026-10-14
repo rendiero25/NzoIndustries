@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import type { User } from "@supabase/supabase-js";
-import type { Tables } from "@/types/legacy-supabase";
+import type { Tables } from "@/types/database";
 
 type ProfileRow = Tables<"profiles">;
 

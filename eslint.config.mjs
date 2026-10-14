@@ -51,8 +51,6 @@ const eslintConfig = defineConfig([
       "tests/**",
       "scripts/**",
     ],
-    // Aksi legacy yang masih dipakai wishlist dashboard lama (ditulis ulang Fase 7).
-    ignores: ["src/app/(public)/products/_actions/**"],
     rules: {
       "no-restricted-imports": [
         "error",

@@ -2117,6 +2117,15 @@ export type Database = {
         Args: { p_product_id: string };
         Returns: string;
       };
+      admin_find_user: {
+        Args: { p_email: string };
+        Returns: {
+          email: string;
+          full_name: string;
+          id: string;
+          role: Database["public"]["Enums"]["app_role"];
+        }[];
+      };
       admin_moderate_review: {
         Args: {
           p_id: string;
@@ -2128,6 +2137,10 @@ export type Database = {
       admin_reorder_categories: {
         Args: { p_ids: string[] };
         Returns: undefined;
+      };
+      admin_sales_report: {
+        Args: { p_from: string; p_group?: string; p_to: string };
+        Returns: Json;
       };
       admin_set_after_sales_status: {
         Args: {
@@ -2148,6 +2161,18 @@ export type Database = {
           p_waybill?: string;
         };
         Returns: undefined;
+      };
+      admin_staff_list: {
+        Args: never;
+        Returns: {
+          created_at: string;
+          email: string;
+          full_name: string;
+          id: string;
+          is_blocked: boolean;
+          last_sign_in_at: string;
+          role: Database["public"]["Enums"]["app_role"];
+        }[];
       };
       anonymize_my_account: { Args: never; Returns: undefined };
       cancel_my_order: { Args: { p_order_id: string }; Returns: string };
@@ -2312,6 +2337,19 @@ export type Database = {
       };
       staff_mfa_required: { Args: never; Returns: boolean };
       store_return_window_days: { Args: never; Returns: number };
+      system_apply_shipment_update: {
+        Args: {
+          p_at?: string;
+          p_biteship_order_id: string;
+          p_status: string;
+          p_waybill?: string;
+        };
+        Returns: string;
+      };
+      system_complete_delivered_orders: {
+        Args: { p_days?: number };
+        Returns: number;
+      };
     };
     Enums: {
       app_role: "owner" | "admin" | "warehouse" | "cs" | "customer";

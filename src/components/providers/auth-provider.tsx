@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-import { createClient } from "@/lib/supabase/legacy/client";
+import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/store/auth-store";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {

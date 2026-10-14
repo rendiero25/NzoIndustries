@@ -1,36 +1,25 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/legacy/server";
+import { getServerEnv } from "@/lib/env";
+import { isCronAuthorized } from "@/lib/security/secret";
+import { createAdminClient } from "@/lib/supabase/admin";
 
-export async function GET(req: NextRequest) {
-  const secret = req.nextUrl.searchParams.get("secret");
-  if (secret !== process.env.CRON_SECRET) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+export const dynamic = "force-dynamic";
+
+/**
+ * GET /api/cron/complete-delivered-orders  (Authorization: Bearer <CRON_SECRET>)
+ *
+ * Pesanan `delivered` lebih dari 3 hari otomatis `completed` (RPC
+ * `system_complete_delivered_orders`). Dijadwalkan harian (cron-job.org).
+ */
+export async function GET(req: Request) {
+  if (!isCronAuthorized(req, getServerEnv().CRON_SECRET)) {
+    return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
-
-  const supabase = await createServiceClient();
-  const cutoff = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
-
-  const { data: orders, error } = await supabase
-    .from("orders")
-    .select("id, order_number")
-    .eq("status", "delivered")
-    .lt("delivered_at", cutoff);
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  if (!orders || orders.length === 0) return NextResponse.json({ updated: 0 });
-
-  const ids = orders.map((o) => o.id);
-  await supabase.from("orders").update({ status: "completed" }).in("id", ids);
-
-  await supabase.from("order_status_history").insert(
-    ids.map((id) => ({
-      order_id: id,
-      status: "completed" as const,
-      note: "Auto-selesai 3 hari setelah diterima",
-      changed_by: null,
-    })),
-  );
-
-  console.log(`[cron] Auto-completed ${ids.length} orders`);
-  return NextResponse.json({ updated: ids.length });
+  const { data, error } = await createAdminClient().rpc("system_complete_delivered_orders", {
+    p_days: 3,
+  });
+  if (error) {
+    console.error("[cron complete-delivered-orders]", error.code);
+    return Response.json({ ok: false }, { status: 500 });
+  }
+  return Response.json({ ok: true, completed: data ?? 0 });
 }

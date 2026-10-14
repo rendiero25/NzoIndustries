@@ -28,6 +28,8 @@ const serverEnvSchema = z.object({
   PAYMENT_TEST_MODE: z.enum(["true", "false"]).default("false"),
 
   BITESHIP_API_KEY: z.string().min(1).optional(),
+  // Token di query `?token=` URL webhook Biteship (wajib; tanpa ini webhook menolak).
+  BITESHIP_WEBHOOK_SECRET: z.string().min(16).optional(),
   BITESHIP_IS_PRODUCTION: z.enum(["true", "false"]).default("false"),
   BITESHIP_ORIGIN_POSTAL_CODE: z
     .string()

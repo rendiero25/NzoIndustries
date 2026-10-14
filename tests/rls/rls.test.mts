@@ -1794,3 +1794,136 @@ describe("pelanggan & after-sales admin (Fase 8D)", () => {
     assert.equal(notes?.length, 4);
   });
 });
+
+describe("administrasi admin (Fase 8E)", () => {
+  const today = new Date().toISOString().slice(0, 10);
+
+  test("laporan penjualan hanya owner/admin, bentuk data lengkap", async () => {
+    for (const client of [customerA.client, warehouse.client, cs.client]) {
+      assert.ok((await client.rpc("admin_sales_report", { p_from: today, p_to: today })).error);
+    }
+    const { data, error } = await adminUser.client.rpc("admin_sales_report", {
+      p_from: "2026-01-01",
+      p_to: today,
+      p_group: "month",
+    });
+    assert.ifError(error);
+    const r = data as Record<string, unknown>;
+    for (const key of ["totals", "series", "products", "categories", "payments"])
+      assert.ok(key in r, key);
+    assert.ok(
+      (await adminUser.client.rpc("admin_sales_report", { p_from: today, p_to: "2020-01-01" }))
+        .error,
+    );
+  });
+
+  test("daftar staf owner/admin; cari akun hanya owner", async () => {
+    assert.ok((await customerA.client.rpc("admin_staff_list")).error);
+    assert.ok((await cs.client.rpc("admin_staff_list")).error);
+    const { data: staff, error } = await adminUser.client.rpc("admin_staff_list");
+    assert.ifError(error);
+    assert.ok((staff ?? []).every((s) => s.role !== "customer"));
+    assert.ok((staff ?? []).some((s) => s.id === warehouse.id));
+
+    const { data: me } = await admin.auth.admin.getUserById(customerB.id);
+    assert.ok(
+      (await adminUser.client.rpc("admin_find_user", { p_email: me.user!.email! })).error,
+      "admin ditolak",
+    );
+    const { data: found, error: findErr } = await owner.client.rpc("admin_find_user", {
+      p_email: me.user!.email!.toUpperCase(),
+    });
+    assert.ifError(findErr);
+    assert.equal(found?.[0]?.id, customerB.id);
+  });
+
+  test("pengaturan toko: hanya owner yang bisa mengubah", async () => {
+    const { data: before } = await admin
+      .from("store_settings")
+      .select("low_stock_threshold")
+      .eq("id", true)
+      .single();
+    await adminUser.client
+      .from("store_settings")
+      .update({ low_stock_threshold: 99 })
+      .eq("id", true);
+    const { data: after } = await admin
+      .from("store_settings")
+      .select("low_stock_threshold")
+      .eq("id", true)
+      .single();
+    assert.equal(after!.low_stock_threshold, before!.low_stock_threshold);
+  });
+
+  test("RPC sistem (webhook kurir, auto-selesai) hanya service role", async () => {
+    assert.ok(
+      (
+        await adminUser.client.rpc("system_apply_shipment_update", {
+          p_biteship_order_id: "x",
+          p_status: "delivered",
+        })
+      ).error,
+    );
+    assert.ok((await owner.client.rpc("system_complete_delivered_orders", { p_days: 3 })).error);
+
+    const { data: order } = await admin
+      .from("orders")
+      .insert({
+        order_number: "",
+        user_id: customerA.id,
+        subtotal: 10000,
+        shipping_cost: 0,
+        discount_total: 0,
+        unique_code: 0,
+        grand_total: 10000,
+        shipping_address: { city: "Test" },
+        status: "processing",
+      })
+      .select("id")
+      .single();
+    const bid = `RLS-BS-${RUN_ID}`;
+    const { error: shipErr } = await admin
+      .from("shipments")
+      .insert({
+        order_id: order!.id,
+        courier_code: "jne",
+        courier_service: "reg",
+        biteship_order_id: bid,
+      });
+    assert.ifError(shipErr);
+
+    assert.equal(
+      (
+        await admin.rpc("system_apply_shipment_update", {
+          p_biteship_order_id: bid,
+          p_status: "weird",
+        })
+      ).data,
+      "ignored_status",
+    );
+    assert.equal(
+      (
+        await admin.rpc("system_apply_shipment_update", {
+          p_biteship_order_id: bid,
+          p_status: "picked",
+          p_waybill: "WB1",
+        })
+      ).data,
+      "applied",
+    );
+    let { data: o } = await admin.from("orders").select("status").eq("id", order!.id).single();
+    assert.equal(o!.status, "shipped");
+    await admin.rpc("system_apply_shipment_update", {
+      p_biteship_order_id: bid,
+      p_status: "delivered",
+      p_at: new Date(Date.now() - 5 * 86_400_000).toISOString(),
+    });
+    ({ data: o } = await admin.from("orders").select("status").eq("id", order!.id).single());
+    assert.equal(o!.status, "delivered");
+    const { data: done } = await admin.rpc("system_complete_delivered_orders", { p_days: 3 });
+    assert.ok((done ?? 0) >= 1);
+    ({ data: o } = await admin.from("orders").select("status").eq("id", order!.id).single());
+    assert.equal(o!.status, "completed");
+    await admin.from("orders").delete().eq("id", order!.id);
+  });
+});

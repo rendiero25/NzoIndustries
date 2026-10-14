@@ -1,8 +1,8 @@
 import "server-only";
 
-import { createClient } from "@/lib/supabase/legacy/server";
+import { createClient } from "@/lib/supabase/server";
 
-import type { Database } from "@/types/legacy-supabase";
+import type { Database } from "@/types/database";
 
 /**
  * Profil untuk auth store legacy (header & admin lama, D-19) sampai auth store
