@@ -183,7 +183,7 @@ Versi dokumen: 0.18 (2026-10-14). Aturan, keputusan (`D-xx`), dan pending klien 
 - [x] Garasi Saya (tambah/hapus kendaraan, set default)
 - [x] Pesanan: daftar dengan filter status, detail dengan timeline, lacak pengiriman (stub sampai Biteship & resi Fase 8), batalkan pesanan belum bayar, konfirmasi diterima
 - [x] Bayar ulang pesanan pending — ~~upload bukti transfer~~ dibatalkan (D-31)
-- [ ] Unduh invoice PDF (D-09) — dipindah ke Fase 9 (D-34); tombol nonaktif "segera" sudah ada
+- [x] Unduh invoice PDF (D-09) — dikerjakan di Fase 9 (D-34, D-41): tombol "Unduh invoice" aktif setelah lunas
 - [x] Wishlist (`/account/wishlist`)
 - [x] Ulasan produk (setelah pesanan diterima), dengan foto (moderasi di Fase 8)
 - [x] Voucher saya (voucher publik + riwayat, D-33)
