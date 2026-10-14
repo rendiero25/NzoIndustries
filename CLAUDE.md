@@ -1,6 +1,6 @@
 # CLAUDE.md — NZO Industries E-commerce
 
-Versi dokumen: 0.17 (2026-10-14). Baca file ini di awal setiap sesi.
+Versi dokumen: 0.18 (2026-10-14). Baca file ini di awal setiap sesi.
 
 ## Proyek
 Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (plus sebagian produk non-otomotif yang masuk kategori sendiri). Ada tiga area: storefront publik, dashboard user (`/account`), dan dashboard admin/CMS (`/admin`). Prinsip utama: **security first**.
@@ -74,6 +74,7 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - Pembayaran (Fase 6): `placeOrder` → `startPayment` (link Mayar, reuse link pending) → redirect. Halaman status `/checkout/success?order=` (bayar ulang, cek status). Webhook `POST /api/webhooks/mayar` (header `x-callback-token` = `MAYAR_WEBHOOK_TOKEN`, idempotent di `webhook_events`); daftarkan `${NEXT_PUBLIC_APP_URL}/api/webhooks/mayar` di dashboard Mayar (sandbox web.mayar.club, produksi web.mayar.id). Simulator dev `/checkout/pay-test/[ref]` bila `MAYAR_API_KEY` kosong dan `PAYMENT_TEST_MODE=true` (D-32).
 - Dashboard user (Fase 7): `/account` (ringkasan), `/account/orders` (+ `/[number]`), `/addresses`, `/garage`, `/wishlist`, `/reviews`, `/vouchers`, `/returns`, `/notifications`, `/profile`. DAL `src/server/queries/account.ts` (`requireAccountUser` di layout + setiap query), actions `src/server/actions/account/*`. Upload media pelanggan lewat `requestUpload` (signed upload URL, path `{uid}/{uuid}.ext` ditentukan server; bucket `review-images` publik, `after-sales-media` privat). Label status pesanan/retur/klaim/ulasan: `src/lib/orders/status.ts`. Legacy `/dashboard/*` dan `/wishlist` di-redirect permanen di `next.config.ts`.
 - Halaman statis (D-39): `getContentPage(slug)` (`src/server/queries/content.ts`, tag `content`) dipakai 7 halaman publik; null = teks bawaan. Markdown dirender `src/components/shared/markdown.tsx` (tanpa HTML mentah). Gambar admin non-produk diverifikasi `verifyUploadedImage()` (`src/lib/cloudinary/verify.ts`).
+- Dokumen cetak (Fase 9): `src/lib/pdf/` (server-only; `render.tsx` → `renderInvoicePdf`/`renderLabelsPdf`, template `invoice-document.tsx` A4 & `label-document.tsx` A5, helper murni `format.ts`). Data lewat `src/server/queries/documents.ts` (client user-scoped, RLS menentukan akses). Rute PDF: `/account/orders/[number]/invoice`, `/admin/orders/[number]/invoice`, `/admin/orders/labels?numbers=` (maks 50). Aset yang dibaca dari disk wajib terdaftar di `outputFileTracingIncludes`.
 - Rute yang bisa `notFound()` jangan diberi `loading.tsx` (streaming dimulai sebelum 404, status jadi 200); bungkus konten lambat dengan `Suspense` setelah validasi.
 - Admin (Fase 8): aksi di `src/server/actions/admin/*` memakai `adminGuard(ROLES.x)` (`_guard.ts`) lalu Zod lalu client user-scoped (RPC `admin_*` security definer cek `private.has_role`). DAL `src/server/queries/admin/*`. Status pesanan admin hanya lewat RPC `admin_set_order_status` (matriks transisi, notifikasi user, lepas reservasi saat batal). Rute: `/admin`, `/admin/orders[/number]`, `/admin/products[/new|/[id]|/export]`, `/admin/stock`, `/admin/categories`, `/admin/brands`, `/admin/vehicles`, `/admin/import`, `/admin/vouchers`, `/admin/flash-sales[/id]`, `/admin/banners`, `/admin/pages[/slug]`, `/admin/reviews`, `/admin/customers[/id]`, `/admin/returns[/kind/id]`, `/admin/reports[/export]`, `/admin/staff`, `/admin/audit`, `/admin/settings`, `/admin/notifications`. Status retur/klaim hanya lewat RPC `admin_set_after_sales_status`, moderasi ulasan lewat `admin_moderate_review`, daftar pelanggan lewat `admin_customers` (email dari `auth.users`). Hapus kategori/brand/model kendaraan hanya lewat RPC `admin_delete_*` (menolak bila masih dipakai).
 
@@ -156,6 +157,9 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - D-38 Diskon produk/kategori = bulk action harga coret (persen/nominal/hapus) lewat RPC `admin_bulk_discount`; dasar = `coalesce(compare_at_price, price)` supaya diskon tidak bertumpuk, kategori ikut subkategori. Bundling = change request (D-14).
 - D-39 Halaman statis (tentang, FAQ, cara beli, kontak, legal P-08) disimpan di tabel `content_pages` (Markdown, published) dengan editor admin; halaman publik memakai fallback copy bila kosong. Dikerjakan di 8C.
 - D-40 Resi: admin input kurir + nomor resi manual (status jadi Dikirim). Tombol "Buat pengiriman Biteship" (`ShippingProvider.createShipment`) aktif otomatis setelah `BITESHIP_API_KEY` dan data pengirim `store_settings.shipper` (P-11) terisi.
+- D-41 Nomor invoice `INV/YYYY/000001`, urut per tahun WIB tanpa celah (`invoice_counters` + lock baris), diterbitkan trigger saat pesanan pertama kali `paid`. Nomor & tanggal invoice tidak bisa diubah/dihapus siapa pun. Invoice hanya ada untuk pesanan yang pernah lunas; refund/batal setelahnya tetap memakai nomor yang sama dengan cap status.
+- D-42 Pajak invoice dikendalikan `store_settings.tax_mode` (`none` default = tanpa baris PPN; `ppn_included` = catatan "sudah termasuk PPN"). Format final mengikuti P-07.
+- D-43 PDF dirender di server dengan `@react-pdf/renderer` + font Outfit lokal; barcode resi Code128 `bwip-js` (nomor resi kurir, fallback nomor pesanan). Resi hitam-putih A5, satu pesanan per halaman.
 - D-25 Logo resmi dari klien (`public/logo.png`) di-trace ke SVG (`public/brand/nzo-lockup.svg`, `nzo-mark.svg`); dirender sebagai CSS mask supaya mengikuti warna tema. Favicon = perisai.
 
 ## Pending info klien
@@ -188,6 +192,7 @@ Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - 0.6 (2026-10-02): Tambah D-20 (MFA staf lewat flag, default mati). Security rule 7 diperbarui.
 - 0.7 (2026-10-02): Fase 2 (design system + redesign shell). Sinkron versi, tanpa keputusan baru.
 - 0.9 (2026-10-07): Fase 4 (storefront di schema NZO). Tambah D-26 (publish dev), D-27 (fitment dua tingkat). Catatan rute storefront & DAL.
+- 0.18 (2026-10-14): Fase 9 (dokumen cetak). Tambah D-41 (nomor invoice), D-42 (mode pajak), D-43 (PDF server + barcode). Rute PDF dan catatan aset.
 - 0.17 (2026-10-14): Fase 8E (administrasi) — Fase 8 selesai. Laporan/staf/audit/pengaturan/notifikasi staf, webhook Biteship & cron auto-selesai versi NZO, legacy GeekyTech dihapus. Env baru `BITESHIP_WEBHOOK_SECRET`. Tanpa keputusan baru.
 - 0.16 (2026-10-13): Fase 8D (pelanggan & after-sales). RPC pelanggan/after-sales/moderasi ulasan, rute admin. Tanpa keputusan baru.
 - 0.15 (2026-10-13): Fase 8C (promo & konten). `content_pages`, rute admin promo/halaman, konvensi transform Zod idempoten, helper verifikasi gambar. Tanpa keputusan baru (implementasi D-38, D-39).

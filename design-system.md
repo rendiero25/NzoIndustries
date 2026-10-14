@@ -1,6 +1,6 @@
 # design-system.md — NZO Industries
 
-Versi dokumen: 0.17 (2026-10-14). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
+Versi dokumen: 0.18 (2026-10-14). Sinkron dengan `CLAUDE.md` (D-02, D-03, D-10, D-11, D-13) dan `task.md` (Fase 2 dan seterusnya).
 
 ## 1. Arah desain
 
@@ -265,6 +265,13 @@ Bahasa Indonesia, sapaan "kamu", sentence case, kalimat aktif, tanpa basa-basi.
 ```
 Hitam-putih, tanpa warna aksen, aman untuk printer thermal/laser. Cetak massal: satu resi per halaman dalam satu PDF.
 
+**Implementasi (Fase 9, D-41–D-43):**
+- Font Outfit 400/600/700. Tinta `#0E0F11`, teks sekunder `#5B6068`, garis `#D9DBDF` (invoice); resi murni hitam.
+- Invoice: kepala logo + "INVOICE" 22 pt + nomor + cap status bergaris (LUNAS / Dibatalkan / Dikembalikan). Dua kotak (penerima, detail). Tabel item bergaris tipis dengan header huruf kapital kecil. Ringkasan rata kanan, total dipisah garis tebal. Footer tetap "sah tanpa tanda tangan" + nomor halaman.
+- Resi: bingkai 1,5 pt, bagian dipisah garis 1 pt. Barcode Code128 tinggi ±62 pt + teks resi berspasi. Penerima nama 12 pt tebal + telepon tebal. Baris info empat sel (no. pesanan lebih lebar). Isi paket maks 8 baris lalu "+n item lain".
+- Data pengirim kosong ditandai teks tebal "[Data pengirim belum lengkap di Pengaturan]", supaya tidak tercetak diam-diam.
+- Tombol dokumen di admin memakai Button outline kecil dengan ikon FileText/Printer, membuka tab baru. Pilih massal memakai Checkbox shadcn + bar sticky "Cetak resi (n)".
+
 ## 13. Aksesibilitas (standar minimum)
 
 - Kontras teks ≥ 4.5:1, fokus keyboard terlihat (ring hitam 2px + offset).
@@ -281,6 +288,7 @@ Hitam-putih, tanpa warna aksen, aman untuk printer thermal/laser. Cetak massal: 
 - 0.6 (2026-10-02): Sinkron versi (D-20).
 - 0.7 (2026-10-02): Fase 2 diimplementasikan. `success` jadi `#1C7F46` (kontras AA), daftar komponen NZO + varian tombol `signal`, implementasi dark mode admin, catatan paket `motion` untuk Magic UI. Logo & perisai masih sementara.
 - 0.9 (2026-10-07): Komponen storefront Fase 4 (VehicleSelector, GarageChip, CatalogPage, ProductView), aturan tampilan kecocokan dua tingkat (D-27), animasi bump/pop/tick. Header tetap tidak mengubah tinggi saat scroll (hanya bayangan) agar konten tidak melompat.
+- 0.18 (2026-10-14): Implementasi dokumen cetak (invoice A4, resi A5, pilih massal) Fase 9.
 - 0.17 (2026-10-14): Pola laporan, audit log, pengaturan, dan staf admin (Fase 8E).
 - 0.16 (2026-10-13): Pola pelanggan, moderasi ulasan, dan retur/klaim admin (Fase 8D).
 - 0.15 (2026-10-13): Pola promo & konten admin, tampilan Markdown halaman statis (Fase 8C).

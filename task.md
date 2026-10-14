@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.17 (2026-10-14). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.18 (2026-10-14). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -269,12 +269,19 @@ Dikerjakan dalam 5 sub-batch 8A–8E (D-37).
   - Akun uji admin & pembeli (dipakai 8A–8E) beserta pesanannya dihapus; stok DEMO-OLI-001 kembali 120.
 
 ## Fase 9 — Dokumen cetak
-- [ ] Invoice PDF A4 sesuai design-system.md §12 [P-07]
-- [ ] Resi A5 dengan barcode (`bwip-js`) [P-11]
-- [ ] Cetak resi massal (pilih banyak pesanan → satu PDF)
-- [ ] Nomor invoice berurutan dan tidak bisa diubah
+- [x] Invoice PDF A4 sesuai design-system.md §12 — format pajak menunggu [P-07] (D-42, mode `none`)
+- [x] Resi A5 dengan barcode (`bwip-js`) — data pengirim dari Pengaturan, menunggu [P-11]
+- [x] Cetak resi massal (pilih banyak pesanan → satu PDF)
+- [x] Nomor invoice berurutan dan tidak bisa diubah (D-41)
 
 **Catatan fase:**
+- Migration `20261014000300_invoices`: `orders.invoice_number` (unik, format `INV/YYYY/000001`, urut per tahun WIB lewat `invoice_counters` + lock baris) dan `invoice_issued_at`. Diterbitkan trigger `orders_invoice` saat status pertama kali menjadi `paid` (mencakup `mark_order_paid` dan aktivasi ulang admin) — lebih aman daripada menyalin ulang body fungsi pelunasan; trigger yang sama menolak perubahan/penghapusan nomor, termasuk oleh service role. Backfill pesanan lunas lama. `store_settings.tax_mode` (`none`/`ppn_included`).
+- PDF dirender di server dengan `@react-pdf/renderer` (font Outfit woff OFL di `src/lib/pdf/fonts/`, logo `public/logo.png`, logo kurir `public/couriers/`), barcode Code128 `bwip-js/node` (import subpath karena `moduleResolution: bundler`). File dibaca dari disk: `outputFileTracingIncludes` di `next.config.ts`.
+- Rute: `/account/orders/[number]/invoice` (RLS = hanya pemilik, 404 bila belum lunas), `/admin/orders/[number]/invoice` (staf), `/admin/orders/labels?numbers=…` (owner/admin/gudang; maks 50; hanya paid/processing/shipped, pesanan lain diabaikan). Info toko dibaca service role karena `store_settings` tidak terbaca pelanggan.
+- UI: tombol "Unduh invoice" di detail pesanan akun (sebelumnya nonaktif, D-34); "Invoice" + "Cetak resi" di detail pesanan admin dengan peringatan bila data pengirim kosong; filter "Siap kirim" + checkbox + bar "Cetak resi (n)" di daftar pesanan.
+- Resi tanpa nomor resi kurir memakai barcode nomor pesanan dengan label "belum ada resi kurir". Pembayaran selalu NON-COD sampai P-12.
+- Diuji (skrip e2e dengan akun uji sementara, dihapus setelahnya; stok DEMO dikembalikan): nomor invoice terbit berurutan; pembeli unduh invoice (PDF valid), pesanan orang lain dan belum lunas 404, tanpa login dialihkan; admin unduh invoice; resi tunggal; resi massal 3 halaman (pesanan pending diabaikan); pelanggan tidak bisa cetak resi; nomor tidak valid 400. PDF diperiksa visual (invoice A4, resi A5). Headless: daftar pesanan (checkbox), detail admin (tombol dokumen), detail akun (tombol invoice) tanpa error.
+- Cek: `test:rls` 54/54 (2 tes baru), unit test format dokumen.
 
 ## Fase 10 — Notifikasi dan email
 - [ ] Template React Email dengan gaya brand: verifikasi, reset password, pesanan dibuat, instruksi pembayaran, pembayaran diterima, bukti ditolak, pesanan dikirim + resi, pesanan selesai + ajakan ulasan, update retur/garansi

@@ -664,6 +664,21 @@ export type Database = {
           },
         ];
       };
+      invoice_counters: {
+        Row: {
+          last_no: number;
+          year: number;
+        };
+        Insert: {
+          last_no?: number;
+          year: number;
+        };
+        Update: {
+          last_no?: number;
+          year?: number;
+        };
+        Relationships: [];
+      };
       notifications: {
         Row: {
           body: string | null;
@@ -830,6 +845,8 @@ export type Database = {
           discount_total: number;
           grand_total: number;
           id: string;
+          invoice_issued_at: string | null;
+          invoice_number: string | null;
           order_number: string;
           paid_at: string | null;
           payment_due_at: string | null;
@@ -852,6 +869,8 @@ export type Database = {
           discount_total?: number;
           grand_total: number;
           id?: string;
+          invoice_issued_at?: string | null;
+          invoice_number?: string | null;
           order_number: string;
           paid_at?: string | null;
           payment_due_at?: string | null;
@@ -874,6 +893,8 @@ export type Database = {
           discount_total?: number;
           grand_total?: number;
           id?: string;
+          invoice_issued_at?: string | null;
+          invoice_number?: string | null;
           order_number?: string;
           paid_at?: string | null;
           payment_due_at?: string | null;
@@ -1678,6 +1699,7 @@ export type Database = {
           store_name: string;
           support_email: string | null;
           support_whatsapp: string | null;
+          tax_mode: string;
           updated_at: string;
         };
         Insert: {
@@ -1693,6 +1715,7 @@ export type Database = {
           store_name?: string;
           support_email?: string | null;
           support_whatsapp?: string | null;
+          tax_mode?: string;
           updated_at?: string;
         };
         Update: {
@@ -1708,6 +1731,7 @@ export type Database = {
           store_name?: string;
           support_email?: string | null;
           support_whatsapp?: string | null;
+          tax_mode?: string;
           updated_at?: string;
         };
         Relationships: [];

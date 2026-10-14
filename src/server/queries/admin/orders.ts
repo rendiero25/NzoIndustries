@@ -51,7 +51,9 @@ export async function listAdminOrders(
     )
     .order("created_at", { ascending: false })
     .range((page - 1) * ADMIN_ORDERS_PER_PAGE, page * ADMIN_ORDERS_PER_PAGE - 1);
-  if (f.status && STATUSES.has(f.status)) query = query.eq("status", f.status as never);
+  // "ready" = siap kirim (lunas/diproses, belum dikirim): dipakai untuk cetak resi massal.
+  if (f.status === "ready") query = query.in("status", ["paid", "processing"]);
+  else if (f.status && STATUSES.has(f.status)) query = query.eq("status", f.status as never);
   const q = f.q?.trim();
   if (q) {
     const safe = q.replace(/[%,()]/g, " ").slice(0, 60);
@@ -89,6 +91,7 @@ export type AdminOrderDetail = {
   id: string;
   orderNumber: string;
   status: string;
+  invoiceNumber: string | null;
   subtotal: number;
   shippingCost: number;
   discountTotal: number;
@@ -136,7 +139,7 @@ export async function getAdminOrder(orderNumber: string): Promise<AdminOrderDeta
   const { data: o } = await supabase
     .from("orders")
     .select(
-      "id, user_id, order_number, status, subtotal, shipping_cost, discount_total, grand_total, created_at, paid_at, payment_due_at, customer_note, cancel_reason, shipping_address, voucher:vouchers(code), order_items(id, product_id, product_name, variant_name, sku, unit_price, quantity, line_total), payments(status, method, provider_ref, amount, paid_at, created_at), shipments(courier_code, courier_service, waybill_number, status, cost, shipped_at, delivered_at), order_status_history(to_status, note, created_at)",
+      "id, user_id, order_number, status, invoice_number, subtotal, shipping_cost, discount_total, grand_total, created_at, paid_at, payment_due_at, customer_note, cancel_reason, shipping_address, voucher:vouchers(code), order_items(id, product_id, product_name, variant_name, sku, unit_price, quantity, line_total), payments(status, method, provider_ref, amount, paid_at, created_at), shipments(courier_code, courier_service, waybill_number, status, cost, shipped_at, delivered_at), order_status_history(to_status, note, created_at)",
     )
     .eq("order_number", orderNumber)
     .maybeSingle();
@@ -153,6 +156,7 @@ export async function getAdminOrder(orderNumber: string): Promise<AdminOrderDeta
     id: o.id,
     orderNumber: o.order_number,
     status: o.status,
+    invoiceNumber: o.invoice_number,
     subtotal: Number(o.subtotal),
     shippingCost: Number(o.shipping_cost),
     discountTotal: Number(o.discount_total),

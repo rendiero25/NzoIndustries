@@ -22,6 +22,12 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname),
   poweredByHeader: false,
   serverExternalPackages: ["lightningcss"],
+  // Aset dokumen PDF dibaca dari disk saat runtime (Fase 9).
+  outputFileTracingIncludes: {
+    "/account/orders/[number]/invoice": ["./src/lib/pdf/fonts/**", "./public/logo.png"],
+    "/admin/orders/[number]/invoice": ["./src/lib/pdf/fonts/**", "./public/logo.png"],
+    "/admin/orders/labels": ["./src/lib/pdf/fonts/**", "./public/logo.png", "./public/couriers/**"],
+  },
   // nzo.local → alias hosts-file ke localhost, supaya Cloudflare Turnstile bisa
   // di-whitelist (widget butuh domain valid, bukan "localhost" polos).
   allowedDevOrigins: ["nzo.local"],

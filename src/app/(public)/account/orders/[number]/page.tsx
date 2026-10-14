@@ -274,9 +274,21 @@ export default async function AccountOrderDetailPage({
                 {order.paymentMethod ? ` · ${paymentMethodLabel(order.paymentMethod)}` : ""}
               </p>
             ) : null}
-            <Button variant="outline" disabled title="Invoice PDF segera tersedia">
-              <FileText className="size-4" /> Unduh invoice (segera)
-            </Button>
+            {order.invoiceNumber ? (
+              <Button asChild variant="outline">
+                {/* Route handler PDF: pakai <a> biasa, bukan Link (bukan halaman). */}
+                <a href={`/account/orders/${order.orderNumber}/invoice`} download>
+                  <FileText className="size-4" /> Unduh invoice
+                  <span className="font-mono text-caption text-muted-foreground">
+                    {order.invoiceNumber}
+                  </span>
+                </a>
+              </Button>
+            ) : (
+              <p className="text-caption text-muted-foreground">
+                Invoice tersedia setelah pembayaran diterima.
+              </p>
+            )}
           </section>
 
           <section

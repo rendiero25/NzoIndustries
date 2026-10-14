@@ -1882,14 +1882,12 @@ describe("administrasi admin (Fase 8E)", () => {
       .select("id")
       .single();
     const bid = `RLS-BS-${RUN_ID}`;
-    const { error: shipErr } = await admin
-      .from("shipments")
-      .insert({
-        order_id: order!.id,
-        courier_code: "jne",
-        courier_service: "reg",
-        biteship_order_id: bid,
-      });
+    const { error: shipErr } = await admin.from("shipments").insert({
+      order_id: order!.id,
+      courier_code: "jne",
+      courier_service: "reg",
+      biteship_order_id: bid,
+    });
     assert.ifError(shipErr);
 
     assert.equal(
@@ -1925,5 +1923,102 @@ describe("administrasi admin (Fase 8E)", () => {
     ({ data: o } = await admin.from("orders").select("status").eq("id", order!.id).single());
     assert.equal(o!.status, "completed");
     await admin.from("orders").delete().eq("id", order!.id);
+  });
+});
+
+describe("nomor invoice (Fase 9)", () => {
+  const ids: string[] = [];
+
+  const paidOrder = async () => {
+    const { data: order, error } = await admin
+      .from("orders")
+      .insert({
+        order_number: "",
+        user_id: customerA.id,
+        subtotal: 50000,
+        shipping_cost: 0,
+        discount_total: 0,
+        unique_code: 0,
+        grand_total: 50000,
+        shipping_address: { city: "Test" },
+      })
+      .select("id")
+      .single();
+    if (error || !order) throw new Error(`order: ${error?.message}`);
+    ids.push(order.id);
+    const { data: pay } = await admin
+      .from("payments")
+      .insert({
+        order_id: order.id,
+        provider: "mayar",
+        provider_ref: `TEST-${crypto.randomUUID()}`,
+        status: "pending",
+        amount: 50000,
+      })
+      .select("id")
+      .single();
+    const settle = () => admin.rpc("mark_order_paid", { p_payment_id: pay!.id, p_amount: 50000 });
+    assert.equal((await settle()).data, "settled");
+    const { data: o } = await admin
+      .from("orders")
+      .select("invoice_number, invoice_issued_at")
+      .eq("id", order.id)
+      .single();
+    return { id: order.id, invoice: o!.invoice_number!, issuedAt: o!.invoice_issued_at, settle };
+  };
+
+  after(async () => {
+    if (ids.length) await admin.from("orders").delete().in("id", ids);
+  });
+
+  test("terbit saat lunas, berurutan, idempoten, tidak bisa diubah", async () => {
+    const a = await paidOrder();
+    assert.match(a.invoice, /^INV\/\d{4}\/\d{6}$/);
+    assert.ok(a.issuedAt);
+    assert.equal((await a.settle()).data, "already_paid");
+    const { data: again } = await admin
+      .from("orders")
+      .select("invoice_number")
+      .eq("id", a.id)
+      .single();
+    assert.equal(again!.invoice_number, a.invoice, "pelunasan ulang tidak mengganti nomor");
+
+    const b = await paidOrder();
+    const seq = (n: string) => Number(n.split("/")[2]);
+    assert.equal(seq(b.invoice), seq(a.invoice) + 1);
+
+    const { error } = await admin
+      .from("orders")
+      .update({ invoice_number: "INV/2026/999999" })
+      .eq("id", a.id);
+    assert.ok(error, "service role pun tidak boleh mengubah nomor");
+    const { error: clearErr } = await admin
+      .from("orders")
+      .update({ invoice_number: null })
+      .eq("id", a.id);
+    assert.ok(clearErr, "nomor tidak boleh dihapus");
+  });
+
+  test("pesanan belum lunas tidak punya nomor; counter tidak terbaca klien", async () => {
+    const { data: pending } = await admin
+      .from("orders")
+      .insert({
+        order_number: "",
+        user_id: customerA.id,
+        subtotal: 1000,
+        shipping_cost: 0,
+        discount_total: 0,
+        unique_code: 0,
+        grand_total: 1000,
+        shipping_address: { city: "Test" },
+      })
+      .select("id, invoice_number")
+      .single();
+    ids.push(pending!.id);
+    assert.equal(pending!.invoice_number, null);
+    for (const client of [customerA.client, adminUser.client]) {
+      const { data } = await client.from("invoice_counters").select("year");
+      assert.equal(data?.length ?? 0, 0);
+    }
   });
 });

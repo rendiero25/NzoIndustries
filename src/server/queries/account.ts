@@ -196,6 +196,7 @@ export type OrderDetail = {
   shippingCost: number;
   discountTotal: number;
   grandTotal: number;
+  invoiceNumber: string | null;
   createdAt: string;
   paidAt: string | null;
   paymentDueAt: string | null;
@@ -224,7 +225,7 @@ export async function getMyOrder(orderNumber: string): Promise<OrderDetail | nul
   const { data: o } = await supabase
     .from("orders")
     .select(
-      "id, order_number, status, subtotal, shipping_cost, discount_total, grand_total, created_at, updated_at, paid_at, payment_due_at, customer_note, shipping_address, order_items(id, product_id, product_name, variant_name, sku, unit_price, quantity, line_total, product:products(slug, images:product_images(public_id, sort_order))), order_status_history(to_status, note, created_at), shipments(courier_code, courier_service, waybill_number, status, shipped_at, delivered_at), payments(status, method, created_at), returns(id, reason, status, created_at)",
+      "id, order_number, status, invoice_number, subtotal, shipping_cost, discount_total, grand_total, created_at, updated_at, paid_at, payment_due_at, customer_note, shipping_address, order_items(id, product_id, product_name, variant_name, sku, unit_price, quantity, line_total, product:products(slug, images:product_images(public_id, sort_order))), order_status_history(to_status, note, created_at), shipments(courier_code, courier_service, waybill_number, status, shipped_at, delivered_at), payments(status, method, created_at), returns(id, reason, status, created_at)",
     )
     .eq("order_number", orderNumber)
     .eq("user_id", user.id)
@@ -257,6 +258,7 @@ export async function getMyOrder(orderNumber: string): Promise<OrderDetail | nul
     id: o.id,
     orderNumber: o.order_number,
     status: o.status,
+    invoiceNumber: o.invoice_number,
     subtotal: Number(o.subtotal),
     shippingCost: Number(o.shipping_cost),
     discountTotal: Number(o.discount_total),

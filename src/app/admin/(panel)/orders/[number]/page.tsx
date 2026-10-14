@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import { StatusBadge } from "@/components/account/status-badge";
 import { AdminOrderActions } from "@/components/admin/orders/admin-order-actions";
+import { OrderDocuments } from "@/components/admin/orders/order-documents";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -20,6 +21,7 @@ import { formatIDR } from "@/lib/money";
 import { orderStatusMeta } from "@/lib/orders/status";
 import { paymentMethodLabel } from "@/lib/payments/mayar-method";
 import { getAdminOrder } from "@/server/queries/admin/orders";
+import { getStoreInfo, LABEL_STATUSES } from "@/server/queries/documents";
 
 const ORDER_NUMBER = /^NZO-\d{6}-[0-9A-F]{6}$/;
 const dateTime = new Intl.DateTimeFormat("id-ID", {
@@ -56,7 +58,7 @@ export default async function AdminOrderDetailPage({
   const user = await requireStaff();
   const { number } = await params;
   if (!ORDER_NUMBER.test(number)) notFound();
-  const o = await getAdminOrder(number);
+  const [o, store] = await Promise.all([getAdminOrder(number), getStoreInfo()]);
   if (!o) notFound();
 
   const meta = orderStatusMeta(o.status);
@@ -96,6 +98,15 @@ export default async function AdminOrderDetailPage({
           canManage={user.role === "owner" || user.role === "admin"}
           canShip={user.role !== "cs"}
           paidAfterCancel={paidAfterCancel}
+        />
+        <OrderDocuments
+          orderNumber={o.orderNumber}
+          invoiceNumber={o.invoiceNumber}
+          canPrintLabel={
+            user.role !== "cs" &&
+            LABEL_STATUSES.includes(o.status as (typeof LABEL_STATUSES)[number])
+          }
+          shipperIncomplete={!store.shipper.address || !store.shipper.phone}
         />
       </div>
 
