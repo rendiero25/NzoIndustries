@@ -1,6 +1,6 @@
 # CLAUDE.md — NZO Industries E-commerce
 
-Versi dokumen: 0.15 (2026-10-13). Baca file ini di awal setiap sesi.
+Versi dokumen: 0.16 (2026-10-13). Baca file ini di awal setiap sesi.
 
 ## Proyek
 Web e-commerce untuk NZO Industries, penjual produk otomotif motor dan mobil (plus sebagian produk non-otomotif yang masuk kategori sendiri). Ada tiga area: storefront publik, dashboard user (`/account`), dan dashboard admin/CMS (`/admin`). Prinsip utama: **security first**.
@@ -74,7 +74,7 @@ Package manager: pnpm 11 (`packageManager` di package.json). Build script depend
 - Dashboard user (Fase 7): `/account` (ringkasan), `/account/orders` (+ `/[number]`), `/addresses`, `/garage`, `/wishlist`, `/reviews`, `/vouchers`, `/returns`, `/notifications`, `/profile`. DAL `src/server/queries/account.ts` (`requireAccountUser` di layout + setiap query), actions `src/server/actions/account/*`. Upload media pelanggan lewat `requestUpload` (signed upload URL, path `{uid}/{uuid}.ext` ditentukan server; bucket `review-images` publik, `after-sales-media` privat). Label status pesanan/retur/klaim/ulasan: `src/lib/orders/status.ts`. Legacy `/dashboard/*` dan `/wishlist` di-redirect permanen di `next.config.ts`.
 - Halaman statis (D-39): `getContentPage(slug)` (`src/server/queries/content.ts`, tag `content`) dipakai 7 halaman publik; null = teks bawaan. Markdown dirender `src/components/shared/markdown.tsx` (tanpa HTML mentah). Gambar admin non-produk diverifikasi `verifyUploadedImage()` (`src/lib/cloudinary/verify.ts`).
 - Rute yang bisa `notFound()` jangan diberi `loading.tsx` (streaming dimulai sebelum 404, status jadi 200); bungkus konten lambat dengan `Suspense` setelah validasi.
-- Admin (Fase 8): aksi di `src/server/actions/admin/*` memakai `adminGuard(ROLES.x)` (`_guard.ts`) lalu Zod lalu client user-scoped (RPC `admin_*` security definer cek `private.has_role`). DAL `src/server/queries/admin/*`. Status pesanan admin hanya lewat RPC `admin_set_order_status` (matriks transisi, notifikasi user, lepas reservasi saat batal). Rute: `/admin`, `/admin/orders[/number]`, `/admin/products[/new|/[id]|/export]`, `/admin/stock`, `/admin/categories`, `/admin/brands`, `/admin/vehicles`, `/admin/import`, `/admin/vouchers`, `/admin/flash-sales[/id]`, `/admin/banners`, `/admin/pages[/slug]`. Hapus kategori/brand/model kendaraan hanya lewat RPC `admin_delete_*` (menolak bila masih dipakai).
+- Admin (Fase 8): aksi di `src/server/actions/admin/*` memakai `adminGuard(ROLES.x)` (`_guard.ts`) lalu Zod lalu client user-scoped (RPC `admin_*` security definer cek `private.has_role`). DAL `src/server/queries/admin/*`. Status pesanan admin hanya lewat RPC `admin_set_order_status` (matriks transisi, notifikasi user, lepas reservasi saat batal). Rute: `/admin`, `/admin/orders[/number]`, `/admin/products[/new|/[id]|/export]`, `/admin/stock`, `/admin/categories`, `/admin/brands`, `/admin/vehicles`, `/admin/import`, `/admin/vouchers`, `/admin/flash-sales[/id]`, `/admin/banners`, `/admin/pages[/slug]`, `/admin/reviews`, `/admin/customers[/id]`, `/admin/returns[/kind/id]`. Status retur/klaim hanya lewat RPC `admin_set_after_sales_status`, moderasi ulasan lewat `admin_moderate_review`, daftar pelanggan lewat `admin_customers` (email dari `auth.users`). Hapus kategori/brand/model kendaraan hanya lewat RPC `admin_delete_*` (menolak bila masih dipakai).
 
 ## Konvensi kode
 - Identifier dalam bahasa Inggris; semua teks UI dalam Bahasa Indonesia (aturan copy di design-system.md).
@@ -187,6 +187,7 @@ Status: ⏳ menunggu, ✅ sudah dijawab (pindahkan hasilnya ke Decision log).
 - 0.6 (2026-10-02): Tambah D-20 (MFA staf lewat flag, default mati). Security rule 7 diperbarui.
 - 0.7 (2026-10-02): Fase 2 (design system + redesign shell). Sinkron versi, tanpa keputusan baru.
 - 0.9 (2026-10-07): Fase 4 (storefront di schema NZO). Tambah D-26 (publish dev), D-27 (fitment dua tingkat). Catatan rute storefront & DAL.
+- 0.16 (2026-10-13): Fase 8D (pelanggan & after-sales). RPC pelanggan/after-sales/moderasi ulasan, rute admin. Tanpa keputusan baru.
 - 0.15 (2026-10-13): Fase 8C (promo & konten). `content_pages`, rute admin promo/halaman, konvensi transform Zod idempoten, helper verifikasi gambar. Tanpa keputusan baru (implementasi D-38, D-39).
 - 0.14 (2026-10-13): Fase 8B (struktur katalog). Rute admin kategori/brand/kendaraan, aturan hapus lewat RPC. Tanpa keputusan baru.
 - 0.13 (2026-10-12): Fase 8A (admin operasional). Tambah D-37 (sub-batch), D-38 (diskon = harga coret massal), D-39 (`content_pages`), D-40 (resi manual + Biteship). Catatan pola aksi/DAL admin.

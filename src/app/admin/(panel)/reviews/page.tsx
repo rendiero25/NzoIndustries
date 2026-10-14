@@ -1,72 +1,97 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
+import Link from "next/link";
 
-import { createClient } from "@/lib/supabase/legacy/server";
-import { ReviewFilters } from "./_components/review-filters";
-import { ReviewTable, type ReviewRow } from "./_components/review-table";
+import { ReviewModeration } from "@/components/admin/service/review-moderation";
+import { PageHeader } from "@/components/shared/page-header";
+import { Button } from "@/components/ui/button";
+import { requireRole } from "@/lib/auth/guards";
+import { cn } from "@/lib/utils";
+import { listAdminReviews, REVIEWS_PER_PAGE } from "@/server/queries/admin/service";
 
-export const metadata: Metadata = { title: "Ulasan · Admin" };
+export const metadata: Metadata = { title: "Ulasan" };
 export const dynamic = "force-dynamic";
 
-const PER_PAGE = 20;
+const TABS = [
+  { key: "pending", label: "Menunggu" },
+  { key: "published", label: "Tayang" },
+  { key: "hidden", label: "Disembunyikan" },
+  { key: "all", label: "Semua" },
+];
 
-type SearchParams = Promise<{
-  q?: string;
-  rating?: string;
-  page?: string;
-}>;
-
-export default async function AdminReviewsPage({ searchParams }: { searchParams: SearchParams }) {
-  const params = await searchParams;
-  const q = params.q ?? "";
-  const rating = params.rating ?? "";
-  const page = Math.max(1, parseInt(params.page ?? "1", 10));
-  const from = (page - 1) * PER_PAGE;
-  const to = from + PER_PAGE - 1;
-
-  const supabase = await createClient();
-
-  let query = supabase
-    .from("product_reviews")
-    .select(
-      `id, rating, comment, images, deleted_at, created_at, product_id,
-       products:product_id (name, slug),
-       profiles:user_id (full_name)`,
-      { count: "exact" },
-    )
-    .is("deleted_at", null)
-    .order("created_at", { ascending: false })
-    .range(from, to);
-
-  if (rating) query = query.eq("rating", parseInt(rating, 10));
-
-  const { data: reviews, count } = await query;
-
-  const totalPages = Math.ceil((count ?? 0) / PER_PAGE);
+export default async function AdminReviewsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string; rating?: string; page?: string }>;
+}) {
+  await requireRole(["owner", "admin", "cs"]);
+  const sp = await searchParams;
+  const status = TABS.some((t) => t.key === sp.status) ? sp.status! : "pending";
+  const rating = Number(sp.rating) || undefined;
+  const page = Math.max(1, Number(sp.page) || 1);
+  const { rows, total } = await listAdminReviews({
+    status: status === "all" ? undefined : status,
+    rating,
+    page,
+  });
+  const pages = Math.max(1, Math.ceil(total / REVIEWS_PER_PAGE));
+  const qs = (patch: Record<string, string | undefined>) => {
+    const u = new URLSearchParams();
+    for (const [k, v] of Object.entries({
+      status,
+      rating: rating ? String(rating) : undefined,
+      ...patch,
+    }))
+      if (v) u.set(k, v);
+    return `/admin/reviews?${u}`;
+  };
 
   return (
-    <div className="w-full space-y-8 p-6 lg:p-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-swiss-eyebrow">Konten</p>
-          <h1 className="text-[34px] font-semibold text-foreground uppercase">Ulasan</h1>
-          <p className="mt-1 text-base leading-[1.47] text-foreground">
-            {count ?? 0} ulasan
-            {q ? ` untuk "${q}"` : ""}
-            {rating ? ` · bintang ${rating}` : ""}
-          </p>
-        </div>
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        title="Ulasan"
+        description="Ulasan baru menunggu moderasi sebelum tampil di halaman produk. Rating produk dihitung dari ulasan yang tayang."
+      />
+      <div className="flex flex-wrap items-center gap-2">
+        {TABS.map((t) => (
+          <Button key={t.key} asChild size="sm" variant={status === t.key ? "primary" : "outline"}>
+            <Link href={qs({ status: t.key, page: undefined })}>{t.label}</Link>
+          </Button>
+        ))}
+        <span className="mx-1 h-6 w-px bg-border" aria-hidden />
+        {[5, 4, 3, 2, 1].map((r) => (
+          <Link
+            key={r}
+            href={qs({ rating: rating === r ? undefined : String(r), page: undefined })}
+            className={cn(
+              "rounded-full border border-border px-3 py-1 text-sm hover:bg-muted",
+              rating === r && "border-foreground bg-muted font-medium",
+            )}
+          >
+            {r}★
+          </Link>
+        ))}
       </div>
-
-      {/* Filters */}
-      <Suspense>
-        <ReviewFilters />
-      </Suspense>
-
-      {/* Table */}
-      <Suspense>
-        <ReviewTable reviews={(reviews ?? []) as ReviewRow[]} page={page} totalPages={totalPages} />
-      </Suspense>
+      <p className="text-sm text-muted-foreground">{total.toLocaleString("id-ID")} ulasan</p>
+      <ReviewModeration reviews={rows} />
+      {pages > 1 ? (
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-muted-foreground">
+            Halaman {page} dari {pages}
+          </span>
+          <div className="flex gap-2">
+            {page > 1 ? (
+              <Button asChild variant="outline" size="sm">
+                <Link href={qs({ page: String(page - 1) })}>Sebelumnya</Link>
+              </Button>
+            ) : null}
+            {page < pages ? (
+              <Button asChild variant="outline" size="sm">
+                <Link href={qs({ page: String(page + 1) })}>Berikutnya</Link>
+              </Button>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

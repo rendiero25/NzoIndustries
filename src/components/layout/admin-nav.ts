@@ -118,7 +118,6 @@ export const SEGMENT_LABELS: Record<string, string> = {
   orders: "Pesanan",
   customers: "Pelanggan",
   reviews: "Ulasan",
-  complaints: "Komplain",
   returns: "Retur & garansi",
   coupons: "Voucher",
   vouchers: "Voucher",

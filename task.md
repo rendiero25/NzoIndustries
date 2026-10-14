@@ -1,6 +1,6 @@
 # task.md — NZO Industries E-commerce
 
-Versi dokumen: 0.15 (2026-10-13). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
+Versi dokumen: 0.16 (2026-10-13). Aturan, keputusan (`D-xx`), dan pending klien (`P-xx`) ada di `CLAUDE.md`. Aturan visual ada di `design-system.md`.
 
 **Legenda:** `[ ]` belum, `[x]` selesai, `[P-xx]` bergantung pada info klien (kerjakan dengan stub/feature flag, jangan menebak).
 
@@ -209,9 +209,9 @@ Dikerjakan dalam 5 sub-batch 8A–8E (D-37).
 - [x] Pesanan: daftar dengan filter, detail, ubah status, ~~verifikasi/tolak bukti transfer~~ (D-31), input resi (D-40), batalkan/refund — 8A
 - [x] Promo: voucher, diskon produk/kategori (D-38, bulk harga coret di 8A), flash sale — 8C; ~~bundling~~ change request (D-38)
 - [x] Konten: banner, bar promo, halaman statis (D-39) — 8C; urutan section beranda tetap di kode (section tanpa data tidak dirender)
-- [ ] Ulasan: moderasi (tampilkan/sembunyikan/balas)
-- [ ] Pelanggan: daftar, detail, riwayat belanja, segmentasi sederhana, blokir
-- [ ] Retur dan klaim garansi
+- [x] Ulasan: moderasi (tampilkan/sembunyikan/balas) — 8D
+- [x] Pelanggan: daftar, detail, riwayat belanja, segmentasi sederhana, blokir — 8D
+- [x] Retur dan klaim garansi — 8D
 - [ ] Laporan: penjualan per periode, produk, kategori, pembayaran; export CSV/Excel
 - [ ] Staf dan role (owner, admin, warehouse, cs)
 - [ ] Audit log (read-only, filter per user/aksi)
@@ -249,6 +249,16 @@ Dikerjakan dalam 5 sub-batch 8A–8E (D-37).
   - Diuji di browser: tayangkan FAQ dari editor, tampil di `/faq` (link `javascript:` dan `<script>` tidak dirender), lalu kembali ke teks bawaan; bar promo tampil di storefront dengan link `/promo` (link `//…` ditolak) lalu dihapus; flash sale dibuat, harga ≥ normal ditolak, item 49.000 tampil di beranda, lalu dihapus; voucher dibuat dan dihapus.
   - Cek: `test:rls` 45/45 (2 tes baru 8C), `test` 71/71, typecheck, lint 0 error.
   - Catatan dev: overlay dev menampilkan "Encountered a script tag" dari `ThemeProvider` (next-themes + React 19) saat navigasi client; bawaan lama, hanya dev.
+- **8D (pelanggan & after-sales):**
+  - Migration `20261013000200_admin_after_sales`: RPC `admin_customers` (owner/admin/cs; email dari `auth.users`, jumlah & total belanja pesanan dibayar, segmen baru/aktif/tidak aktif/teratas/diblokir, paginasi), `admin_set_after_sales_status` (matriks transisi retur & klaim, resolusi wajib di status akhir, notifikasi `after_sales` ke pelanggan), `admin_moderate_review` (status + balasan, `replied_by/at`, notifikasi `review_reply` bila dibalas).
+  - `/admin/reviews`: filter status (default Menunggu) & rating, foto ulasan, Tayangkan/Sembunyikan/Balas (balasan sekaligus menayangkan). Rating produk dihitung ulang trigger lama.
+  - `/admin/customers` (+ `/[id]`): cari nama/email/telepon, segmen, detail profil + KPI + riwayat pesanan + alamat; blokir/buka blokir (owner/admin lewat `set_user_blocked`, cs lihat saja).
+  - `/admin/returns` (+ `/[kind]/[id]`): retur & klaim digabung, filter jenis + "Perlu ditangani", detail pengajuan, lampiran privat lewat signed URL 5 menit, form status sesuai matriks.
+  - Legacy GeekyTech customers/reviews/returns/complaints dihapus.
+  - Bug ditemukan & diperbaiki: form status retur menyimpan pilihan lama setelah refresh (status baru tidak ada di opsi), sekarang di-reset dengan `key={status}`.
+  - Catatan dev: menghapus lalu membuat ulang folder rute saat `next dev` berjalan bisa membuat rute baru 404 sampai dev server di-restart; file `.next/dev/types/validator.ts` bisa terpotong (hapus, dibuat ulang).
+  - Diuji di browser (data uji dibuat lewat SQL lalu dihapus): balas ulasan (tayang + notifikasi), setujui retur dengan catatan (notifikasi), tolak klaim (tombol simpan nonaktif tanpa resolusi, lalu status final). Headless: daftar/segmen/detail pelanggan, daftar retur.
+  - Cek: `test:rls` 48/48 (3 tes baru 8D).
 
 ## Fase 9 — Dokumen cetak
 - [ ] Invoice PDF A4 sesuai design-system.md §12 [P-07]
